@@ -1,0 +1,8 @@
+{ "name": "docshop"
+, "amd": {}
+, "main": "www/docs.html"
+, "volo":
+  { "baseUrl": "www/js/lib"
+  , "dependencies": {}
+  }
+}

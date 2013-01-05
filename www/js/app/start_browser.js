@@ -1,0 +1,1 @@
+define(['./browse_module']);
