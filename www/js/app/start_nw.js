@@ -1,12 +1,12 @@
 define
-  ( [ './browse_module'
-    , './git_repo'
-    , './spawn_capture_service'
+  ( [ './browse'
+    , './browse/repo_type/git'
+    , './browse/service/spawn_capture'
     ]
-  , function(browse, gitRepo, spawnCaptureService)
+  , function(browse, gitRepoType, spawnCaptureService)
 
 { browse
-  . factory('gitRepo', gitRepo)
+  . factory('gitRepo', gitRepoType)
   . factory('spawnCapture', spawnCaptureService)
 
 });

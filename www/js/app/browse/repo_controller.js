@@ -1,6 +1,6 @@
 define(function()
 
-{ var RepoCtrl = function($scope, createRepoObj)
+{ var RepoController = function($scope, createRepoObj)
   { $scope.repo = {}
   ; $scope.newRepoId = null
   ; $scope.newRepoRef = null
@@ -23,7 +23,7 @@ define(function()
     }
   }
 
-; RepoCtrl.$inject = ['$scope', 'createRepoObj']
-; return RepoCtrl
+; RepoController.$inject = ['$scope', 'createRepoObj']
+; return RepoController
 
 });

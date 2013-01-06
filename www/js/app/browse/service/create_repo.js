@@ -1,7 +1,7 @@
 define(function()
 
-{ var service = function($injector, $q)
-  { return function(repoId)
+{ var createRepoService = function($injector, $q)
+  { return function createRepo(repoId)
     { var repoTypeMatch = repoId.match(/.+?(?=:)/)
         , repoType = repoTypeMatch && repoTypeMatch[0]
         , createRepoOfType = $injector.get(repoType + 'Repo')
@@ -12,8 +12,8 @@ define(function()
     }
   }
 
-; service.$inject = ['$injector', '$q']
+; createRepoService.$inject = ['$injector', '$q']
 
-; return service
+; return createRepoService
 
 });

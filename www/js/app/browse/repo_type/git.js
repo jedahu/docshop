@@ -1,6 +1,6 @@
-define(['./manifest_parser'], function(mp)
+define(function()
 
-{ var service = function($q, spawnCapture)
+{ var service = function($q, spawnCapture, manifestParser)
   { return function(repoId)
     { var id = repoId.substr('git:'.length)
         , repo = {}
@@ -61,7 +61,7 @@ define(['./manifest_parser'], function(mp)
         ( function(manifestStr)
           { Object.defineProperties
               ( repo
-              , { manifest: {value: mp.parse(manifestStr)}
+              , { manifest: {value: manifestParser.parse(manifestStr)}
                 }
               )
           ; Object.freeze(repo)
@@ -71,7 +71,7 @@ define(['./manifest_parser'], function(mp)
     }
   }
 
-; service.$inject = ['$q', 'spawnCapture']
+; service.$inject = ['$q', 'spawnCapture', 'manifestParser']
 ; return service
 
 });

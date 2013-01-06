@@ -1,8 +1,8 @@
-define(['./manifest_parser'], function(mp)
+define(function()
 
 { var API_PREFIX = 'https://api.github.com/'
 
-; var createRepo = function($q, $http, repoId)
+; var createRepo = function($q, $http, manifestParser, repoId)
   { var id = repoId.substr('github:'.length)
       , repo = {}
       , deferred = $q.defer()
@@ -52,7 +52,7 @@ define(['./manifest_parser'], function(mp)
             ( function(data)
               { Object.defineProperties
                   ( repo
-                  , { manifest: {value: mp.parse(data.content)} }
+                  , { manifest: {value: manifestParser.parse(data.content)} }
                   )
               ; deferred.resolve(repo)
               }
@@ -70,10 +70,10 @@ define(['./manifest_parser'], function(mp)
   ; return deferred.promise
   }
 
-; var service = function($q, $http)
-    { return createRepo.bind(null, $q, $http)
+; var service = function($q, $http, manifestParser)
+    { return createRepo.bind(null, $q, $http, manifestParser)
     }
-; service.$inject = ['$q', '$http']
+; service.$inject = ['$q', '$http', 'manifestParser']
 ; return service
 
 });

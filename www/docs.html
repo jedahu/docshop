@@ -5,7 +5,7 @@
     <meta charset='UTF-8'>
     <script data-main='js/app' src='js/lib/require.js'></script>
   </head>
-  <body ng-controller='RepoCtrl'>
+  <body ng-controller='RepoController'>
     <nav id='manifest'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form ng-submit='changeRepo()'>
@@ -36,7 +36,7 @@
         </section>
       </section>
     </nav>
-    <div id='file' ng-controller='FileCtrl'>
+    <div id='file' ng-controller='FileController'>
       <div class='toc toc-{{hasToc}}'>
         <div class='toggle' ng-click='toggleToc()'>{{tocAction}} toc</div>
         <ul>

@@ -1,1 +1,1 @@
-define(['./browse_module']);
+define(['./browse']);
