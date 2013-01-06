@@ -1,12 +1,12 @@
 ; var mainModule = null
 ; if (typeof process === 'undefined')
-  { mainModule = 'app/start_browser'
+  { mainModule = 'start_browser'
   }
   else if (process.versions['node-webkit'])
-  { mainModule = 'app/start_nw'
+  { mainModule = 'start_nw'
   }
   else if (process.versions.node)
-  { mainModule = 'app/start_node'
+  { mainModule = 'start_node'
   }
   else
   { throw new Error('Not able to start.')
@@ -15,14 +15,14 @@
 ; var inNodeJs = typeof process !== 'undefined' && process.versions.node
 
 ; requirejs.config
-    ( { baseUrl: 'js/lib'
+    ( { baseUrl: 'js/app'
       , paths:
-          { app: '../app'
+          { lib: '../lib'
           }
       , hm: {}
       , urlArgs: 'bust=' + new Date().getTime()
       , shim:
-          { angular:
+          { 'lib/angular':
               { exports: 'angular'
               }
           }
@@ -31,7 +31,7 @@
     )
 
 ; requirejs
-    ( ['angular', mainModule]
+    ( ['lib/angular', mainModule]
     , function(angular)
       { angular.bootstrap(document, ['BrowseModule'])
       }

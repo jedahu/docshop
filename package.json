@@ -1,8 +1,11 @@
-{ "name": "docshop"
-, "amd": {}
-, "main": "www/docs.html"
-, "volo":
-  { "baseUrl": "www/js/lib"
-  , "dependencies": {}
+{
+  "name": "docshop",
+  "amd": {},
+  "main": "www/docs.html",
+  "volo": {
+    "baseUrl": "www/js/lib",
+    "dependencies": {
+      "EventEmitter2": "github:hij1nx/EventEmitter2/v0.4.11"
+    }
   }
 }

@@ -1,7 +1,7 @@
 define
-  ( [ './browse'
-    , './browse/repo_type/git'
-    , './browse/service/spawn_capture'
+  ( [ 'browse'
+    , 'browse/repo_type/git'
+    , 'browse/service/spawn_capture'
     ]
   , function(browse, gitRepoType, spawnCaptureService)
 

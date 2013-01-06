@@ -1,11 +1,11 @@
 define
-  ( [ 'angular'
-    , './browse/repo_controller'
-    , './browse/file_controller'
-    , './browse/repo_type/github'
-    , './browse/repo_type/http'
-    , './browse/service/create_repo'
-    , './browse/service/manifest_parser'
+  ( [ 'lib/angular'
+    , 'browse/repo_controller'
+    , 'browse/file_controller'
+    , 'browse/repo_type/github'
+    , 'browse/repo_type/http'
+    , 'browse/service/create_repo'
+    , 'browse/service/manifest_parser'
     ]
   , function
       ( angular

@@ -1,1 +1,1 @@
-define(['./browse']);
+define(['browse'])
