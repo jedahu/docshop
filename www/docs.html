@@ -36,7 +36,7 @@
         </section>
       </section>
     </nav>
-    <div id='file' ng-controller='FileController'>
+    <div id='file'>
       <div class='toc toc-{{hasToc}}'>
         <div class='toggle' ng-click='toggleToc()'>{{tocAction}} toc</div>
         <ul>
@@ -48,7 +48,7 @@
       <ul class='names names-{{hasNames}}'>
         <li ng-repeat='n in names'><a href='#{{n}}'>{{n}}</a></li>
       </ul>
-      <article class='content'>
+      <article class='content' ng-bind-html='renderedSrc'>
       </article>
     </div>
   </body>

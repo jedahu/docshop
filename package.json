@@ -5,7 +5,10 @@
   "volo": {
     "baseUrl": "www/js/lib",
     "dependencies": {
-      "EventEmitter2": "github:hij1nx/EventEmitter2/v0.4.11"
+      "stream": "github:Jxck/stream/master",
+      "text": "github:requirejs/text/2.0.3",
+      "events": "github:Jxck/events/master",
+      "microevent": "github:twolfson/microevent.js/master"
     }
   }
 }

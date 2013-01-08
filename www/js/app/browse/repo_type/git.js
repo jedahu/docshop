@@ -1,7 +1,8 @@
 define(function()
 
-{ var service = function($q, spawnCapture, manifestParser)
-  { return function(repoId)
+{ var cp = require('child_process')
+; var gitRepoService = function($q, spawnCapture, manifestParser)
+  { return function gitRepo(repoId)
     { var id = repoId.substr('git:'.length)
         , repo = {}
     ; Object.defineProperties
@@ -10,6 +11,15 @@ define(function()
           , tags: {value: []}
           , branches: {value: []}
           , name: {value: id}
+          , readFile:
+            { value: function(path)
+              { return spawnCapture
+                  ( 'git'
+                  , ['show', this.ref + ':' + path]
+                  , {cwd: this.id}
+                  )
+              }
+            }
           }
         )
     ; return spawnCapture('git', ['branch', '--list'], {cwd: id})
@@ -64,14 +74,13 @@ define(function()
               , { manifest: {value: manifestParser.parse(manifestStr)}
                 }
               )
-          ; Object.freeze(repo)
           ; return repo
           }
         )
     }
   }
 
-; service.$inject = ['$q', 'spawnCapture', 'manifestParser']
-; return service
+; gitRepoService.$inject = ['$q', 'spawnCapture', 'manifestParser']
+; return gitRepoService
 
 });
