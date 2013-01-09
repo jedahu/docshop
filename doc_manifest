@@ -1,0 +1,38 @@
+{ "markup": "text"
+, "languages":
+    { "javascript": ["/*", "", "*/"]
+    }
+, "extensions":
+    { "js": "javascript"
+    }
+, "prefix": "www/js/"
+, "files":
+    [ {"README": "../../README"}
+    , "app.js"
+    , {"browser startup": "start_browser.js"}
+    , {"node-webkit startup": "start_nw.js"}
+    , { "Browse module @app/browse/":
+        [ {"module": "module.js"}
+        , {"repo controller": "repo_controller.js"}
+        , { "Services @service/":
+            [ {"source parser": "src_parser.js"}
+            , {"source renderer": "parse_render_src.js"}
+            , {"create repo": "create_repo.js"}
+            , {"spawn capture": "spawn_capture.js"}
+            , {"manifest parser": "manifest_parser.js"}
+            ]
+          }
+        , { "Repo types @repo_type/":
+            [ {"git": "git.js"}
+            , {"github": "github.js"}
+            , {"http": "http.js"}
+            ]
+          }
+        , { "Markup types @renderer/":
+            [ {"text": "text.js"}
+            ]
+          }
+        ]
+      }
+    ]
+}
