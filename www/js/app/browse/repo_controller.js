@@ -1,52 +1,82 @@
 define(function()
 
-{ var RepoController = function($scope, createRepoObj, parseRenderSrc)
-  { $scope.repo = {}
+{ var RepoController = function($scope, $q, $location, createRepoObj, parseRenderSrc)
+  { var initialRepo = $q.defer()
+  ; initialRepo.resolve(null)
+  ; $scope.repo = initialRepo.promise
   ; $scope.newRepoId = null
   ; $scope.newRepoRef = null
   ; $scope.renderedSrc = null
 
-  ; var fileFromPath = function(path)
-    { return $scope.repo.then
-        ( function(repo)
-          { return repo.manifest.fileMap[path]
-          }
-        )
+  ; var fileFromPath = function(repo, path)
+    { return repo.manifest.fileMap[path]
+    }
+
+  ; var parseRepoString = function(str)
+    { var match = str.match(/([^@]+)(?:@([^:]+):?(.*))?/)
+      return {id: match[1], ref: match[2], path: match[3]}
+    }
+
+  ; var setPath = function(repo)
+    { $location.path(repo.id + '@' + repo.ref + ':' + repo.path)
     }
 
   ; $scope.changeRepo = function()
-    { if ($scope.repo.id == $scope.newRepoId)
-      { $scope.repo.ref = $scope.newRepoRef
-      }
-      else
-      { $scope.repo = createRepoObj($scope.newRepoId)
-      ; $scope.repo.then
-          ( function(repo)
-            { $scope.newRepoRef = repo.ref
-            ; repo.path = repo.manifest.files[0][1].path
-            ; $scope.changePath()
-            }
-          , function(err)
-            { // TODO handle error
-            ; console.log('err', err)
-            }
-          )
-      }
-    }
-
-  ; $scope.changePath = function()
-    { $scope.repo.then
+    { var query
+    ; if (!$scope.newRepoString) return
+    ; query = parseRepoString($scope.newRepoString)
+    ; $scope.repo = $scope.repo
+      . then
         ( function(repo)
-          { $scope.renderedSrc = parseRenderSrc
-              ( repo
-              , fileFromPath(repo.path)
-              )
+          { if (repo && repo.id === query.id) return repo
+            return createRepoObj(query.id)
+          }
+        )
+      . then
+        ( function(repo)
+          { var renderFile = repo.ref !== query.ref
+              || repo.path !== query.path
+              || !repo.path
+          ; repo.ref = query.ref || repo.ref
+          ; repo.path = query.path
+              || repo.path
+              || repo.manifest.files[0].path
+          ; if (renderFile) changePath(repo)
+          ; return repo
           }
         )
     }
+
+  ; var changePath = function(repo)
+    { $scope.renderedSrc = parseRenderSrc
+        ( repo
+        , fileFromPath(repo, repo.path)
+        )
+    ; setPath(repo)
+    }
+
+  ; $scope.changePathTo = function(path)
+    { console.log(arguments)
+    ; $scope.repo.then
+        ( function(repo)
+          { repo.path = path
+          ; changePath(repo)
+          }
+        )
+    }
+
+  ; $scope.$on
+      ( '$locationChangeSuccess'
+      , function(_new, _old)
+        { $scope.newRepoString = $location.path().slice(1)
+        ; $scope.changeRepo()
+        }
+      )
+
+  ; $scope.alert = window.alert.bind(window)
   }
 
-; RepoController.$inject = ['$scope', 'createRepoObj', 'parseRenderSrc']
+; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc']
 ; return RepoController
 
 });

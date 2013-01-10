@@ -4,17 +4,12 @@ define(['util/src_parser'], function(srcParser)
   { return function parseRenderSrc(repo, file)
     { var convert = $injector.get(/*file.markup*/ 'text' + 'Render')
     ; if (convert)
-      { return file
+      { return repo.readFile(file.path)
         . then
-          ( function(file1)
-            { return repo.readFile(file1.path)
-              . then
-                ( function(text)
-                  { return convert
-                      ( file1.lang
-                      , srcParser(file1.lang, text)
-                      )
-                  }
+          ( function(text)
+            { return convert
+                ( file.lang
+                , srcParser(file.lang, text)
                 )
             }
           )

@@ -1,28 +1,28 @@
 define(function()
 
 { var cp = require('child_process')
-; var gitRepoService = function($q, spawnCapture, manifestParser)
+; var gitRepoService = function($q, spawnCapture, parseManifest)
   { return function gitRepo(repoId)
-    { var id = repoId.substr('git:'.length)
+    { var repoPath = repoId.substr('git:'.length)
         , repo = {}
     ; Object.defineProperties
         ( repo
-        , { id: {value: id}
+        , { id: {value: repoId}
           , tags: {value: []}
           , branches: {value: []}
-          , name: {value: id}
+          , name: {value: repoPath}
           , readFile:
             { value: function(path)
               { return spawnCapture
                   ( 'git'
                   , ['show', this.ref + ':' + path]
-                  , {cwd: this.id}
+                  , {cwd: repoPath}
                   )
               }
             }
           }
         )
-    ; return spawnCapture('git', ['branch', '--list'], {cwd: id})
+    ; return spawnCapture('git', ['branch', '--list'], {cwd: repoPath})
       . then
         ( function(branchesStr)
           { branchesStr.split('\n').forEach
@@ -40,7 +40,7 @@ define(function()
                 }
               )
           ; Object.freeze(repo.branches)
-          ; return spawnCapture('git', ['tag', '--list'], {cwd: id})
+          ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
           }
         )
       . then
@@ -61,7 +61,7 @@ define(function()
           ; return spawnCapture
               ('git'
               , ['show', repo.ref + ':doc_manifest']
-              , { cwd: id
+              , { cwd: repoPath
                 , transformResponse: function(x) { return x }
                 }
               )
@@ -71,7 +71,7 @@ define(function()
         ( function(manifestStr)
           { Object.defineProperties
               ( repo
-              , { manifest: {value: manifestParser.parse(manifestStr)}
+              , { manifest: {value: parseManifest(manifestStr)}
                 }
               )
           ; return repo
@@ -80,7 +80,7 @@ define(function()
     }
   }
 
-; gitRepoService.$inject = ['$q', 'spawnCapture', 'manifestParser']
+; gitRepoService.$inject = ['$q', 'spawnCapture', 'parseManifest']
 ; return gitRepoService
 
 });

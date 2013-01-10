@@ -1,4 +1,4 @@
-define(function()
+define(['lib/escape'], function(escape)
 
 { var textRenderService = function($q, $rootScope)
   { return function textRender(lang, parser)
@@ -32,16 +32,21 @@ define(function()
       . on
         ( 'line'
         , function(line)
-          { text += line + '\n'
+          { text += escape.html(line) + '\n'
           }
         )
       . on
         ( 'end'
         , function()
-          { deferred.resolve(text)
+          { deferred.resolve
+              ( { html: text
+                , toc: null
+                , names: null
+                }
+              )
+          ; $rootScope.$digest()
           }
         )
-      . parse()
     ; return deferred.promise
     }
   }

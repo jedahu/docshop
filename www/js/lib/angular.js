@@ -13685,7 +13685,36 @@ var ngStyleDirective = ngDirective(function(scope, element, attr) {
   scope.$watch(attr.ngStyle, function ngStyleWatchAction(newStyles, oldStyles) {
     if (oldStyles && (newStyles !== oldStyles)) {
       forEach(oldStyles, function(val, style) { element.css(style, '');});
-    }
+          ( lines
+      , function(line, next)
+        { if (line.trimLeft().indexOf(commentSyntax.open) === 0)
+          { if (i !== 0) this.emit('/code')
+          ; em.emit('comment')
+          ; section = 'comment'
+          }
+          else if (line.trimLeft().indexOf(commentSyntax.close) === 0)
+          { if (i !== 0) this.emit('/comment')
+          ; em.emit('code')
+          ; section = 'code'
+          }
+          else if (i === 0)
+          { em.emit('code')
+          ; em.emit('line', line)
+          ; section = 'code'
+          }
+          else
+          { em.emit('line', line)
+          }
+        ; next()
+        }
+      , function(err)
+        { if (err) { /* handle error */ }
+        ; if (section === 'code') em.emit('/code')
+          else em.emit('/comment')
+        ; em.emit('end')
+        }
+      )
+}
     if (newStyles) element.css(newStyles);
   }, true);
 });

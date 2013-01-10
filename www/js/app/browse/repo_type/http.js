@@ -1,6 +1,6 @@
 define(function()
 
-{ var service = function($q, $http, manifestParser)
+{ var service = function($q, $http, parseManifest)
   { return function(repoId)
     { var repo = {}
         , deferred = $q.defer()
@@ -24,7 +24,7 @@ define(function()
         ( function(data)
           { Object.defineProperties
               ( repo
-              , { manifest: {value: manifestParser.parse(data)}
+              , { manifest: {value: parseManifest(data)}
                 }
               )
           ; console.log(repo)
@@ -40,7 +40,7 @@ define(function()
     }
   }
 
-; service.$inject = ['$q', '$http', 'manifestParser']
+; service.$inject = ['$q', '$http', 'parseManifest']
 ; return service
 
 });

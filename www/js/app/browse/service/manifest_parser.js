@@ -1,98 +1,137 @@
 define(Object.freeze(
 
-{ normalizeLanguage: function(lang, syntax)
-  { if (syntax.constructor === Array)
-    { return {open: syntax[0], middle: syntax[1], close: syntax[2], lang: lang}
+{ parse: function(manifest)
+  { this._manifest = JSON.parse(manifest)
+  ; this._manifest.fileMap = {}
+  ; this.normalizeLanguages()
+  ; this.normalizeFiles(this._manifest.files, this._manifest.prefix || '')
+  ; return this._manifest
+  }
+
+, normalizeLang: function(lang)
+  { if (lang.constructor === Array)
+    { return {open: lang[0], middle: lang[1], close: lang[2], name: lang[3]}
     }
-    if (!syntax.lang) syntax.lang = lang
+    return lang
+  }
+
+, normalizeLanguage: function(lang, syntax)
+  { if (syntax.constructor === Array)
+    { var norm = this.normalizeLang(syntax)
+    ; norm.name = lang
+    ; return norm
+    }
+    if (!syntax.name) syntax.name = lang
   ; return syntax
   }
 
-, normalizeLanguages: function(manifest)
-  { var map = manifest.languages
-      , norm = {}
+, normalizeLanguages: function()
+  { var map = this._manifest.languages
       , langs = Object.keys(map)
       , lang = null
       , i = null
   ; for (i in langs)
     { lang = langs[i]
-    ; norm[lang] = this.normalizeLanguage(lang, map[lang])
+    ; map[lang] = this.normalizeLanguage(lang, map[lang])
     }
-  ; return norm
+  }
+
+, isPair: function(obj)
+  { return obj instanceof Object && Object.keys(obj).length === 1
+  }
+
+, pair: function(obj)
+  { var key = Object.keys(obj)[0]
+  ; return [key, obj[key]]
   }
 
 , normalizeFile1: function(file)
-  { if (file.constructor === String)
+  { var norm
+      , pair
+  ; if (file.constructor === String)
     { return {name: file, path: file}
     }
-  ; if (file[1].constructor === String)
-    { return {name: file[0], path: file[1]}
+  ; if (this.isPair(file) && this.pair(file)[0] !== 'name')
+    {
+    ; pair = this.pair(file)
+    ; if (pair[1].constructor === String)
+      { return {name: pair[0], path: pair[1]}
+      }
+    ; norm = pair[1]
+    ; norm.name = pair[0]
+    ; return norm
     }
-  ; if (file[1].path == null || file[1].path == undefined)
-    { file[1].path = file[0]
-    }
-  ; file[1].name = file[0]
-  ; return file[1]
+  ; return file
   }
 
-, langFromExt: function(exts, path)
+, langFromExt: function(path)
   { var match = path.match(/\.([^.]+)$/)
       , ext = match && match[1]
   ; if (ext)
-    { return exts[ext]
+    { return this._manifest.languages[this._manifest.extensions[ext]]
     }
   ; return null
   }
 
-, normalizeFile: function(file, manifest)
+, normalizeFile: function(file, prefix)
   { var norm = this.normalizeFile1(file)
-  ; norm.markup = norm.markup || manifest.markup
+  ; norm.markup = norm.markup || this._manifest.markup
+  ; if (!norm.path) norm.path = norm.name
+  ; if (prefix && norm.path[0] !== '/') norm.path = prefix + norm.path
+  ; if (norm.path[0] === '/') norm.path = norm.path.slice(1)
   ; if (!norm.lang)
-    { norm.lang = this.langFromExt(manifest.extensions, norm.path)
+    { norm.lang = this.langFromExt(norm.path) || null
     }
     else if (norm.lang.constructor === String)
-    { norm.lang = manifest.languages[norm.lang]
+    { norm.lang = this._manifest.languages[norm.lang]
     }
+    else if (norm.lang.constructor === Array)
+    { norm.lang = this.normalizeLang(norm.lang)
+    }
+  ; this._manifest.fileMap[norm.path] = norm
   ; return norm
   }
 
-, normalizeFiles: function(manifest)
-  { var files = manifest.files
-      , map = {}
-      , list = []
-      , sublist = null
-      , i = null
-      , k = null
-      , val = null
-      , norm1 = null
-      , heading = null
-      , paths = null
-  ; for (i in files)
-    { val = files[i]
-    ; heading = val[0]
-    ; paths = val.slice(1)
-    ; sublist = [heading]
-    ; list.push(sublist)
-    ; for (k in paths)
-      { norm1 = this.normalizeFile(paths[k], manifest)
-      ; sublist.push(norm1)
-      ; map[norm1.path] = norm1
+, normalizeFiles: function(items, prefix)
+  { var self = this
+      , isSubList = function(x)
+        { return self.isPair(x) && self.pair(x)[1].constructor === Array
+        }
+      , i
+      , item
+      , match
+      , newPrefix
+      , subPrefix
+      , heading
+      , subList
+      , subItems
+  ; for (i in items)
+    { item = items[i]
+    ; if (isSubList(item))
+      { match = this.pair(item)[0].match(/(.+?)\s*@(.+)/)
+      ; heading = match[1]
+      ; subPrefix = match[2]
+      ; subItems = this.pair(item)[1]
+      ; subList = {}
+      ; subList[heading] = subItems
+      ; items[i] = subList
+      ; newPrefix =
+            subPrefix[0] === '/'
+          ? subPrefix.slice(1)
+          : prefix + subPrefix
+      ; this.normalizeFiles(subItems, newPrefix)
+      }
+      else
+      { items[i] = this.normalizeFile(item, prefix)
       }
     }
-  ; return {map: map, list: list}
   }
 
-, parse: function(str)
-  { var j = JSON.parse(str)
-      , l = null
-      , x = null
-  ; if (!j.languages) j.languages = {}
-  ; if (!j.extensions) j.extensions = {}
-  ; j.languages = this.normalizeLanguages(j)
-  ; x = this.normalizeFiles(j)
-  ; j.files = x.list
-  ; j.fileMap = x.map
-  ; return j
+, service: function()
+  { return function(str)
+    { return Object.create(this).parse(str)
+    }
+    . bind(this)
   }
 
 }));

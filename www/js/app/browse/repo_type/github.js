@@ -2,7 +2,7 @@ define(function()
 
 { var API_PREFIX = 'https://api.github.com/'
 
-; var createRepo = function($q, $http, manifestParser, repoId)
+; var createRepo = function($q, $http, parseManifest, repoId)
   { var id = repoId.substr('github:'.length)
       , repo = {}
       , deferred = $q.defer()
@@ -52,7 +52,7 @@ define(function()
             ( function(data)
               { Object.defineProperties
                   ( repo
-                  , { manifest: {value: manifestParser.parse(data.content)} }
+                  , { manifest: {value: parseManifest(data.content)} }
                   )
               ; deferred.resolve(repo)
               }
@@ -70,10 +70,10 @@ define(function()
   ; return deferred.promise
   }
 
-; var service = function($q, $http, manifestParser)
-    { return createRepo.bind(null, $q, $http, manifestParser)
+; var service = function($q, $http, parseManifest)
+    { return createRepo.bind(null, $q, $http, parseManifest)
     }
-; service.$inject = ['$q', '$http', 'manifestParser']
+; service.$inject = ['$q', '$http', 'parseManifest']
 ; return service
 
 });

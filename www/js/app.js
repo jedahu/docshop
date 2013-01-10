@@ -61,9 +61,14 @@
   else
   { requirejs.config(rconfig)
   ; requirejs
-      ( ['lib/angular', mainModule]
+      ( ['lib/angular']
       , function(angular)
-        { angular.bootstrap(document, ['BrowseModule'])
+        { requirejs
+            ( ['lib/angular-sanitize', mainModule]
+            , function(_)
+              { angular.bootstrap(document, ['BrowseModule'])
+              }
+            )
         }
       )
   }

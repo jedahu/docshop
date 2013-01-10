@@ -1,54 +1,52 @@
 <!doctype html>
-<html ng-app='BrowseModule'>
+<html data-ng-app='BrowseModule'>
   <head>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
     <script data-main='js/app' src='js/lib/require.js'></script>
+    <style>
+      .code { background-color: wheat }
+    </style>
   </head>
-  <body ng-controller='RepoController'>
+  <body data-ng-controller='RepoController'>
     <nav id='manifest'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
-      <form ng-submit='changeRepo()'>
+      <form data-ng-submit='changeRepo()'>
         <input
-          ng-model='newRepoId'
+          data-ng-model='newRepoString'
           type='text'
           title='Change repository'>
-        <span class='visible-{{repo.refs.length > 0}}'>
+        <!--span class='visible-{{repo.refs.length > 0}}'>
           <input
             type='text'
-            ng-model='newRepoRef'
+            data-ng-model='newRepoRef'
             title='Change branch (or paste commit id)'
           ><button type='button' title='Show branches and tags'>…</button>
           <button type='submit' style='visibility: hidden'>x</button>
-        </span>
+        </span-->
         <ul>
-          <li ng-repeat='ref in repo.refs'>{{ref}}</li>
+          <li data-ng-repeat='ref in repo.refs'>{{ref}}</li>
         </ul>
       </form>
-      <section class='paths'>
-        <section ng-repeat='section in repo.manifest.files'>
-          <h1>{{section[0]}}</h1>
-          <ul>
-            <li ng-repeat='file in section.slice(1)' data-path='{{file.path}}'>
-              {{file.name}}
-            </li>
-          </ul>
-        </section>
+      <section class='paths' data-ds-file-nav='item in repo.manifest.files'>
+        <h1 data-ng-bind='item.text'></h1>
+        <div data-ng-click='changePathTo(item.path)' data-ng-bind='item.name'></div>
       </section>
     </nav>
+    <div data-ng-click='alert("foo")'>foo</div>
     <div id='file'>
       <div class='toc toc-{{hasToc}}'>
-        <div class='toggle' ng-click='toggleToc()'>{{tocAction}} toc</div>
+        <div class='toggle' ng-click='console.log("asdf")'>{{tocAction}} toc</div>
         <ul>
-          <li ng-repeat='h in headings' class='level{{h.level}}'>
+          <li data-ng-repeat='h in headings' class='level{{h.level}}'>
             <a href='#{{h.id}}'>{{h.text}}</a>
           </li>
         </ul>
       </div>
       <ul class='names names-{{hasNames}}'>
-        <li ng-repeat='n in names'><a href='#{{n}}'>{{n}}</a></li>
+        <li data-ng-repeat='n in names'><a href='#{{n}}'>{{n}}</a></li>
       </ul>
-      <article class='content' ng-bind-html='renderedSrc'>
+      <article class='content' data-ng-bind-html='renderedSrc.html'>
       </article>
     </div>
   </body>
