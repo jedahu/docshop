@@ -2,7 +2,15 @@ define(
 
 { on: function (channel, fn)
   { var events = this._events = this._events || {}
-  ; (events[channel] = events[channel] || []).push(fn)
+      , i
+  ; if (channel.constructor === Array)
+    { for (i in channel)
+      { (events[channel[i]] = events[channel[i]] || []).push(fn)
+      }
+    }
+    else
+    { (events[channel] = events[channel] || []).push(fn)
+    }
   ; return this
   }
 
@@ -23,7 +31,7 @@ define(
       , channelFns = (events[channel] || []).slice()
       , fn
   ; while (fn = channelFns.pop())
-    { fn.apply(this, [].slice.call(arguments, 1))
+    { fn.apply(this, arguments)
     }
   ; return this
   }
