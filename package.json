@@ -3,13 +3,7 @@
   "amd": {},
   "main": "www/docs.html",
   "volo": {
-    "baseUrl": "www/js/lib",
-    "dependencies": {
-      "stream": "github:Jxck/stream/master",
-      "text": "github:requirejs/text/2.0.3",
-      "events": "github:Jxck/events/master",
-      "microevent": "github:twolfson/microevent.js/master",
-      "async": "github:caolan/async/v0.1.22"
-    }
+    "baseUrl": "www/js/app",
+    "dependencies": {}
   }
 }
