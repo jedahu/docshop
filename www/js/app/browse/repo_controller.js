@@ -56,8 +56,7 @@ define(function()
     }
 
   ; $scope.changePathTo = function(path)
-    { console.log(arguments)
-    ; $scope.repo.then
+    { $scope.repo.then
         ( function(repo)
           { repo.path = path
           ; changePath(repo)
