@@ -1,6 +1,13 @@
 define(function()
 
-{ var RepoController = function($scope, $q, $location, createRepoObj, parseRenderSrc)
+{ var RepoController = function
+    ( $scope
+    , $q
+    , $location
+    , createRepoObj
+    , parseRenderSrc
+    , scrollToHash
+    )
   { var initialRepo = $q.defer()
   ; initialRepo.resolve(null)
   ; $scope.repo = initialRepo.promise
@@ -48,9 +55,20 @@ define(function()
     }
 
   ; var changePath = function(repo)
-    { $scope.renderedSrc = parseRenderSrc
+    { parseRenderSrc
         ( repo
         , fileFromPath(repo, repo.path)
+        )
+      . then
+        ( function(result)
+          { $scope.renderedSrc = result
+          ; document.getElementById('content').innerHTML = ''
+          ; document.getElementById('content').appendChild(result.html)
+          ; return null
+          }
+        , function(err)
+          { document.getElementById('content').innerHTML = '<b>ERROR</b>'
+          }
         )
     ; setPath(repo)
     }
@@ -72,10 +90,10 @@ define(function()
         }
       )
 
-  ; $scope.alert = window.alert.bind(window)
+  ; $scope.scrollToHash = scrollToHash
   }
 
-; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc']
+; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
 ; return RepoController
 
 });

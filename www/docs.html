@@ -8,7 +8,7 @@
       .code { background-color: wheat }
     </style>
   </head>
-  <body data-ng-controller='RepoController'>
+  <body data-ng-controller='RepoController' data-ng-click='scrollToHash("file")'>
     <nav id='manifest'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form data-ng-submit='changeRepo()'>
@@ -43,10 +43,15 @@
           </li>
         </ul>
       </div>
-      <ul class='names names-{{hasNames}}'>
-        <li data-ng-repeat='n in names'><a href='#{{n}}'>{{n}}</a></li>
+      <ul class='names names-{{renderedSrc.names}}'>
+        <li
+          data-ng-repeat='n in renderedSrc.names'
+          data-ng-click-scroll-to='"id:" + n'
+          data-ng-click='scrollToHash("id:" + n)'>
+          {{n}}
+        </li>
       </ul>
-      <article class='content' data-ng-bind-html='renderedSrc.html'>
+      <article id='content'>
       </article>
     </div>
   </body>

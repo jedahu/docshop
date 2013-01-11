@@ -7,8 +7,9 @@ define
     , 'browse/service/create_repo'
     , 'browse/service/manifest_parser'
     , 'browse/service/parse_render_src'
-    , 'browse/renderer/text'
+    , 'browse/service/scroll_to_hash'
     , 'browse/directive/file_nav'
+    , 'browse/directive/bind_node'
     ]
   , function
       ( angular
@@ -19,8 +20,9 @@ define
       , createRepoService
       , manifestParser
       , parseRenderSrcService
-      , textRenderService
+      , scrollToHashService
       , fileNavDirective
+      , bindNodeDirective
       )
 
 { var browse = angular.module('BrowseModule', ['ngSanitize'])
@@ -30,8 +32,9 @@ define
   . factory('createRepoObj', createRepoService)
   . value('parseManifest', manifestParser.service())
   . factory('parseRenderSrc', parseRenderSrcService)
-  . factory('textRender', textRenderService)
+  . factory('scrollToHash', scrollToHashService)
   . directive('dsFileNav', fileNavDirective)
+  . directive('dsBindNode', bindNodeDirective)
   . config(['$locationProvider', function($locationProvider)
       { $locationProvider.hashPrefix('!')
       }])

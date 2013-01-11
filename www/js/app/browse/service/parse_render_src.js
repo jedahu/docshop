@@ -6,7 +6,27 @@ define
       )
 
 { var parseRenderSrcService = function($q, $http, $rootScope)
-  { return function parseRenderSrc(repo, file)
+  { var process = function(result)
+    { var wrapper = document.createElement('div')
+        , out =
+            { html: wrapper
+            , names:
+                result.names
+                ||[].map.call
+                    ( wrapper.querySelectorAll('[id^="id:"]')
+                    , function(elm)
+                      { return elm.getAttribute('id').slice(3)
+                      }
+                    )
+                  . sort()
+            , toc:
+                result.toc
+                || [].slice.call(wrapper.querySelectorAll('h1,h2,h3'), 0)
+            }
+    ; wrapper.innerHTML = result.html
+    ; return out
+    }
+  ; return function parseRenderSrc(repo, file)
     { var deferred = $q.defer()
     ; $http
         ( { method: 'GET'
@@ -37,7 +57,7 @@ define
                             ; break
                           case 'ack'
                             : if (msg.data === 'end')
-                              { deferred.resolve(out)
+                              { deferred.resolve(process(out))
                               ; $rootScope.$digest()
                               }
                             ; break
@@ -67,12 +87,15 @@ define
                       }
                     )
                 }
+              , function(err)
+                { deferred.reject(err)
+                }
               )
           }
         )
       . error
         ( function(err)
-          {
+          { deferred.reject(err)
           }
         )
     ; return deferred.promise
