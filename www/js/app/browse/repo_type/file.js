@@ -1,8 +1,13 @@
 define(function()
 
 /*
+## File Repo Service
 <a id='id:fileRepoService'></a>
 A repo service that reads from disk. Useful *when* developing documentation.
+
+# Foobar
+
+## Blag
 */
 { var fs = require('fs')
 ; var fileRepoService = function($q, $rootScope, parseManifest)

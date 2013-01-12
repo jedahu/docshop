@@ -1,10 +1,10 @@
-define(function()
+define(['util/tick'], function(tick)
 
 { var scrollToHashService = function($location)
   { return scrollToHash = function(id)
     { var elem = document.getElementById(id)
     ; $location.hash(id)
-    ; elem.scrollIntoView()
+    ; tick.nextTick(function() {elem && elem.scrollIntoView()})
     }
   }
 

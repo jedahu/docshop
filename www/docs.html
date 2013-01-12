@@ -35,22 +35,26 @@
     </nav>
     <div data-ng-click='alert("foo")'>foo</div>
     <div id='file'>
-      <div class='toc toc-{{hasToc}}'>
-        <div class='toggle' ng-click='console.log("asdf")'>{{tocAction}} toc</div>
+      <nav id='table-of-contents' data-ng-class='{show: !!renderedSrc.toc}'>
+        <h1>TOC</h1>
+        <div
+          data-ng-repeat='h in renderedSrc.toc'
+          data-ng-bind='h.innerText'
+          data-ng-click='scrollToHash(h.id)'
+          data-indent='{{0 - h.rank}}'
+          style='padding-left: {{0 - h.rank}}em'></div>
+      </nav>
+      <nav id='id-names' data-ng-class='{show: !!renderedSrc.names}'>
+        <h1>Names</h1>
         <ul>
-          <li data-ng-repeat='h in headings' class='level{{h.level}}'>
-            <a href='#{{h.id}}'>{{h.text}}</a>
-          </li>
-        </ul>
-      </div>
-      <ul class='names names-{{renderedSrc.names}}'>
-        <li
-          data-ng-repeat='n in renderedSrc.names'
-          data-ng-click-scroll-to='"id:" + n'
-          data-ng-click='scrollToHash("id:" + n)'>
-          {{n}}
-        </li>
-      </ul>
+            <li
+              data-ng-repeat='n in renderedSrc.names'
+              data-ng-click-scroll-to='"id:" + n'
+              data-ng-click='scrollToHash("id:" + n)'>
+              {{n}}
+            </li>
+          </ul>
+      </nav>
       <article id='content'>
       </article>
     </div>

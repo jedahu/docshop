@@ -65,8 +65,12 @@ define(function()
           ; $scope.renderedSrc = result
           ; document.getElementById('content').innerHTML = ''
           ; document.getElementById('content').appendChild(result.html)
-          ; hashElem = document.getElementById($location.hash())
-          ; hashElem && hashElem.scrollIntoView()
+          ; return $location.hash()
+          }
+        )
+      . then
+        ( function(hash)
+          { scrollToHash(hash, false)
           }
         , function(err)
           { document.getElementById('content').innerHTML = '<b>ERROR</b>'

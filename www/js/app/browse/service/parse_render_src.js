@@ -1,28 +1,41 @@
 define
-  ( ['util/src_parser'
+  ( [ 'util/src_parser'
+    , 'lib/HTMLOutliner'
     ]
   , function
       ( srcParser
+      , h5o
       )
 
 { var parseRenderSrcService = function($q, $http, $rootScope)
   { var process = function(result)
     { var wrapper = document.createElement('div')
+        , names
+        , toc
+        , idCount = 0
     ; wrapper.innerHTML = result.html
+    ; h5o(wrapper)
+    ; names =
+        result.names
+        || [].map.call
+             ( wrapper.querySelectorAll('[id^="id:"]')
+             , function(elm)
+               { return elm.getAttribute('id').slice(3)
+               }
+             )
+           . sort()
+    ; toc = [].slice.call(wrapper.querySelectorAll('h1,h2,h3,h4'), 0)
+    ; toc.forEach
+        ( function(h)
+          { if (!h.id)
+            { h.id = 'ds-h-' + idCount++
+            }
+          }
+        )
     ; return {
           html: wrapper
-        , names:
-            result.names
-            ||[].map.call
-                ( wrapper.querySelectorAll('[id^="id:"]')
-                , function(elm)
-                  { return elm.getAttribute('id').slice(3)
-                  }
-                )
-              . sort()
-        , toc:
-            result.toc
-            || [].slice.call(wrapper.querySelectorAll('h1,h2,h3'), 0)
+        , names: names.length > 0 ? names : null
+        , toc: toc.length > 0 ? toc : null
         }
     }
   ; return function parseRenderSrc(repo, file)
@@ -88,6 +101,7 @@ define
                 }
               , function(err)
                 { deferred.reject(err)
+                  ; $rootScope.$digest()
                 }
               )
           }
@@ -95,6 +109,7 @@ define
       . error
         ( function(err)
           { deferred.reject(err)
+          ; $rootScope.$digest()
           }
         )
     ; return deferred.promise
