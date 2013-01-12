@@ -8,29 +8,28 @@ define
 { var parseRenderSrcService = function($q, $http, $rootScope)
   { var process = function(result)
     { var wrapper = document.createElement('div')
-        , out =
-            { html: wrapper
-            , names:
-                result.names
-                ||[].map.call
-                    ( wrapper.querySelectorAll('[id^="id:"]')
-                    , function(elm)
-                      { return elm.getAttribute('id').slice(3)
-                      }
-                    )
-                  . sort()
-            , toc:
-                result.toc
-                || [].slice.call(wrapper.querySelectorAll('h1,h2,h3'), 0)
-            }
     ; wrapper.innerHTML = result.html
-    ; return out
+    ; return {
+          html: wrapper
+        , names:
+            result.names
+            ||[].map.call
+                ( wrapper.querySelectorAll('[id^="id:"]')
+                , function(elm)
+                  { return elm.getAttribute('id').slice(3)
+                  }
+                )
+              . sort()
+        , toc:
+            result.toc
+            || [].slice.call(wrapper.querySelectorAll('h1,h2,h3'), 0)
+        }
     }
   ; return function parseRenderSrc(repo, file)
     { var deferred = $q.defer()
     ; $http
         ( { method: 'GET'
-          , url: 'worker/renderer/' + file.markup + '.js'
+          , url: 'worker/renderer/' + file.markup + '.js?' + new Date()
           , transformResponse: function(x) { return x }
           }
         )

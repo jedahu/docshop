@@ -61,10 +61,12 @@ define(function()
         )
       . then
         ( function(result)
-          { $scope.renderedSrc = result
+          { var hashElem
+          ; $scope.renderedSrc = result
           ; document.getElementById('content').innerHTML = ''
           ; document.getElementById('content').appendChild(result.html)
-          ; return null
+          ; hashElem = document.getElementById($location.hash())
+          ; hashElem && hashElem.scrollIntoView()
           }
         , function(err)
           { document.getElementById('content').innerHTML = '<b>ERROR</b>'

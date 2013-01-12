@@ -26,6 +26,7 @@
             [ {"git": "git.js"}
             , {"github": "github.js"}
             , {"http": "http.js"}
+            , {"file": "file.js"}
             ]
           }
         , { "Markup types @renderer/":

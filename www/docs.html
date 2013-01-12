@@ -8,7 +8,7 @@
       .code { background-color: wheat }
     </style>
   </head>
-  <body data-ng-controller='RepoController' data-ng-click='scrollToHash("file")'>
+  <body data-ng-controller='RepoController'>
     <nav id='manifest'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form data-ng-submit='changeRepo()'>
