@@ -1,4 +1,4 @@
-{ "markup": "text"
+{ "markup": "markdown"
 , "languages":
     { "javascript": ["/*", "", "*/"]
     }
@@ -9,8 +9,8 @@
 , "files":
     [ {"README": "../../README"}
     , "app.js"
-    , {"browser startup": "start_browser.js"}
-    , {"node-webkit startup": "start_nw.js"}
+    , {"browser startup": "app/start_browser.js"}
+    , {"node-webkit startup": "app/start_nw.js"}
     , { "Browse module @app/browse/":
         [ {"module": "module.js"}
         , {"repo controller": "repo_controller.js"}
