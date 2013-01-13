@@ -28,7 +28,7 @@ define(
 
 , emit: function(channel /* , args... */)
   { var events = this._events = this._events || {}
-      , channelFns = (events[channel] || []).slice()
+      , channelFns = (events[channel] || []).concat(events['*'] || [])
       , fn
   ; while (fn = channelFns.pop())
     { fn.apply(this, arguments)
