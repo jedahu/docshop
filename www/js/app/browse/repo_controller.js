@@ -80,7 +80,8 @@ define(function()
     }
 
   ; $scope.changePathTo = function(path)
-    { $scope.repo.then
+    { if (!path) return
+    ; $scope.repo.then
         ( function(repo)
           { repo.path = path
           ; changePath(repo)
