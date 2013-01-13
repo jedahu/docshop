@@ -34,9 +34,15 @@
       }
     )
 ; receive
-    ( 'line'
+    ( 'code.line'
     , function(line)
-      { text += line + '\n'
+      { text += line
+      }
+    )
+; receive
+    ( 'comment.line'
+    , function(line)
+      { text += line.text
       }
     )
 ; receive

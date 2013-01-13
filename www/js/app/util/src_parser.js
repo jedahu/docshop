@@ -3,7 +3,25 @@ define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
 { return function srcParser(lang, text)
   { var lines = text.split('\n')
       , section = null
+      , commentLabel = null
       , me = Object.create(microEmitter)
+      , metaStr = ''
+      , isCommentOpen = function(line)
+        { return line.trimLeft().indexOf(lang.open) === 0
+        }
+      , isCommentClose = function(line)
+        { return line.trimLeft().indexOf(lang.close) === 0
+        }
+      , consumeMetaComment = function(i)
+        { for (; i < lines.length; ++i)
+          { if (isCommentClose(lines[i]))
+            { break
+            }
+            metaStr += lines[i] + '\n'
+          }
+        ; me.metaData = JSON.parse(metaStr)
+        ; return ++i
+        }
   ; if (!lang)
     { me.emit('comment')
     ; tick.forEach
@@ -20,33 +38,52 @@ define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
         )
     ; return me
     }
-  ; tick.forEach
-      ( lines
-      , function(line, next)
-        { if (line.trimLeft().indexOf(lang.open) === 0)
-          { if (section) me.emit('/code')
-          ; me.emit('comment')
+  ; tick.for
+      ( 0
+      , function(i) { return i < lines.length }
+      , function(i) { return ++i }
+      , function(i, next)
+        { var line = lines[i] + '\n'
+            , trimmed = line.trimLeft()
+            , nextI
+        ; if (isCommentOpen(line))
+          { if (section === 'code') me.emit('/code')
+          ; commentLabel = trimmed.slice(lang.open.length).trim() || null
+          ; if (commentLabel === '!meta')
+            { nextI = consumeMetaComment(++i)
+            }
+          ; me.emit('comment', commentLabel)
           ; section = 'comment'
           }
-          else if (line.trimLeft().indexOf(lang.close) === 0)
-          { if (section) me.emit('/comment')
-          ; me.emit('code')
-          ; section = 'code'
+          else if (isCommentClose(line))
+          { me.emit('/comment', commentLabel)
+          ; if (!isCommentOpen(lines[i + 1]))
+            { me.emit('code')
+            ; section = 'code'
+            }
           }
-          else if (!section)
-          { me.emit('code')
-          ; me.emit('line', line)
-          ; section = 'code'
+          else if (section === 'comment')
+          { me.emit
+              ( 'comment.line'
+              , { label: commentLabel
+                , text: trimmed.slice(lang.middle.length)
+                }
+              )
+          }
+          else if (section === 'code')
+          { me.emit('code.line', line)
           }
           else
-          { me.emit('line', line)
+          { me.emit('code')
+          ; me.emit('code.line', line)
+          ; section = 'code'
           }
-        ; next()
+        ; next(null, nextI)
         }
       , function(err)
         { if (err) { /* handle error */ }
         ; if (section === 'code') me.emit('/code')
-          else me.emit('/comment')
+          else me.emit('/comment', commentLabel)
         ; me.emit('end')
         }
       )

@@ -53,6 +53,7 @@ define
               ( function(text)
                 { var worker = new Worker('worker/renderer.js?' + new Date())
                     , out = {html: ''}
+                    , parser = srcParser(file.lang, text)
                 ; worker.addEventListener
                     ( 'message'
                     , function(evt)
@@ -69,7 +70,8 @@ define
                             ; break
                           case 'ack'
                             : if (msg.data === 'end')
-                              { deferred.resolve(process(out))
+                              { out.meta = parser.metaData
+                              ; deferred.resolve(process(out))
                               ; $rootScope.$digest()
                               }
                             ; break
@@ -86,12 +88,9 @@ define
                 ; worker.postMessage
                     ( JSON.stringify({type: 'lang', data: file.lang})
                     )
-                ; srcParser(file.lang, text)
+                ; parser
                   . on
-                    ( [ 'comment', '/comment'
-                      , 'code', '/code'
-                      , 'line', 'end'
-                      ]
+                    ( '*'
                     , function(evtName, arg)
                       { worker.postMessage
                           ( JSON.stringify({type: evtName, data: arg})

@@ -34,9 +34,15 @@
       }
     )
 ; receive
-    ( 'line'
+    ( 'comment.line'
     , function(line)
-      { sendHtml(escapeHtml(line) + '\n')
+      { sendHtml(escapeHtml(line.text))
+      }
+    )
+; receive
+    ( 'code.line'
+    , function(line)
+      { sendHtml(escapeHtml(line))
       }
     )
 ; receive
