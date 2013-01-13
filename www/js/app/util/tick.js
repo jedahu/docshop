@@ -15,4 +15,18 @@ define(
   ; _cb()
   }
 
+, for: function(init, test, incr, fn, cb)
+  { var self = this
+      , _cb = function(err, val)
+        { init = typeof val === 'undefined' || val === null ? incr(init) : val
+        ; console.log('init:', init)
+        ; if (err) cb(err)
+          else if (test(init))
+          { self.nextTick(fn.bind(null, init, _cb))
+          }
+          else cb(null, init)
+        }
+  ; _cb(null, init)
+  }
+
 });
