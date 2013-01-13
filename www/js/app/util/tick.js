@@ -19,7 +19,6 @@ define(
   { var self = this
       , _cb = function(err, val)
         { init = typeof val === 'undefined' || val === null ? incr(init) : val
-        ; console.log('init:', init)
         ; if (err) cb(err)
           else if (test(init))
           { self.nextTick(fn.bind(null, init, _cb))
