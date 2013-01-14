@@ -4,15 +4,12 @@ define(function()
 ; var gitRepoService = function($q, spawnCapture, parseManifest)
   { return function gitRepo(repoId)
     { var repoPath = repoId.substr('git:'.length)
-        , repo = {}
-    ; Object.defineProperties
-        ( repo
-        , { id: {value: repoId}
-          , tags: {value: []}
-          , branches: {value: []}
-          , name: {value: repoPath}
-          , readFile:
-            { value: function(path)
+        , repo =
+            { id: repoId
+            , tags: []
+            , branches: []
+            , name: repoPath
+            , readFile: function(path)
               { return spawnCapture
                   ( 'git'
                   , ['show', this.ref + ':' + path]
@@ -20,8 +17,6 @@ define(function()
                   )
               }
             }
-          }
-        )
     ; return spawnCapture('git', ['branch', '--list'], {cwd: repoPath})
       . then
         ( function(branchesStr)
@@ -30,16 +25,11 @@ define(function()
                 { var branch = str.slice(1).trim()
                 ; if (branch == '') return
                 ; if (str[0] == '*')
-                  { Object.defineProperties
-                      ( repo
-                      , { ref: {value: branch}
-                        }
-                      )
+                  { repo.ref = branch
                   }
                 ; repo.branches.push(branch)
                 }
               )
-          ; Object.freeze(repo.branches)
           ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
           }
         )
@@ -51,13 +41,7 @@ define(function()
               ; if (tag != '') repo.tags.push(tag)
               }
             )
-          ; Object.freeze(repo.tags)
-          ; Object.defineProperties
-              ( repo
-              , { refs: {value: repo.branches.concat(repo.tags)}
-                }
-              )
-          ; Object.freeze(repo.refs)
+          ; repo.refs = repo.branches.concat(repo.tags)
           ; return spawnCapture
               ('git'
               , ['show', repo.ref + ':doc_manifest']
@@ -69,11 +53,7 @@ define(function()
         )
       . then
         ( function(manifestStr)
-          { Object.defineProperties
-              ( repo
-              , { manifest: {value: parseManifest(manifestStr)}
-                }
-              )
+          { repo.manifest = parseManifest(manifestStr)
           ; return repo
           }
         )
