@@ -16,9 +16,9 @@ A repo service that reads from disk. Useful *when* developing documentation.
         , deferredRepo = $q.defer()
         , repo =
             { id: repoId
-            , tags: []
-            , branches: ['master']
-            , refs: ['master']
+            , tags: null
+            , branches: null
+            , refs: null
             , ref: 'master'
             , name: repoPath
             , readFile: function(path)
