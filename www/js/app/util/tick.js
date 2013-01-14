@@ -4,28 +4,26 @@ define(
     && process.nextTick
     || function(fn) { setTimeout(fn, 0) }
 
-, forEach: function(list, fn, cb)
+, forEach: function(list, fn, cb, eb)
   { var self = this
       , i = 0
-      , _cb = function(err)
-        { if (err) cb(err)
-          else if (i === list.length) cb()
-          else self.nextTick(fn.bind(null, list[i++], _cb))
+      , next = function()
+        { if (i === list.length) cb()
+          else self.nextTick(fn.bind(null, list[i++], next, eb))
         }
-  ; _cb()
+  ; next()
   }
 
-, for: function(init, test, incr, fn, cb)
+, for: function(init, test, incr, fn, cb, eb)
   { var self = this
-      , _cb = function(err, val)
+      , next = function(val)
         { init = typeof val === 'undefined' || val === null ? incr(init) : val
-        ; if (err) cb(err)
-          else if (test(init))
-          { self.nextTick(fn.bind(null, init, _cb))
+        ; if (test(init))
+          { self.nextTick(fn.bind(null, init, next, eb))
           }
-          else cb(null, init)
+          else cb(init)
         }
-  ; _cb(null, init)
+  ; next(init)
   }
 
 });

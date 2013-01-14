@@ -42,7 +42,7 @@ define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
       ( 0
       , function(i) { return i < lines.length }
       , function(i) { return ++i }
-      , function(i, next)
+      , function(i, next, err)
         { var line = lines[i] + '\n'
             , trimmed = line.trimLeft()
             , nextI
@@ -78,13 +78,15 @@ define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
           ; me.emit('code.line', line)
           ; section = 'code'
           }
-        ; next(null, nextI)
+        ; next(nextI)
         }
-      , function(err)
-        { if (err) { /* handle error */ }
-        ; if (section === 'code') me.emit('/code')
+      , function(_i)
+        { if (section === 'code') me.emit('/code')
           else me.emit('/comment', commentLabel)
         ; me.emit('end')
+        }
+      , function(err)
+        { // TODO handle error
         }
       )
   ; return me
