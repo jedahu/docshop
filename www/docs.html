@@ -22,13 +22,6 @@
           title='Change ref'
           data-ng-disabled='!repo.refs'>
         <button type='submit'></button>
-        <!--span class='visible-{{repo.refs.length > 0}}'>
-          <input
-            type='text'
-            data-ng-model='newRepoRef'
-            title='Change branch (or paste commit id)'
-          ><button type='button' title='Show branches and tags'>…</button>
-        </span-->
         <ul>
           <li data-ng-repeat='ref in repo.refs'>{{ref}}</li>
         </ul>
