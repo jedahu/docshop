@@ -1,0 +1,514 @@
+@import 'nib'
+
+font-size = 12px
+line-height = 21px
+
+content-width = 40em
+manifest-width = 12em
+content-padding = 1em
+manifest-bg = #e7eff3
+toc-width = 15em
+
+.content-trait
+  margin-right toc-width
+
+.smaller-trait
+  font-size 10px
+  line-height 21px
+
+.monospace-trait
+  font-family Inconsolata, monospace
+
+.sans-serif-trait
+  font-family Nobile, Helvetica, Arial, sans-serif
+
+.serif-trait
+  font-family Vollkorn, Georgia, serif
+
+
+html
+  @extends .sans-serif-trait
+  font-size 12px
+  line-height 21px
+  background-color manifest-bg
+  width 100%
+  overflow-x hidden
+
+body
+  margin 0
+  height 100%
+
+ul
+  list-style-position inside
+
+#ds-x, #ds-y
+  @extends .content-trait
+  margin-left manifest-width + 2em
+  background-color white
+  position fixed
+  height 100%
+  padding-right content-padding * 2
+  box-shadow 0 0 1em 0
+  width 100%
+  z-index 0
+
+#ds-y
+  z-index 1
+  box-shadow none
+
+#ds-z
+  position fixed
+  right 0
+  width toc-width
+  height 100%
+  padding 2em 0 2em 0
+  top -1em
+  box-shadow 0.5em 0 1em -0.5em black inset
+  background-color #fafafa
+  z-index 10
+
+#ds-file
+  margin-left manifest-width + 2em
+  //box-shadow 0 0 1em 0
+
+#ds-content
+  @extends .content-trait
+  z-index 100
+
+  p,
+  .listingblock,
+  blockquote,
+  .quoteblock,
+  .verseblock,
+  .paragraph,
+  ul,
+  ol
+    margin-top 0
+    margin-bottom 25px
+
+    .title
+      font-weight bold
+
+  p,
+  blockquote,
+  .quoteblock,
+  ul,
+  ol
+    text-align justify
+
+  .quoteblock,
+  .verseblock
+    margin-left 3em
+
+    &.epigraph
+
+      .content
+        font-style italic
+
+  .verseblock
+
+    pre
+      font-family inherit
+      font-style italic
+
+  hr
+    border none
+    text-align center
+    font-size 150%
+    clear both
+
+  hr:after
+    content '\2766'
+
+  img
+    margin 1.2em 0 1.2em 1.2em
+    border none
+
+  .imageblock
+    width 14em
+    float right
+    clear right
+
+    &.unscaled
+      width auto
+      max-width 100%
+      clear both
+
+      img
+        width auto
+        max-width 100%
+
+    img
+      width 12.8em
+      float left
+
+    .title
+      @extends .smaller-trait
+      float right
+      margin-right -17em
+      text-align left
+      width 14em
+      margin-top 1.2em
+      color grey
+
+  article,
+  .hentry
+    padding-bottom 4em
+
+    hgroup
+      padding-top 1em
+
+    .entry-title
+      padding-top 0
+      padding-bottom 0
+      margin-top 0
+      margin-bottom 0
+
+      .n
+        display block
+        width 4em
+        margin-left -4.2em
+        padding-right 0.2em
+        position absolute
+        text-align right
+        color red
+
+    .article-content
+      clear both
+
+    .sidebarblock
+      @extends .smaller-trait
+      background-color #fff4f4
+      margin-top 3em
+      margin-bottom 3em
+
+    .listingblock .content
+      background-color #ffffe4
+
+    .attribution.ulist
+      @extends .smaller-trait
+      margin-top 3em
+
+      ul
+        list-style-type none
+
+    footer
+      @extends .smaller-trait
+      margin-top 3em
+
+  .monospaced
+    @extends .monospace-trait
+
+  .latest-post-titles
+    display inline
+
+    a:after
+      content '; '
+
+    a:last-child:after
+      content ''
+
+  .meta
+    @extends .smaller-trait
+    color gray
+    clear both
+
+    .time
+      margin-right 0.5em
+
+  .spinner
+    opacity 0
+    transition opacity 0.5s
+
+    &.active
+      opacity 1
+
+  .comments .fb-comments > span
+    overflow-y hidden
+    transition height 0.5s
+
+  .nextprev
+    padding-left 1px
+    padding-right 1px
+    padding-bottom 3em
+    background-color black
+    color white
+    height 2em
+
+    a,
+    a:hover
+      color inherit
+
+    .prev
+      float left
+
+      &:before
+        content '❮ '
+        font-size 1.2em
+
+      &:hover:before
+        color red
+
+    .next
+      float right
+
+      &:after
+        content ' ❯'
+        font-size 1.2em
+
+      &:hover:after
+        color red
+
+#ds-content
+  padding: 1.2em content-padding 3em content-padding
+  //box-shadow 0.5em 0 1em -0.5em
+  background-color white
+  position relative
+
+  .paragraph,
+  .listingblock
+
+    .title
+      color grey
+
+      .name
+        color black
+
+  .listingblock .content
+    float left
+    position relative
+    width content-width
+    padding-left content-padding
+    padding-right content-padding
+    margin-left 0 - content-padding
+    margin-right 0 - content-padding
+    overflow-x hidden
+    margin-bottom 25px
+
+    /*&:after
+      display block
+      margin-left content-width + 0.2em
+      margin-right 0 - content-padding
+      margin-bottom -0.2em
+      box-shadow 0.5em 0.5em 1em -0.5em
+      content '_'*/
+
+    &:hover
+      width auto
+      min-width content-width
+      overflow-x visible
+      box-shadow 0.5em 0 1em -0.5em
+      z-index 20
+
+    &.collapsed,
+    &.collapsed:hover
+      height 1em
+      overflow hidden
+      width content-width
+
+    .listing-collapser
+      color grey
+      font-size 0.8em
+      line-height 0.8em
+      cursor pointer
+      padding 0
+      margin 0
+      position absolute
+      top 0
+      left 0
+
+#ds-content:after
+  content: ''
+  display table
+  clear both
+
+#ds-manifest
+  position fixed
+  z-index 1
+  left 0
+  width manifest-width
+  padding 1.2em
+  color grey
+  resize width
+  height 100%
+
+  a,
+  a:link,
+  a:hover
+    color inherit
+
+  h1
+    color white
+    text-shadow -0.1em 0.1em 0.3em black
+    word-wrap break-word
+
+  input[type='text']
+    display block
+    width 100%
+    border 1px #999999 solid
+
+  button[type='submit']
+    visibility hidden
+    position fixed
+    top -100px
+
+#ds-manifest .paths
+  h1
+    padding-bottom: 0
+    margin-bottom: 0
+    color white
+    text-shadow -0.1em 0.1em 0.3em black
+    width manifest-width + 4em
+    text-transform uppercase
+
+    &.current
+      text-shadow -0.1em 0.1em 0.3em pink
+      color crimson
+
+  div
+    margin 0
+    padding 0
+    width manifest-width + 4em
+    height 1.8em
+    white-space nowrap
+
+  .current
+    background-color white
+    color crimson
+    box-shadow 0 0.5em 1em -0.5em black
+    margin-left -2em
+    padding-left 2em
+
+  .file:hover
+    box-shadow 0 0.5em 1em -0.5em black
+    margin-left -2em
+    padding-left 2em
+    cursor pointer
+    background-color lighten(manifest-bg, 4)
+    position relative
+    z-index 10
+
+    &.current
+      background-color white
+
+#ds-names
+  height 100em
+  width 100em
+
+#ds-names,
+#ds-headings
+  position fixed
+  left 57em
+  top 3.6em
+  color grey
+
+  a,
+  a:link,
+  a:hover
+    color inherit
+
+#ds-headings
+  z-index 10
+  height 0
+
+  .toggle
+    position fixed
+    margin-top -1.8em
+    font-style italic
+
+  ul
+    height 100em
+    width 100em
+    position fixed
+    background-color #fafafa
+    transition opacity 0.5s
+
+#ds-names,
+#ds-headings ul
+  list-style-type none
+  padding 0
+  margin 0
+
+#ds-headings li
+  &.level1
+    padding-left 0
+
+  &.level2
+    padding-left 1em
+
+  &.level3
+    padding-left 2em
+
+#ds-headings:hover
+
+  ul
+    opacity 1 !important
+    visibility visible !important
+
+#ds-commit
+
+  ul
+    position absolute
+    width auto
+    z-index 110
+    background-color white
+    box-shadow 0 0 1em 0 black
+    padding-left 0
+    padding-top 0
+    margin-top 0 - line-height + 1px
+    outline 1px solid white
+    list-style-type none
+    visibility hidden
+    opacity 0
+    transition visibility 0.5s linear 0s, opacity 0.5s
+    transition-delay 0s
+
+    &.active
+      visibility visible
+      opacity 1
+      transition visibility 0.5s linear 0s, opacity 0.5s
+
+    li
+      @extends .sans-serif-trait
+      width auto
+      min-width manifest-width - 1em
+      cursor pointer
+
+      &:hover
+        color white
+        background-color grey
+
+  input
+    @extends .sans-serif-trait
+    font-size font-size
+    width manifest-width - 3em
+    color grey
+    border none
+    outline 1px solid grey
+    margin-right 0
+
+  button
+    @extends .sans-serif-trait
+    font-size font-size
+    text-align center
+    width 2em
+    padding 0
+    margin-left 0
+    vertical-align baseline
+    height line-height
+    border solid 1px grey
+
+#ds-listing-toggle
+  display none
+  position absolute
+  z-index 100
+  width 1em
+  height 1em
+  background-color black
+  color white
+
+  &:before
+    content '⌃'
+
+  &.collapsed:before
+    content '⌄'

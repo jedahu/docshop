@@ -63,8 +63,8 @@ define(function()
         ( function(result)
           { var hashElem
           ; $scope.renderedSrc = result
-          ; document.getElementById('content').innerHTML = ''
-          ; document.getElementById('content').appendChild(result.html)
+          ; document.getElementById('ds-content').innerHTML = ''
+          ; document.getElementById('ds-content').appendChild(result.html)
           ; return $location.hash()
           }
         )
@@ -73,7 +73,7 @@ define(function()
           { scrollToHash(hash, false)
           }
         , function(err)
-          { document.getElementById('content').innerHTML = '<b>ERROR</b>'
+          { document.getElementById('ds-content').innerHTML = '<b>ERROR</b>'
           }
         )
     ; setPath(repo)

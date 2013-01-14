@@ -4,38 +4,49 @@
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
     <script data-main='js/app' src='js/lib/require.js'></script>
-    <style>
-      .code { background-color: wheat }
-    </style>
+    <link rel='stylesheet' type='text/css' href='css/browse.css'>
   </head>
   <body data-ng-controller='RepoController'>
-    <nav id='manifest'>
+    <nav id='ds-manifest'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form data-ng-submit='changeRepo()'>
         <input
           data-ng-model='newRepoString'
           type='text'
+          placeholder='repository id'
           title='Change repository'>
+        <input
+          data-ng-model='newRepoRef'
+          type='text'
+          placeholder='branch | tag | commit'
+          title='Change ref'
+          data-ng-disabled='!repo.refs'>
+        <button type='submit'></button>
         <!--span class='visible-{{repo.refs.length > 0}}'>
           <input
             type='text'
             data-ng-model='newRepoRef'
             title='Change branch (or paste commit id)'
           ><button type='button' title='Show branches and tags'>…</button>
-          <button type='submit' style='visibility: hidden'>x</button>
         </span-->
         <ul>
           <li data-ng-repeat='ref in repo.refs'>{{ref}}</li>
         </ul>
       </form>
       <section class='paths' data-ds-file-nav='item in repo.manifest.files'>
-        <h1 data-ng-bind='item.text'></h1>
-        <div data-ng-bind='item.name'></div>
+        <h1
+          data-ng-bind='item.text'
+          data-ng-class='{current: repo.path == item.path, file: !!item.path}'></h1>
+        <div
+          data-ng-bind='item.name'
+          data-ng-class='{current: repo.path == item.path, file: !!item.path}'></div>
       </section>
     </nav>
-    <div data-ng-click='alert("foo")'>foo</div>
-    <div id='file'>
-      <nav id='table-of-contents' data-ng-class='{show: !!renderedSrc.toc}'>
+    <div id='ds-x'></div>
+    <div id='ds-y'></div>
+    <div id='ds-z'></div>
+    <div id='ds-file'>
+      <nav id='ds-headings' data-ng-class='{show: !!renderedSrc.toc}'>
         <h1>TOC</h1>
         <div
           data-ng-repeat='h in renderedSrc.toc'
@@ -44,7 +55,7 @@
           data-indent='{{0 - h.rank}}'
           style='padding-left: {{0 - h.rank}}em'></div>
       </nav>
-      <nav id='id-names' data-ng-class='{show: !!renderedSrc.names}'>
+      <nav id='ds-names' data-ng-class='{show: !!renderedSrc.names}'>
         <h1>Names</h1>
         <ul>
             <li
@@ -55,7 +66,7 @@
             </li>
           </ul>
       </nav>
-      <article id='content'>
+      <article id='ds-content'>
       </article>
     </div>
   </body>
