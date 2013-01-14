@@ -11,8 +11,7 @@ define(function()
   { var initialRepo = $q.defer()
   ; initialRepo.resolve(null)
   ; $scope.repo = initialRepo.promise
-  ; $scope.newRepoId = null
-  ; $scope.newRepoRef = null
+  ; $scope.repoForm = {}
   ; $scope.renderedSrc = null
 
   ; var fileFromPath = function(repo, path)
@@ -29,23 +28,20 @@ define(function()
     }
 
   ; $scope.changeRepo = function()
-    { var query
-    ; if (!$scope.newRepoString) return
-    ; query = parseRepoString($scope.newRepoString)
-    ; $scope.repo = $scope.repo
+    { $scope.repo = $scope.repo
       . then
         ( function(repo)
-          { if (repo && repo.id === query.id) return repo
-            return createRepoObj(query.id)
+          { if (repo && repo.id === $scope.repoForm.id) return repo
+            return createRepoObj($scope.repoForm.id)
           }
         )
       . then
         ( function(repo)
-          { var renderFile = repo.ref !== query.ref
-              || repo.path !== query.path
+          { var renderFile = repo.ref !== $scope.repoForm.ref
+              || repo.path !== $scope.repoForm.path
               || !repo.path
-          ; repo.ref = query.ref || repo.ref
-          ; repo.path = query.path
+          ; repo.ref = $scope.repoForm.ref || repo.ref
+          ; repo.path = $scope.repoForm.path
               || repo.path
               || repo.manifest.files[0].path
           ; if (renderFile) changePath(repo)
@@ -92,7 +88,7 @@ define(function()
   ; $scope.$on
       ( '$locationChangeSuccess'
       , function(_new, _old)
-        { $scope.newRepoString = $location.path().slice(1)
+        { $scope.repoForm = parseRepoString($location.path().slice(1))
         ; $scope.changeRepo()
         }
       )

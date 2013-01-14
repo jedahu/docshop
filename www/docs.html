@@ -11,12 +11,12 @@
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form data-ng-submit='changeRepo()'>
         <input
-          data-ng-model='newRepoString'
+          data-ng-model='repoForm.id'
           type='text'
           placeholder='repository id'
           title='Change repository'>
         <input
-          data-ng-model='newRepoRef'
+          data-ng-model='repoForm.ref'
           type='text'
           placeholder='branch | tag | commit'
           title='Change ref'
