@@ -27,7 +27,7 @@ define(function()
         ( 'exit'
         , function(code, _signal)
           { if (code != 0 && !done)
-            { deferred.reject(errStr)
+            { deferred.reject({cmdErr: errStr})
             ; $rootScope.$digest()
             ; done = true
             }
