@@ -19,8 +19,10 @@ define(function()
     }
 
   ; var parseRepoString = function(str)
-    { var match = str.match(/([^@]+)(?:@([^:]+):?(.*))?/)
-      return {id: match[1], ref: match[2], path: match[3]}
+    { var match = str && str.match(/([^@]+)(?:@([^:]+):?(.*))?/)
+      return match
+        ? {id: match[1], ref: match[2], path: match[3]}
+        : null
     }
 
   ; var setPath = function(repo)
@@ -31,13 +33,20 @@ define(function()
     { $scope.repo = $scope.repo
       . then
         ( function(repo)
-          { if (repo && repo.id === $scope.repoForm.id) return repo
-            return createRepoObj($scope.repoForm.id)
+          { if (repo && repo.id === $scope.repoForm.id)
+            { return repo
+            }
+            else if ($scope.repoForm)
+            { return createRepoObj($scope.repoForm.id)
+            }
+            else return $q.reject('No repo query')
           }
         )
       . then
         ( function(repo)
-          { var renderFile = repo.ref !== $scope.repoForm.ref
+          { var renderFile
+          ; if (!repo) return $q.reject('No repo produced')
+          ; renderFile = repo.ref !== $scope.repoForm.ref
               || repo.path !== $scope.repoForm.path
               || !repo.path
           ; repo.ref = $scope.repoForm.ref || repo.ref
@@ -46,6 +55,9 @@ define(function()
               || repo.manifest.files[0].path
           ; if (renderFile) changePath(repo)
           ; return repo
+          }
+        , function(err)
+          { console.log('err:', err) // TODO handle error
           }
         )
     }
