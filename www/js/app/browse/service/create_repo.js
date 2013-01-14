@@ -7,7 +7,7 @@ define(function()
         , createRepoOfType = $injector.get(repoType + 'Repo')
         , deferred = $q.defer()
     ; if (createRepoOfType) deferred.resolve(createRepoOfType(repoId))
-    ; else deferred.reject({msg: 'No such repository type: ' + repoType})
+      else deferred.reject({msg: 'No such repository type: ' + repoType})
     ; return deferred.promise
     }
   }

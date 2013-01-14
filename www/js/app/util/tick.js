@@ -9,8 +9,8 @@ define(
       , i = 0
       , _cb = function(err)
         { if (err) cb(err)
-        ; else if (i === list.length) cb()
-        ; else self.nextTick(fn.bind(null, list[i++], _cb))
+          else if (i === list.length) cb()
+          else self.nextTick(fn.bind(null, list[i++], _cb))
         }
   ; _cb()
   }
