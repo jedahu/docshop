@@ -1,6 +1,7 @@
-define(Object.freeze(
+define(function() {
 
-{ parse: function(manifest)
+return {
+  parse: function(manifest)
   { this._manifest = JSON.parse(manifest)
   ; this._manifest.fileMap = {}
   ; this.normalizeLanguages()
@@ -133,5 +134,6 @@ define(Object.freeze(
     }
     . bind(this)
   }
+}
 
-}));
+});

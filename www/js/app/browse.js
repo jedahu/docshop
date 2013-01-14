@@ -25,7 +25,7 @@ define
       , bindNodeDirective
       )
 
-{ var browse = angular.module('BrowseModule', ['ngSanitize'])
+{ var browse = globalObj['angular'].module('BrowseModule', ['ngSanitize'])
   . controller('RepoController', RepoController)
   . factory('githubRepo', githubRepoType)
   . factory('httpRepo', httpRepoType)

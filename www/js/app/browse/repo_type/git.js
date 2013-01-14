@@ -1,6 +1,6 @@
 define(function()
 
-{ var cp = require('child_process')
+{ var cp = require('child_process' + '')
 ; var gitRepoService = function($q, spawnCapture, parseManifest)
   { return function gitRepo(repoId)
     { var repoPath = repoId.substr('git:'.length)

@@ -47,10 +47,10 @@
   ; rconfig.paths['test'] = '../test'
   ; requirejs.config(rconfig)
   ; requirejs
-      ( ['test/mocha']
+      ( ['test/mocha' + '']
       , function(mocha)
         { requirejs
-            ( ['test/all']
+            ( ['test/all' + '']
             , function(_all)
               { mocha.run()
               }
@@ -61,12 +61,13 @@
   else
   { requirejs.config(rconfig)
   ; requirejs
-      ( ['lib/angular']
-      , function(angular)
-        { requirejs
-            ( ['lib/angular-sanitize', mainModule]
+      ( ['lib/angular', mainModule]
+      , function(_angular)
+        { //globalObj['angular'] = angular
+        ; requirejs
+            ( ['lib/angular-sanitize']
             , function(_)
-              { angular.bootstrap(document, ['BrowseModule'])
+              { globalObj['angular'].bootstrap(document, ['BrowseModule'])
               }
             )
         }

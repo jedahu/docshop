@@ -9,7 +9,7 @@ A repo service that reads from disk. Useful *when* developing documentation.
 
 ## Blag
 */
-{ var fs = require('fs')
+{ var fs = require('fs' + '')
 ; var fileRepoService = function($q, $rootScope, parseManifest)
   { return function fileRepo(repoId)
     { var repoPath = repoId.substr('file:'.length)

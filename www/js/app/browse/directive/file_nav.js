@@ -2,8 +2,9 @@ define(function()
 
 { var fileNavDirective = function($compile)
   { return function fileNav(scope, elem, attr)
-    { var headingTemplate = angular.element(elem[0].firstElementChild)
-        , fileTemplate = angular.element(elem[0].lastElementChild)
+    { var ngelem = globalObj['angular'].element
+        , headingTemplate = ngelem(elem[0].firstElementChild)
+        , fileTemplate = ngelem(elem[0].lastElementChild)
         , parts = attr.dsFileNav.split(/\s+/)
         , varname = parts[0]
         , tree = parts[2]
@@ -28,7 +29,7 @@ define(function()
               ; if (item.name === '!index') continue
               ; newScope = scope._wrapperScope.$new()
               ; if (Object.keys(item).length === 1) // sublist
-                { sublist = angular.element(document.createElement(elem[0].tagName))
+                { sublist = ngelem(document.createElement(elem[0].tagName))
                 ; heading = headingTemplate.clone(true)
                 ; headingText = Object.keys(item)[0]
                 ; sublist.append(heading)
@@ -63,7 +64,7 @@ define(function()
     ; elem.bind
         ( 'click'
         , function(evt)
-          { var elem = angular.element(evt.target)
+          { var elem = ngelem(evt.target)
               , path = elem.data('path')
           ; if (path) scope.$apply(function() { scope.changePathTo(path) })
           }

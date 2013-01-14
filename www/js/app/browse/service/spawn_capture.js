@@ -1,6 +1,6 @@
 define(function()
 
-{ var cp = require(['child_process'])
+{ var cp = require('child_process' + '')
 
 ; var spawnCaptureService = function($q, $rootScope)
   { return function spawnCapture(cmd, args, opts)
