@@ -24,6 +24,16 @@
     , shim:
         { 'lib/angular':
             { exports: 'angular'
+            , deps: ['lib/jquery']
+            }
+        , 'lib/select2':
+            { deps: ['lib/jquery', 'lib/jquery-ui']
+            }
+        , 'lib/angular-ui':
+            { deps: ['lib/angular', 'lib/select2']
+            }
+        , 'lib/angular-sanitize':
+            { deps: ['lib/angular']
             }
         }
     , nodeRequire: inNodeWebkit ? require : undefined
@@ -61,14 +71,9 @@
   else
   { requirejs.config(rconfig)
   ; requirejs
-      ( ['lib/angular']
-      , function(_angular)
-        { requirejs
-            ( ['lib/angular-sanitize', mainModule]
-            , function(_)
-              { globalObj['angular'].bootstrap(document, ['BrowseModule'])
-              }
-            )
+      ( [mainModule]
+      , function(_)
+        { globalObj['angular'].bootstrap(document, ['BrowseModule'])
         }
       )
-  }
+}

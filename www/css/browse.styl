@@ -355,6 +355,9 @@ ul
     position fixed
     top -100px
 
+  .select2-container
+    width 100%
+
 #ds-manifest .paths
   h1
     padding-bottom: 0
@@ -364,7 +367,7 @@ ul
     width manifest-width + 4em
     text-transform uppercase
 
-    &.current
+    &.file.current
       text-shadow -0.1em 0.1em 0.3em pink
       color crimson
 
@@ -375,7 +378,7 @@ ul
     height 1.8em
     white-space nowrap
 
-  .current
+  .file.current
     background-color white
     color crimson
     box-shadow 0 0.5em 1em -0.5em black
@@ -391,24 +394,20 @@ ul
     position relative
     z-index 10
 
-    &.current
+    &.file.current
       background-color white
-
-#ds-names
-  height 100em
-  width 100em
 
 #ds-names,
 #ds-headings
   position fixed
-  left 57em
+  right 0.5em
+  width toc-width - 1em
   top 3.6em
   color grey
+  z-index 10
 
-  a,
-  a:link,
-  a:hover
-    color inherit
+  div, li
+    cursor pointer
 
 #ds-headings
   z-index 10

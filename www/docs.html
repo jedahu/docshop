@@ -1,9 +1,9 @@
 <!doctype html>
-<html data-ng-app='BrowseModule'>
+<html>
   <head>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
-    <script data-main='js/app' src='js/lib/require.js'></script>
+    <link rel='stylesheet' type='text/css' href='css/select2.css'>
     <link rel='stylesheet' type='text/css' href='css/browse.css'>
   </head>
   <body data-ng-controller='RepoController'>
@@ -16,15 +16,12 @@
           placeholder='repository id'
           title='Change repository'>
         <input
+          data-ui-select2='refQuery'
           data-ng-model='repoForm.ref'
-          type='text'
-          placeholder='branch | tag | commit'
-          title='Change ref'
+          data-placeholder='branch|tag|commit'
           data-ng-disabled='!repo.refs'>
         <button type='submit'></button>
-        <ul>
-          <li data-ng-repeat='ref in repo.refs'>{{ref}}</li>
-        </ul>
+        <div ng-bind='repoForm.ref.text'></div>
       </form>
       <section class='paths' data-ds-file-nav='item in repo.manifest.files'>
         <h1
@@ -63,4 +60,5 @@
       </article>
     </div>
   </body>
+    <script data-main='js/app' src='js/lib/require.js'></script>
 </html>

@@ -10,9 +10,29 @@ define(function()
     )
   { var initialRepo = $q.defer()
   ; initialRepo.resolve(null)
-  ; $scope.repo = initialRepo.promise
+  ; $scope.repo = null
   ; $scope.repoForm = {}
   ; $scope.renderedSrc = null
+
+  ; $scope.refQuery =
+      { initSelection: function(elem, cb)
+        { cb($scope.repoForm.ref)
+        }
+      , query: function(q)
+        { var data = {results: [{id: q.term, text: q.term}]}
+        ; angular.forEach
+            ( $scope.repo.refs || []
+            , function(item, key)
+              { if (q.term.toUpperCase() ===
+                    item.substring(0, q.term.length)
+                    . toUpperCase())
+                { data.results.push({id: item, text: item})
+                }
+              }
+            )
+        ; q.callback(data)
+        }
+      }
 
   ; var fileFromPath = function(repo, path)
     { return repo.manifest.fileMap[path]
@@ -21,51 +41,57 @@ define(function()
   ; var parseRepoString = function(str)
     { var match = str && str.match(/([^@]+)(?:@([^:]+):?(.*))?/)
       return match
-        ? {id: match[1], ref: match[2], path: match[3]}
+        ? {id: match[1], ref: {id: match[2], text: match[2]}, path: match[3]}
         : null
     }
 
-  ; var setPath = function(repo)
-    { $location.path(repo.id + '@' + repo.ref + ':' + repo.path)
+  ; var setPath = function()
+    { var repo = $scope.repo
+    ; $location.path(repo.id + '@' + repo.ref + ':' + repo.path)
     }
 
   ; $scope.changeRepo = function()
-    { $scope.repo = $scope.repo
-      . then
-        ( function(repo)
-          { if (repo && repo.id === $scope.repoForm.id)
-            { return repo
+    { if ($scope.repo && $scope.repoForm.ref.text && $scope.repo.ref !== $scope.repoForm.ref.text)
+      { console.log('here');$scope.repo.ref = $scope.repoForm.ref.text
+      ; changePath()
+      }
+      else if ($scope.repo && $scope.repo.id === $scope.repoForm.id)
+      { console.log('there');// do nothing
+      }
+      else if ($scope.repoForm)
+      { createRepoObj($scope.repoForm.id)
+        . then
+          ( function(repo)
+            { var renderFile
+            ; if (!repo) return $q.reject('No repo produced')
+            ; renderFile = repo.ref !== $scope.repoForm.ref.text
+                || repo.path !== $scope.repoForm.path
+                || !repo.path
+            ; repo.ref = $scope.repoForm.ref.text || repo.ref
+            ; console.log('ref', repo.ref)
+            ; repo.path = $scope.repoForm.path
+                || repo.path
+                || repo.manifest.files[0].path
+            ; $scope.repo = repo
+            ; if (renderFile) changePath()
+            ; console.log('set repo')
             }
-            else if ($scope.repoForm)
-            { return createRepoObj($scope.repoForm.id)
+          , function(err)
+            { console.log('err:', err) // TODO handle error
+            ; $scope.repo = null
             }
-            else return $q.reject('No repo query')
-          }
-        )
-      . then
-        ( function(repo)
-          { var renderFile
-          ; if (!repo) return $q.reject('No repo produced')
-          ; renderFile = repo.ref !== $scope.repoForm.ref
-              || repo.path !== $scope.repoForm.path
-              || !repo.path
-          ; repo.ref = $scope.repoForm.ref || repo.ref
-          ; repo.path = $scope.repoForm.path
-              || repo.path
-              || repo.manifest.files[0].path
-          ; if (renderFile) changePath(repo)
-          ; return repo
-          }
-        , function(err)
-          { console.log('err:', err) // TODO handle error
-          }
-        )
+          )
+      }
+      else
+      { // handle error
+      ; console.log('err: no repo')
+      }
     }
 
-  ; var changePath = function(repo)
+  ; var changePath = function()
     { parseRenderSrc
-        ( repo
-        , fileFromPath(repo, repo.path)
+        ( $scope.repo
+        , fileFromPath($scope.repo, $scope.repo.path)
         )
       . then
         ( function(result)
@@ -84,17 +110,14 @@ define(function()
           { document.getElementById('ds-content').innerHTML = '<b>ERROR</b>'
           }
         )
-    ; setPath(repo)
+    ; setPath()
+    ; $scope.repoForm.updateHack = new Date().getTime()
     }
 
   ; $scope.changePathTo = function(path)
-    { if (!path) return
-    ; $scope.repo.then
-        ( function(repo)
-          { repo.path = path
-          ; changePath(repo)
-          }
-        )
+    { if (!path || !$scope.repo) return
+    ; $scope.repo.path = path
+    ; changePath()
     }
 
   ; $scope.$on
@@ -102,6 +125,15 @@ define(function()
       , function(_new, _old)
         { $scope.repoForm = parseRepoString($location.path().slice(1))
         ; $scope.changeRepo()
+        }
+      )
+
+  ; $scope.$watch
+      ( function() { return $scope.repoForm.ref }
+      , function(newVal, _old)
+        { console.log('newVal', newVal);if (newVal)
+          { $scope.changeRepo()
+          }
         }
       )
 

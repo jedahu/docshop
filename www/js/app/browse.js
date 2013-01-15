@@ -1,6 +1,7 @@
 define
   ( [ 'lib/angular'
     , 'lib/angular-sanitize'
+    , 'lib/angular-ui'
     , 'browse/repo_controller'
     , 'browse/repo_type/github'
     , 'browse/repo_type/http'
@@ -14,6 +15,7 @@ define
   , function
       ( angular
       , _sanitize
+      , _ui
       , RepoController
       , githubRepoType
       , httpRepoType
@@ -25,7 +27,7 @@ define
       , bindNodeDirective
       )
 
-{ var browse = globalObj['angular'].module('BrowseModule', ['ngSanitize'])
+{ var browse = globalObj['angular'].module('BrowseModule', ['ngSanitize', 'ui.directives'])
   . controller('RepoController', RepoController)
   . factory('githubRepo', githubRepoType)
   . factory('httpRepo', httpRepoType)
