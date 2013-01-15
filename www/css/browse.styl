@@ -348,7 +348,19 @@ ul
   input[type='text']
     display block
     width 100%
-    border 1px #999999 solid
+    border 1px #aaa solid
+    color #808080
+    border-radius 4px
+    font-size 12px
+    line-height 26px
+    height 26px
+    box-sizing border-box
+    padding 0 8px 0 8px
+    text-overflow ellipsis
+    margin-bottom 2px
+
+    &:focus
+      color black
 
   button[type='submit']
     visibility hidden
@@ -359,6 +371,11 @@ ul
     width 100%
 
 #ds-manifest .paths
+
+  .file
+    margin-left -2em
+    padding-left 2em
+
   h1
     padding-bottom: 0
     margin-bottom: 0
@@ -387,8 +404,6 @@ ul
 
   .file:hover
     box-shadow 0 0.5em 1em -0.5em black
-    margin-left -2em
-    padding-left 2em
     cursor pointer
     background-color lighten(manifest-bg, 4)
     position relative

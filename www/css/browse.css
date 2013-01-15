@@ -63,14 +63,16 @@ ul{list-style-position:inside}
 #ds-manifest a,#ds-manifest a:link,#ds-manifest a:hover{color:inherit}
 #ds-manifest h1{color:#fff;text-shadow:-.1em .1em .3em #000;word-wrap:break-word;}
 #ds-manifest h1 a:link{text-decoration:none}
-#ds-manifest input[type='text']{display:block;width:100%;border:1px #999 solid}
+#ds-manifest input[type='text']{display:block;width:100%;border:1px #aaa solid;color:#808080;-webkit-border-radius:4px;border-radius:4px;font-size:12px;line-height:26px;height:26px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:0 8px 0 8px;-o-text-overflow:ellipsis;text-overflow:ellipsis;margin-bottom:2px;}
+#ds-manifest input[type='text']:focus{color:#000}
 #ds-manifest button[type='submit']{visibility:hidden;position:fixed;top:-100px}
 #ds-manifest .select2-container{width:100%}
+#ds-manifest .paths .file{margin-left:-2em;padding-left:2em}
 #ds-manifest .paths h1{padding-bottom:0;margin-bottom:0;color:#fff;text-shadow:-.1em .1em .3em #000;width:16em;text-transform:uppercase;}
 #ds-manifest .paths h1.file.current{text-shadow:-.1em .1em .3em #ffc0cb;color:#dc143c}
 #ds-manifest .paths div{margin:0;padding:0;width:16em;height:1.8em;white-space:nowrap}
 #ds-manifest .paths .file.current{background-color:#fff;color:#dc143c;-webkit-box-shadow:0 .5em 1em -.5em #000;box-shadow:0 .5em 1em -.5em #000;margin-left:-2em;padding-left:2em}
-#ds-manifest .paths .file:hover{-webkit-box-shadow:0 .5em 1em -.5em #000;box-shadow:0 .5em 1em -.5em #000;margin-left:-2em;padding-left:2em;cursor:pointer;background-color:#f5f8fa;position:relative;z-index:10;}
+#ds-manifest .paths .file:hover{-webkit-box-shadow:0 .5em 1em -.5em #000;box-shadow:0 .5em 1em -.5em #000;cursor:pointer;background-color:#f5f8fa;position:relative;z-index:10;}
 #ds-manifest .paths .file:hover.file.current{background-color:#fff}
 #ds-names,#ds-headings{position:fixed;right:.5em;width:14em;top:3.6em;color:#808080;z-index:10;}
 #ds-names div,#ds-headings div,#ds-names li,#ds-headings li{cursor:pointer}
