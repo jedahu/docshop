@@ -95,8 +95,8 @@ define(function()
         ( function(result)
           { var hashElem
           ; $scope.renderedSrc = result
-          ; document.getElementById('ds-content').innerHTML = '<div id="ds-float-fix">&nbsp;</div>'
-          ; document.getElementById('ds-content').appendChild(result.html)
+          ; result.html.prepend('<div id="ds-float-fix">&nbsp;</div>')
+          ; angular.element('#ds-content').html('').append(result.html)
           ; return $location.hash()
           }
         )
@@ -105,7 +105,7 @@ define(function()
           { scrollToHash(hash, false)
           }
         , function(err)
-          { document.getElementById('ds-content').innerHTML = '<b>ERROR</b>'
+          { angular.element('#ds-content').html('<b>ERROR</b>')
           }
         )
     ; setPath()

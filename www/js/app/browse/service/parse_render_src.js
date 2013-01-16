@@ -9,22 +9,22 @@ define
 
 { var parseRenderSrcService = function($q, $http, $rootScope)
   { var process = function(result)
-    { var wrapper = document.createElement('div')
+    { var wrapper = angular.element('<div>')
         , names
         , toc
         , idCount = 0
-    ; wrapper.innerHTML = result.html
+    ; wrapper.html(result.html)
     ; h5o(wrapper)
     ; names =
         result.names
         || [].map.call
-             ( wrapper.querySelectorAll('[id^="id:"]')
+             ( wrapper.find('[id^="id:"]')
              , function(elm)
                { return elm.getAttribute('id').slice(3)
                }
              )
            . sort()
-    ; toc = [].slice.call(wrapper.querySelectorAll('h1,h2,h3,h4'), 0)
+    ; toc = [].slice.call(wrapper.find('h1,h2,h3,h4'), 0)
     ; toc.forEach
         ( function(h)
           { if (!h.id)
