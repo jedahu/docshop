@@ -24,12 +24,16 @@ define(function()
               ( function(str)
                 { var branch = str.slice(1).trim()
                 ; if (branch == '') return
+                ; if (branch == '(no branch)') return
                 ; if (str[0] == '*')
                   { repo.ref = branch
                   }
                 ; repo.branches.push(branch)
                 }
               )
+          // FIXME repo.ref must be set to what is in $location and only
+          // fall back to the *rred branch if $location is not set.
+          ; if (!repo.ref) repo.ref = repo.branches[0]
           ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
           }
         )
