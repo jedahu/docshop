@@ -7,7 +7,7 @@ content-width = 40em
 manifest-width = 12em
 content-padding = 1em
 manifest-bg = #e7eff3
-toc-width = 15em
+toc-width = 12em
 
 .content-trait
   margin-right toc-width
@@ -35,31 +35,24 @@ html
   line-height 21px
   background-color white
   width 100%
-  overflow-x hidden
+  //overflow-x hidden
 
 body
   margin 0
   height 100%
+  width 100%
+  display table
+  position absolute
 
 ul
   list-style-position inside
 
-#ds-z
-  position fixed
-  right 0
-  width toc-width
-  height 100%
-  padding 2em 0 2em 0
-  top -1em
-  box-shadow 0.5em 0 1em -0.5em black inset
-  background-color #fafafa
-  z-index 50
-
-#ds-file
-  margin-left manifest-width + 2em
-  //box-shadow 0 0 1em 0
-
 #ds-content
+  display table-cell
+  box-shadow 0 0 1em black
+  position relative
+  z-index 100
+  max-width 10em
   //@extends .content-trait
 
   p,
@@ -248,13 +241,7 @@ ul
 
 #ds-content
   padding: 1.2em content-padding 3em content-padding
-  width auto
-  margin-right 0
   //box-shadow 0.5em 0 1em -0.5em
-
-  & > *
-    margin-right toc-width
-    z-index 200
 
   .paragraph,
   .listingblock
@@ -267,35 +254,33 @@ ul
 
   .listingblock .content,
   pre
-    min-width 100%
-    display inline-block
+    padding-top 0
+    margin-top 0
     padding-left content-padding
     padding-right content-padding
     margin-left 0 - content-padding
-    overflow hidden
+    margin-right 0 - content-padding
     margin-bottom 25px
     background-color #ffffe4
+    overflow hidden
 
-    code
-      display inline-block
-      width auto
+    //code
+    //  display block
+    //  float left
+    //  background-color yellow
 
-    /*&:after
+    &:after
       display block
-      margin-left content-width + 0.2em
+      content ' '
+      box-shadow 0.5em 0.5em 1em -0.5em black
+      margin-left 0 - content-padding - 0.2em
       margin-right 0 - content-padding
-      margin-bottom -0.2em
-      box-shadow 0.5em 0.5em 1em -0.5em
-      content '_'*/
 
     &:hover
-      position relative
-      //margin-right 0 - (toc-width + 2em)
-      //margin-left 0 - (manifest-width + 3em)
-      //min-width content-width
-      margin-right 0
+      float left
       box-shadow 0.5em 0 1em -0.5em
-      z-index 200
+      min-width 100%
+      overflow visible
 
     &.collapsed,
     &.collapsed:hover
@@ -314,27 +299,17 @@ ul
       top 0
       left 0
 
-#ds-content:after
-  content: ''
-  display table
-  clear both
-
 #ds-manifest
-  position fixed
-  overflow hidden
-  z-index 1
-  left 0
   width manifest-width
-  padding 1em
-  margin 0
+  min-width manifest-width
+  max-width manifest-width
+  padding-left 1em
+  padding-right 1em
   color grey
   background-color manifest-bg
-  resize width
   height 100%
-  box-shadow 0.5em 0 1em 0.5em black inset
-  padding 3em 1em 3em 3em
-  top -2em
-  left -2em
+  overflow hidden
+  display table-cell
 
   a,
   a:link,
@@ -377,6 +352,7 @@ ul
     width 100%
 
 #ds-manifest .paths
+  position relative
 
   .file
     margin-left -2em
@@ -407,31 +383,43 @@ ul
     box-shadow 0 0.5em 1em -0.5em black
     margin-left -2em
     padding-left 2em
+    position relative
+    z-index 1000
 
   .file:hover
     box-shadow 0 0.5em 1em -0.5em black
     cursor pointer
     background-color lighten(manifest-bg, 4)
     position relative
-    z-index 10
+    z-index 900
 
     &.file.current
       background-color white
 
+#ds-file-nav-backing
+  display table-cell
+  width toc-width + 1em
+  min-width toc-width + 1em
+  max-width toc-width + 1em
+  background-color #fafafa
+
 #ds-file-nav
+  display block
   position fixed
-  right 0.5em
-  width toc-width - 2em
-  top 1em
+  width toc-width
+  min-width toc-width
+  max-width toc-width
   color grey
-  z-index 150
   list-style-type none
   padding 0
   margin 0
+  padding-left 1em
   border none
   background none
   font-family inherit
   font-size inherit
+  background-color #fafafa
+  border-radius 0
 
   .ui-widget-content
     border none
@@ -492,3 +480,7 @@ ul
 
   div
     cursor pointer
+
+#ds-float-fix
+  visibility hidden
+  height 0

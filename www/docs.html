@@ -8,7 +8,10 @@
     <link rel='stylesheet' type='text/css' href='css/browse.css'>
   </head>
   <body data-ng-controller='RepoController'>
-    <nav id='ds-manifest'>
+    <nav
+      id='ds-manifest'
+      data-ui-jq='resizable'
+      data-ui-options='resizeOpts("reverse")'>
       <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
       <form data-ng-submit='changeRepo()'>
         <input
@@ -32,9 +35,10 @@
           data-ng-class='{current: repo.path == item.path, file: !!item.path}'></div>
       </section>
     </nav>
-    <div id='ds-z'></div>
-    <div id='ds-file'>
-      <nav id='ds-file-nav' data-ui-jq='tabs'>
+    <article id='ds-content'>
+    </article>
+    <nav id='ds-file-nav-backing'>
+      <div id='ds-file-nav' data-ui-jq='tabs'>
         <ul>
           <li data-ng-class='{hide: !renderedSrc.toc}'><a href='#ds-toc'><span>TOC</span></a></li>
           <li data-ng-class='{hide: !renderedSrc.names}'><a href='#ds-names'><span>Names</span></a></li>
@@ -57,10 +61,8 @@
             </li>
           </ul>
         </div>
-      </nav>
-      <article id='ds-content'>
-      </article>
-    </div>
+      </div>
+    </nav>
   </body>
     <script data-main='js/app' src='js/lib/require.js'></script>
 </html>

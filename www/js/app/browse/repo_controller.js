@@ -95,7 +95,7 @@ define(function()
         ( function(result)
           { var hashElem
           ; $scope.renderedSrc = result
-          ; document.getElementById('ds-content').innerHTML = ''
+          ; document.getElementById('ds-content').innerHTML = '<div id="ds-float-fix">&nbsp;</div>'
           ; document.getElementById('ds-content').appendChild(result.html)
           ; return $location.hash()
           }
@@ -138,6 +138,25 @@ define(function()
   ; $scope.scrollToHash = scrollToHash
 
   ; $scope.console = console
+
+  ; $scope.resizeOpts = function(direction)
+    { var content = jQuery('#ds-content')
+        , originalWidth
+        , originalOffset
+    ; return {
+        start: function(evt, ui)
+        { originalWidth = content.width()
+        ; originalOffset = content.offset().left
+        }
+      , resize: function(evt, ui)
+        { var travel = ui.size.width - ui.originalSize.width
+        ; if (direction === 'reverse')
+          { content.offset({left: originalOffset + travel})
+          }
+        }
+      , handles: direction === 'reverse' ? 'e' : 'w'
+      }
+    }
   }
 
 ; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
