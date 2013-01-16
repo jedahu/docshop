@@ -33,7 +33,7 @@ html
   @extends .sans-serif-trait
   font-size 12px
   line-height 21px
-  background-color manifest-bg
+  background-color white
   width 100%
   overflow-x hidden
 
@@ -44,21 +44,6 @@ body
 ul
   list-style-position inside
 
-#ds-x, #ds-y
-  @extends .content-trait
-  margin-left manifest-width + 2em
-  background-color white
-  position fixed
-  height 100%
-  padding-right content-padding * 2
-  box-shadow 0 0 1em 0
-  width 100%
-  z-index 0
-
-#ds-y
-  z-index 1
-  box-shadow none
-
 #ds-z
   position fixed
   right 0
@@ -68,15 +53,14 @@ ul
   top -1em
   box-shadow 0.5em 0 1em -0.5em black inset
   background-color #fafafa
-  z-index 10
+  z-index 50
 
 #ds-file
   margin-left manifest-width + 2em
   //box-shadow 0 0 1em 0
 
 #ds-content
-  @extends .content-trait
-  z-index 100
+  //@extends .content-trait
 
   p,
   .listingblock,
@@ -264,9 +248,13 @@ ul
 
 #ds-content
   padding: 1.2em content-padding 3em content-padding
+  width auto
+  margin-right 0
   //box-shadow 0.5em 0 1em -0.5em
-  background-color white
-  position relative
+
+  & > *
+    margin-right toc-width
+    z-index 200
 
   .paragraph,
   .listingblock
@@ -277,16 +265,20 @@ ul
       .name
         color black
 
-  .listingblock .content
-    float left
-    position relative
-    width content-width
+  .listingblock .content,
+  pre
+    min-width 100%
+    display inline-block
     padding-left content-padding
     padding-right content-padding
     margin-left 0 - content-padding
-    margin-right 0 - content-padding
-    overflow-x hidden
+    overflow hidden
     margin-bottom 25px
+    background-color #ffffe4
+
+    code
+      display inline-block
+      width auto
 
     /*&:after
       display block
@@ -297,11 +289,13 @@ ul
       content '_'*/
 
     &:hover
-      width auto
-      min-width content-width
-      overflow-x visible
+      position relative
+      //margin-right 0 - (toc-width + 2em)
+      //margin-left 0 - (manifest-width + 3em)
+      //min-width content-width
+      margin-right 0
       box-shadow 0.5em 0 1em -0.5em
-      z-index 20
+      z-index 200
 
     &.collapsed,
     &.collapsed:hover
@@ -327,14 +321,20 @@ ul
 
 #ds-manifest
   position fixed
+  overflow hidden
   z-index 1
   left 0
   width manifest-width
   padding 1em
   margin 0
   color grey
+  background-color manifest-bg
   resize width
   height 100%
+  box-shadow 0.5em 0 1em 0.5em black inset
+  padding 3em 1em 3em 3em
+  top -2em
+  left -2em
 
   a,
   a:link,
@@ -424,7 +424,7 @@ ul
   width toc-width - 2em
   top 1em
   color grey
-  z-index 10
+  z-index 150
   list-style-type none
   padding 0
   margin 0
@@ -492,71 +492,3 @@ ul
 
   div
     cursor pointer
-
-#ds-commit
-
-  ul
-    position absolute
-    width auto
-    z-index 110
-    background-color white
-    box-shadow 0 0 1em 0 black
-    padding-left 0
-    padding-top 0
-    margin-top 0 - line-height + 1px
-    outline 1px solid white
-    list-style-type none
-    visibility hidden
-    opacity 0
-    transition visibility 0.5s linear 0s, opacity 0.5s
-    transition-delay 0s
-
-    &.active
-      visibility visible
-      opacity 1
-      transition visibility 0.5s linear 0s, opacity 0.5s
-
-    li
-      @extends .sans-serif-trait
-      width auto
-      min-width manifest-width - 1em
-      cursor pointer
-
-      &:hover
-        color white
-        background-color grey
-
-  input
-    @extends .sans-serif-trait
-    font-size font-size
-    width manifest-width - 3em
-    color grey
-    border none
-    outline 1px solid grey
-    margin-right 0
-
-  button
-    @extends .sans-serif-trait
-    font-size font-size
-    text-align center
-    width 2em
-    padding 0
-    margin-left 0
-    vertical-align baseline
-    height line-height
-    border solid 1px grey
-
-#ds-listing-toggle
-  display none
-  position absolute
-  z-index 100
-  width 1em
-  height 1em
-  background-color black
-  color white
-
-  &:before
-    content '⌃'
-
-  &.collapsed:before
-    content '⌄'

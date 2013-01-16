@@ -1,17 +1,14 @@
-.content-trait,#ds-x,#ds-y,#ds-content{margin-right:15em}
+.content-trait{margin-right:15em}
 .smaller-trait,#ds-content .imageblock .title,#ds-content article .sidebarblock,#ds-content .hentry .sidebarblock,#ds-content article .attribution.ulist,#ds-content .hentry .attribution.ulist,#ds-content article footer,#ds-content .hentry footer,#ds-content .meta{font-size:10px;line-height:21px}
 .monospace-trait,#ds-content .monospaced{font-family:Inconsolata,monospace}
-.sans-serif-trait,html,#ds-commit ul li,#ds-commit input,#ds-commit button{font-family:Nobile,Helvetica,Arial,sans-serif}
+.sans-serif-trait,html{font-family:Nobile,Helvetica,Arial,sans-serif}
 .serif-trait{font-family:Vollkorn,Georgia,serif}
 .hide{display:none}
-html{font-size:12px;line-height:21px;background-color:#e7eff3;width:100%;overflow-x:hidden}
+html{font-size:12px;line-height:21px;background-color:#fff;width:100%;overflow-x:hidden}
 body{margin:0;height:100%}
 ul{list-style-position:inside}
-#ds-x,#ds-y{margin-left:14em;background-color:#fff;position:fixed;height:100%;padding-right:2em;-webkit-box-shadow:0 0 1em 0;box-shadow:0 0 1em 0;width:100%;z-index:0}
-#ds-y{z-index:1;-webkit-box-shadow:none;box-shadow:none}
-#ds-z{position:fixed;right:0;width:15em;height:100%;padding:2em 0 2em 0;top:-1em;-webkit-box-shadow:.5em 0 1em -.5em #000 inset;box-shadow:.5em 0 1em -.5em #000 inset;background-color:#fafafa;z-index:10}
+#ds-z{position:fixed;right:0;width:15em;height:100%;padding:2em 0 2em 0;top:-1em;-webkit-box-shadow:.5em 0 1em -.5em #000 inset;box-shadow:.5em 0 1em -.5em #000 inset;background-color:#fafafa;z-index:50}
 #ds-file{margin-left:14em}
-#ds-content{z-index:100;}
 #ds-content p,#ds-content .listingblock,#ds-content blockquote,#ds-content .quoteblock,#ds-content .verseblock,#ds-content .paragraph,#ds-content ul,#ds-content ol{margin-top:0;margin-bottom:25px;}
 #ds-content p .title,#ds-content .listingblock .title,#ds-content blockquote .title,#ds-content .quoteblock .title,#ds-content .verseblock .title,#ds-content .paragraph .title,#ds-content ul .title,#ds-content ol .title{font-weight:bold}
 #ds-content p,#ds-content blockquote,#ds-content .quoteblock,#ds-content ul,#ds-content ol{text-align:justify}
@@ -52,15 +49,17 @@ ul{list-style-position:inside}
 #ds-content .nextprev .next{float:right;}
 #ds-content .nextprev .next:after{content:' ❯';font-size:1.2em}
 #ds-content .nextprev .next:hover:after{color:#f00}
-#ds-content{padding:1.2em 1em 3em 1em;background-color:#fff;position:relative;}
+#ds-content{padding:1.2em 1em 3em 1em;width:auto;margin-right:0;}
+#ds-content > *{margin-right:15em;z-index:200}
 #ds-content .paragraph .title,#ds-content .listingblock .title{color:#808080;}
 #ds-content .paragraph .title .name,#ds-content .listingblock .title .name{color:#000}
-#ds-content .listingblock .content{float:left;position:relative;width:40em;padding-left:1em;padding-right:1em;margin-left:-1em;margin-right:-1em;overflow-x:hidden;margin-bottom:25px;}
-#ds-content .listingblock .content:hover{width:auto;min-width:40em;overflow-x:visible;-webkit-box-shadow:.5em 0 1em -.5em;box-shadow:.5em 0 1em -.5em;z-index:20}
-#ds-content .listingblock .content.collapsed,#ds-content .listingblock .content.collapsed:hover{height:1em;overflow:hidden;width:40em}
-#ds-content .listingblock .content .listing-collapser{color:#808080;font-size:.8em;line-height:.8em;cursor:pointer;padding:0;margin:0;position:absolute;top:0;left:0}
+#ds-content .listingblock .content,#ds-content pre{min-width:100%;display:inline-block;padding-left:1em;padding-right:1em;margin-left:-1em;overflow:hidden;margin-bottom:25px;background-color:#ffffe4;}
+#ds-content .listingblock .content code,#ds-content pre code{display:inline-block;width:auto}
+#ds-content .listingblock .content:hover,#ds-content pre:hover{position:relative;margin-right:0;-webkit-box-shadow:.5em 0 1em -.5em;box-shadow:.5em 0 1em -.5em;z-index:200}
+#ds-content .listingblock .content.collapsed,#ds-content pre.collapsed,#ds-content .listingblock .content.collapsed:hover,#ds-content pre.collapsed:hover{height:1em;overflow:hidden;width:40em}
+#ds-content .listingblock .content .listing-collapser,#ds-content pre .listing-collapser{color:#808080;font-size:.8em;line-height:.8em;cursor:pointer;padding:0;margin:0;position:absolute;top:0;left:0}
 #ds-content:after{content:'';display:table;clear:both}
-#ds-manifest{position:fixed;z-index:1;left:0;width:12em;padding:1em;margin:0;color:#808080;resize:width;height:100%;}
+#ds-manifest{position:fixed;overflow:hidden;z-index:1;left:0;width:12em;padding:1em;margin:0;color:#808080;background-color:#e7eff3;resize:width;height:100%;-webkit-box-shadow:.5em 0 1em .5em #000 inset;box-shadow:.5em 0 1em .5em #000 inset;padding:3em 1em 3em 3em;top:-2em;left:-2em;}
 #ds-manifest a,#ds-manifest a:link,#ds-manifest a:hover{color:inherit}
 #ds-manifest h1{color:#fff;text-shadow:-.1em .1em .3em #000;word-wrap:break-word;padding:0;margin:0;padding-bottom:1em;}
 #ds-manifest h1 a:link{text-decoration:none}
@@ -75,7 +74,7 @@ ul{list-style-position:inside}
 #ds-manifest .paths .file.current{background-color:#fff;color:#dc143c;-webkit-box-shadow:0 .5em 1em -.5em #000;box-shadow:0 .5em 1em -.5em #000;margin-left:-2em;padding-left:2em}
 #ds-manifest .paths .file:hover{-webkit-box-shadow:0 .5em 1em -.5em #000;box-shadow:0 .5em 1em -.5em #000;cursor:pointer;background-color:#f5f8fa;position:relative;z-index:10;}
 #ds-manifest .paths .file:hover.file.current{background-color:#fff}
-#ds-file-nav{position:fixed;right:.5em;width:13em;top:1em;color:#808080;z-index:10;list-style-type:none;padding:0;margin:0;border:none;background:none;font-family:inherit;font-size:inherit;}
+#ds-file-nav{position:fixed;right:.5em;width:13em;top:1em;color:#808080;z-index:150;list-style-type:none;padding:0;margin:0;border:none;background:none;font-family:inherit;font-size:inherit;}
 #ds-file-nav .ui-widget-content{border:none;color:inherit}
 #ds-file-nav .ui-tabs-panel{position:absolute;padding:0;opacity:0;-ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);filter:alpha(opacity=0);display:block !important;-webkit-transition:opacity .5s;-moz-transition:opacity .5s;-o-transition:opacity .5s;-ms-transition:opacity .5s;transition:opacity .5s;-webkit-transition-delay:0;-moz-transition-delay:0;-o-transition-delay:0;-ms-transition-delay:0;transition-delay:0;}
 #ds-file-nav .ui-tabs-panel[aria-hidden='false']{display:block;opacity:1;-ms-filter:none;filter:none}
@@ -86,12 +85,3 @@ ul{list-style-position:inside}
 #ds-names ul{padding:0;margin:0}
 #ds-names li{list-style-type:none;padding:0;margin:0;cursor:pointer}
 #ds-toc div{cursor:pointer}
-#ds-commit ul{position:absolute;width:auto;z-index:110;background-color:#fff;-webkit-box-shadow:0 0 1em 0 #000;box-shadow:0 0 1em 0 #000;padding-left:0;padding-top:0;margin-top:-20px;outline:1px solid #fff;list-style-type:none;visibility:hidden;opacity:0;-ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);filter:alpha(opacity=0);-webkit-transition:visibility .5s linear 0, opacity .5s;-moz-transition:visibility .5s linear 0, opacity .5s;-o-transition:visibility .5s linear 0, opacity .5s;-ms-transition:visibility .5s linear 0, opacity .5s;transition:visibility .5s linear 0,opacity .5s;-webkit-transition-delay:0;-moz-transition-delay:0;-o-transition-delay:0;-ms-transition-delay:0;transition-delay:0;}
-#ds-commit ul.active{visibility:visible;opacity:1;-ms-filter:none;filter:none;-webkit-transition:visibility .5s linear 0, opacity .5s;-moz-transition:visibility .5s linear 0, opacity .5s;-o-transition:visibility .5s linear 0, opacity .5s;-ms-transition:visibility .5s linear 0, opacity .5s;transition:visibility .5s linear 0,opacity .5s}
-#ds-commit ul li{width:auto;min-width:11em;cursor:pointer;}
-#ds-commit ul li:hover{color:#fff;background-color:#808080}
-#ds-commit input{font-size:12px;width:9em;color:#808080;border:none;outline:1px solid #808080;margin-right:0}
-#ds-commit button{font-size:12px;text-align:center;width:2em;padding:0;margin-left:0;vertical-align:baseline;height:21px;border:solid 1px #808080}
-#ds-listing-toggle{display:none;position:absolute;z-index:100;width:1em;height:1em;background-color:#000;color:#fff;}
-#ds-listing-toggle:before{content:'⌃'}
-#ds-listing-toggle.collapsed:before{content:'⌄'}
