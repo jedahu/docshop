@@ -11,7 +11,6 @@ define
     , 'browse/service/scroll_to_hash'
     , 'browse/directive/file_nav'
     , 'browse/directive/bind_node'
-    , 'browse/directive/tabs'
     ]
   , function
       ( angular
@@ -26,7 +25,6 @@ define
       , scrollToHashService
       , fileNavDirective
       , bindNodeDirective
-      , tabsDirective
       )
 
 { var browse = globalObj['angular'].module('BrowseModule', ['ngSanitize', 'ui.directives'])
@@ -39,7 +37,6 @@ define
   . factory('scrollToHash', scrollToHashService)
   . directive('dsFileNav', fileNavDirective)
   . directive('dsBindNode', bindNodeDirective)
-  . directive('dsTabs', tabsDirective)
   . config(['$locationProvider', function($locationProvider)
       { $locationProvider.hashPrefix('!')
       }])
