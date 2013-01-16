@@ -35,7 +35,7 @@ html
   line-height 21px
   background-color white
   width 100%
-  //overflow-x hidden
+  overflow-x hidden
 
 body
   margin 0
@@ -266,25 +266,21 @@ ul
     margin-right 0 - content-padding
     margin-bottom 25px
     background-color #ffffe4
+    float left
+    max-width 100%
+    min-width 100%
     overflow hidden
-
-    //code
-    //  display block
-    //  float left
-    //  background-color yellow
-
-    &:after
-      display block
-      content ' '
-      box-shadow 0.5em 0.5em 1em -0.5em black
-      margin-left 0 - content-padding - 0.2em
-      margin-right 0 - content-padding
+    transition max-width 0.4s, box-shadow 0s
+    transition-delay 0s, 0.4s
 
     &:hover
       float left
       box-shadow 0.5em 0 1em -0.5em
       min-width 100%
+      max-width 200%
+      width auto
       overflow visible
+      transition-delay 0s, 0s
 
     &.collapsed,
     &.collapsed:hover

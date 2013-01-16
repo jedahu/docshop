@@ -4,7 +4,7 @@
 .sans-serif-trait,html{font-family:Nobile,Helvetica,Arial,sans-serif}
 .serif-trait{font-family:Vollkorn,Georgia,serif}
 .hide{display:none}
-html{font-size:12px;line-height:21px;background-color:#fff;width:100%}
+html{font-size:12px;line-height:21px;background-color:#fff;width:100%;overflow-x:hidden}
 body{margin:0;height:100%;width:100%}
 #body{display:table;height:100%;width:100%;position:absolute}
 ul{list-style-position:inside}
@@ -52,9 +52,8 @@ ul{list-style-position:inside}
 #ds-content{padding:1.2em 1em 3em 1em;}
 #ds-content .paragraph .title,#ds-content .listingblock .title{color:#808080;}
 #ds-content .paragraph .title .name,#ds-content .listingblock .title .name{color:#000}
-#ds-content .listingblock .content,#ds-content pre{padding-top:0;margin-top:0;padding-left:1em;padding-right:1em;margin-left:-1em;margin-right:-1em;margin-bottom:25px;background-color:#ffffe4;overflow:hidden;}
-#ds-content .listingblock .content:after,#ds-content pre:after{display:block;content:' ';-webkit-box-shadow:.5em .5em 1em -.5em #000;box-shadow:.5em .5em 1em -.5em #000;margin-left:-1.2em;margin-right:-1em}
-#ds-content .listingblock .content:hover,#ds-content pre:hover{float:left;-webkit-box-shadow:.5em 0 1em -.5em;box-shadow:.5em 0 1em -.5em;min-width:100%;overflow:visible}
+#ds-content .listingblock .content,#ds-content pre{padding-top:0;margin-top:0;padding-left:1em;padding-right:1em;margin-left:-1em;margin-right:-1em;margin-bottom:25px;background-color:#ffffe4;float:left;max-width:100%;min-width:100%;overflow:hidden;-webkit-transition:max-width .4s, box-shadow 0;-moz-transition:max-width .4s, box-shadow 0;-o-transition:max-width .4s, box-shadow 0;-ms-transition:max-width .4s, box-shadow 0;transition:max-width .4s,box-shadow 0;-webkit-transition-delay:0,.4s;-moz-transition-delay:0,.4s;-o-transition-delay:0,.4s;-ms-transition-delay:0,.4s;transition-delay:0,.4s;}
+#ds-content .listingblock .content:hover,#ds-content pre:hover{float:left;-webkit-box-shadow:.5em 0 1em -.5em;box-shadow:.5em 0 1em -.5em;min-width:100%;max-width:200%;width:auto;overflow:visible;-webkit-transition-delay:0,0;-moz-transition-delay:0,0;-o-transition-delay:0,0;-ms-transition-delay:0,0;transition-delay:0,0}
 #ds-content .listingblock .content.collapsed,#ds-content pre.collapsed,#ds-content .listingblock .content.collapsed:hover,#ds-content pre.collapsed:hover{height:1em;overflow:hidden;width:40em}
 #ds-content .listingblock .content .listing-collapser,#ds-content pre .listing-collapser{color:#808080;font-size:.8em;line-height:.8em;cursor:pointer;padding:0;margin:0;position:absolute;top:0;left:0}
 #ds-manifest{width:12em;min-width:12em;max-width:12em;padding-left:1em;padding-right:1em;color:#808080;background-color:#e7eff3;height:100%;overflow:hidden;display:table-cell;}
