@@ -14,7 +14,7 @@ define
         , toc
         , idCount = 0
     ; wrapper.html(result.html)
-    ; h5o(wrapper)
+    ; h5o(wrapper[0])
     ; names =
         result.names
         || [].map.call
