@@ -52,11 +52,11 @@ define(function()
 
   ; $scope.changeRepo = function()
     { if ($scope.repo && $scope.repoForm.ref.text && $scope.repo.ref !== $scope.repoForm.ref.text)
-      { console.log('here');$scope.repo.ref = $scope.repoForm.ref.text
+      { $scope.repo.ref = $scope.repoForm.ref.text
       ; changePath()
       }
       else if ($scope.repo && $scope.repo.id === $scope.repoForm.id)
-      { console.log('there');// do nothing
+      { // do nothing
       }
       else if ($scope.repoForm)
       { createRepoObj($scope.repoForm.id)
@@ -68,13 +68,11 @@ define(function()
                 || repo.path !== $scope.repoForm.path
                 || !repo.path
             ; repo.ref = $scope.repoForm.ref.text || repo.ref
-            ; console.log('ref', repo.ref)
             ; repo.path = $scope.repoForm.path
                 || repo.path
                 || repo.manifest.files[0].path
             ; $scope.repo = repo
             ; if (renderFile) changePath()
-            ; console.log('set repo')
             }
           , function(err)
             { console.log('err:', err) // TODO handle error
@@ -131,13 +129,15 @@ define(function()
   ; $scope.$watch
       ( function() { return $scope.repoForm.ref }
       , function(newVal, _old)
-        { console.log('newVal', newVal);if (newVal)
+        { if (newVal)
           { $scope.changeRepo()
           }
         }
       )
 
   ; $scope.scrollToHash = scrollToHash
+
+  ; $scope.console = console
   }
 
 ; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']

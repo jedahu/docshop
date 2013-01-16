@@ -3,6 +3,7 @@
   <head>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
+    <link rel='stylesheet' type='textcss' href='css/jquery-ui/jquery-ui-1.9.2.custom.css'>
     <link rel='stylesheet' type='text/css' href='css/select2.css'>
     <link rel='stylesheet' type='text/css' href='css/browse.css'>
   </head>
@@ -21,7 +22,6 @@
           data-placeholder='branch|tag|commit'
           data-ng-disabled='!repo.refs'>
         <button type='submit'></button>
-        <div ng-bind='repoForm.ref.text'></div>
       </form>
       <section class='paths' data-ds-file-nav='item in repo.manifest.files'>
         <h1
@@ -36,18 +36,21 @@
     <div id='ds-y'></div>
     <div id='ds-z'></div>
     <div id='ds-file'>
-      <nav id='ds-headings' data-ng-class='{show: !!renderedSrc.toc}'>
-        <h1>TOC</h1>
-        <div
-          data-ng-repeat='h in renderedSrc.toc'
-          data-ng-bind='h.innerText'
-          data-ng-click='scrollToHash(h.id)'
-          data-indent='{{0 - h.rank}}'
-          style='padding-left: {{0 - h.rank}}em'></div>
-      </nav>
-      <nav id='ds-names' data-ng-class='{show: !!renderedSrc.names}'>
-        <h1>Names</h1>
+      <nav id='ds-file-nav' data-ds-tabs='{}'>
         <ul>
+          <li data-ng-class='{hide: !renderedSrc.toc}'><a href='#ds-toc'><span>TOC</span></a></li>
+          <li data-ng-class='{hide: !renderedSrc.names}'><a href='#ds-names'><span>Names</span></a></li>
+        </ul>
+        <div id='ds-toc' data-ng-class='{hide: !renderedSrc.toc}'>
+          <div
+            data-ng-repeat='h in renderedSrc.toc'
+            data-ng-bind='h.innerText'
+            data-ng-click='scrollToHash(h.id)'
+            data-indent='{{0 - h.rank}}'
+            style='padding-left: {{-1 - h.rank}}em'></div>
+        </div>
+        <div id='ds-names' data-ng-class='{hide: !renderedSrc.names}'>
+          <ul>
             <li
               data-ng-repeat='n in renderedSrc.names'
               data-ng-click-scroll-to='"id:" + n'
@@ -55,6 +58,7 @@
               {{n}}
             </li>
           </ul>
+        </div>
       </nav>
       <article id='ds-content'>
       </article>

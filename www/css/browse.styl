@@ -25,6 +25,9 @@ toc-width = 15em
 .serif-trait
   font-family Vollkorn, Georgia, serif
 
+.hide
+  display none
+
 
 html
   @extends .sans-serif-trait
@@ -327,7 +330,8 @@ ul
   z-index 1
   left 0
   width manifest-width
-  padding 1.2em
+  padding 1em
+  margin 0
   color grey
   resize width
   height 100%
@@ -341,6 +345,9 @@ ul
     color white
     text-shadow -0.1em 0.1em 0.3em black
     word-wrap break-word
+    padding 0
+    margin 0
+    padding-bottom 1em
 
     a:link
       text-decoration none
@@ -364,8 +371,7 @@ ul
 
   button[type='submit']
     visibility hidden
-    position fixed
-    top -100px
+    height 1em
 
   .select2-container
     width 100%
@@ -412,55 +418,80 @@ ul
     &.file.current
       background-color white
 
-#ds-names,
-#ds-headings
+#ds-file-nav
   position fixed
   right 0.5em
-  width toc-width - 1em
-  top 3.6em
+  width toc-width - 2em
+  top 1em
   color grey
   z-index 10
-
-  div, li
-    cursor pointer
-
-#ds-headings
-  z-index 10
-  height 0
-
-  .toggle
-    position fixed
-    margin-top -1.8em
-    font-style italic
-
-  ul
-    height 100em
-    width 100em
-    position fixed
-    background-color #fafafa
-    transition opacity 0.5s
-
-#ds-names,
-#ds-headings ul
   list-style-type none
   padding 0
   margin 0
+  border none
+  background none
+  font-family inherit
+  font-size inherit
 
-#ds-headings li
-  &.level1
-    padding-left 0
+  .ui-widget-content
+    border none
+    color inherit
 
-  &.level2
-    padding-left 1em
+  .ui-tabs-panel
+    position absolute
+    padding 0
+    opacity 0
+    display block !important
+    transition opacity 0.5s
+    transition-delay 0s
 
-  &.level3
-    padding-left 2em
+    &[aria-hidden='false']
+      display block
+      opacity 1
 
-#ds-headings:hover
+  .ui-tabs-nav
+    border none
+    background none
+    font-size inherit
+    font-family inherit
+    line-height inherit
+    font-weight inherit
+    margin 0
+    padding 0
+    cursor pointer
+
+    a
+      padding 0 1em 0 0
+
+    li
+      border none
+      background none
+      line-height inherit
+      color black
+      text-transform uppercase
+
+      &.ui-state-focus,
+      &.ui-tabs-active,
+      &.ui-state-active
+        border none
+        font-style italic
+
+#ds-names
 
   ul
-    opacity 1 !important
-    visibility visible !important
+    padding 0
+    margin 0
+
+  li
+    list-style-type none
+    padding 0
+    margin 0
+    cursor pointer
+
+#ds-toc
+
+  div
+    cursor pointer
 
 #ds-commit
 
