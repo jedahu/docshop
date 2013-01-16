@@ -86,7 +86,7 @@ define
                         )
                     )
                 ; worker.postMessage
-                    ( JSON.stringify({type: 'lang', data: file.lang})
+                    ( JSON.stringify({type: 'lang', data: file.lang.name})
                     )
                 ; parser
                   . on

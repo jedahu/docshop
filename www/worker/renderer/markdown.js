@@ -1,6 +1,6 @@
 ; importScripts('lib/marked.js')
 
-; var lang = null
+; var lang = ''
     , text = ''
 
 ; receiveOnce
@@ -24,13 +24,13 @@
 ; receive
     ( 'code'
     , function()
-      { text += '\n~~~~\n'
+      { text += '\n```' + lang + '\n'
       }
     )
 ; receive
     ( '/code'
     , function()
-      { text += '~~~~\n\n'
+      { text += '```\n\n'
       }
     )
 ; receive
