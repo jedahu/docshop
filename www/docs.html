@@ -67,8 +67,8 @@
               <li
                 data-ng-repeat='n in renderedSrc.names'
                 data-ng-click-scroll-to='"id:" + n'
-                data-ng-click='scrollToHash("id:" + n)'>
-                {{n}}
+                data-ng-click='scrollToHash("id:" + n)'
+                data-ng-bind='n'>
               </li>
             </ul>
           </div>
