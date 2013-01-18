@@ -1,4 +1,9 @@
-define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
+define
+  ( [ 'lib/micro_emitter'
+    , 'util/tick'
+    , 'lib/js-yaml'
+    ]
+  , function(microEmitter, tick, jsyaml)
 
 { return function srcParser(lang, text)
   { var lines = text.split('\n')
@@ -19,7 +24,7 @@ define(['lib/micro_emitter', 'util/tick'], function(microEmitter, tick)
             }
             metaStr += lines[i] + '\n'
           }
-        ; me.metaData = JSON.parse(metaStr)
+        ; me.metaData = jsyaml.load(metaStr)
         ; return ++i
         }
   ; if (!lang)

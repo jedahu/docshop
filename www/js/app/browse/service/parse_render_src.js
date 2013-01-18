@@ -85,9 +85,11 @@ define
                           }
                         )
                     )
-                ; worker.postMessage
-                    ( JSON.stringify({type: 'lang', data: file.lang.name})
-                    )
+                ; if (file.lang)
+                  { worker.postMessage
+                      ( JSON.stringify({type: 'lang', data: file.lang.name})
+                      )
+                  }
                 ; parser
                   . on
                     ( '*'

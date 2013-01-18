@@ -35,6 +35,9 @@
         , 'lib/angular-sanitize':
             { deps: ['lib/angular']
             }
+        , 'lib/js-yaml':
+            { exports: 'jsyaml'
+            }
         }
     , nodeRequire: inNodeWebkit ? require : undefined
     }

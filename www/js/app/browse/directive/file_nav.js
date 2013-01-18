@@ -26,7 +26,7 @@ define(function()
           ; (function populate(parent, items)
             { for (i in items)
               { item = items[i]
-              ; if (item.name === '!index') continue
+              ; if (item.name === '~index') continue
               ; newScope = scope._wrapperScope.$new()
               ; if (Object.keys(item).length === 1) // sublist
                 { sublist = ngelem(document.createElement(elem[0].tagName))
@@ -37,7 +37,7 @@ define(function()
                 ; subitems = item[headingText]
                 ; if ((index = subitems.filter
                         ( function(x)
-                          { return x.name === '!index'
+                          { return x.name === '~index'
                           }
                         )
                       )

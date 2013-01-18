@@ -1,8 +1,8 @@
-define(function() {
+define(['lib/js-yaml'], function(jsyaml) {
 
 return {
   parse: function(manifest)
-  { this._manifest = JSON.parse(manifest)
+  { this._manifest = jsyaml.load(manifest)
   ; this._manifest.fileMap = {}
   ; this.normalizeLanguages()
   ; this.normalizeFiles(this._manifest.files, this._manifest.prefix || '')
