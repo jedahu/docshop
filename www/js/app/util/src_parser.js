@@ -25,7 +25,7 @@ define
             metaStr += lines[i] + '\n'
           }
         ; me.metaData = jsyaml.load(metaStr)
-        ; return ++i
+        ; return i
         }
   ; if (!lang)
     { me.emit('comment')
