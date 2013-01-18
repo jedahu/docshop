@@ -43,4 +43,4 @@
           })
       }
     )
-  . listen(process.env.PORT || 5000, '127.0.0.1')
+  . listen(process.env.PORT || 5000, '0.0.0.0')
