@@ -13,7 +13,13 @@
         id='ds-manifest'
         data-ui-jq='resizable'
         data-ui-options='resizeOpts("reverse")'>
-        <h1><a href='{{repo.url}}/'>{{repo.name}}</a></h1>
+        <h1
+          id='ds-repo-title'
+          title='{{repo.name + " @ " + repo.url}}'
+          data-url='{{repo.url}}'
+          data-ng-click='openExternal(repo.url)'
+          data-ng-bind='repo.name'>
+        </h1>
         <form data-ng-submit='changeRepo()'>
           <input
             data-ng-model='repoForm.id'

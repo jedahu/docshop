@@ -15,6 +15,8 @@
 
 ; var inNodeWebkit = typeof process !== 'undefined' && process.versions['node-webkit']
 
+; globalObj.inNodeWebkit = inNodeWebkit
+
 ; var rconfig =
     { baseUrl: 'js/app'
     , paths:

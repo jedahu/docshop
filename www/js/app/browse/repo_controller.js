@@ -156,6 +156,16 @@ define(function()
       , handles: direction === 'reverse' ? 'e' : 'w'
       }
     }
+
+  ; $scope.openExternal = (function()
+    { if (globalObj.inNodeWebkit)
+      { return require('nw.gui' + '').Shell.openExternal
+      }
+      return function(url)
+      { window.location = url
+      }
+    })()
+
   }
 
 ; RepoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
