@@ -1,15 +1,21 @@
+/* !meta
+title: File repository constructor
+author: Jeremy Hughes <jedahu@gmail.com>
+*/
 define(function()
 
 /*
-## File Repo Service
-<a id='id:fileRepoService'></a>
-A repo service that reads from disk. Useful *when* developing documentation.
-
-# Foobar
-
-## Blag
+A service that constructs a repository object for reading files from a local
+directory. This is useful for checking out how some documentation renders
+without having to check it in to one of Docshop's supported SCMs.
 */
+
 { var fs = require('fs' + '')
+
+/*
+The service requires the `$q` and `$rootScope` services from AngularJs and
+`parseManifest` from Docshop. The `$rootScope` service is used only to trigger a digest after resolving a deferred object.
+*/
 ; var fileRepoService = function($q, $rootScope, parseManifest)
   { return function fileRepo(repoId)
     { var repoPath = repoId.substr('file:'.length)
