@@ -65,6 +65,9 @@ define
           ; if (!isCommentOpen(lines[i + 1]))
             { me.emit('code')
             ; section = 'code'
+            ; while (lines[nextI = ++i].trim() == '')
+              { // pass
+              }
             }
           }
           else if (section === 'comment')
@@ -80,6 +83,9 @@ define
           }
           else
           { me.emit('code')
+          ; while (lines[nextI = ++i].trim() == '')
+            { // pass
+            }
           ; me.emit('code.line', line)
           ; section = 'code'
           }
