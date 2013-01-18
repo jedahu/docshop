@@ -37,6 +37,10 @@
         </section>
       </nav>
       <article id='ds-content'>
+        <h1
+          data-ng-bind='renderedSrc.meta.title'
+          data-ng-show='renderedSrc.meta.title'></h1>
+        <div data-ds-bind-node='renderedSrc.html'></div>
       </article>
       <nav id='ds-file-nav-backing'>
         <div id='ds-file-nav' data-ui-jq='tabs'>
