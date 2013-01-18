@@ -32,7 +32,7 @@ define
     ; tick.forEach
         ( lines
         , function(line, next)
-          { me.emit('line', line)
+          { me.emit('comment.line', {text: line + '\n'})
           ; next()
           }
         , function(err)

@@ -36,6 +36,7 @@ define
           html: wrapper
         , names: names.length > 0 ? names : null
         , toc: toc.length > 0 ? toc : null
+        , meta: result.meta
         }
     }
   ; return function parseRenderSrc(repo, file)

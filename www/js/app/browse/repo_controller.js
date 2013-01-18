@@ -59,7 +59,8 @@ define(function()
       { // do nothing
       }
       else if ($scope.repoForm)
-      { createRepoObj($scope.repoForm.id)
+      { if (!$scope.repoForm.ref) $scope.repoForm.ref = {}
+      ; createRepoObj($scope.repoForm.id)
         . then
           ( function(repo)
             { var renderFile
@@ -93,10 +94,8 @@ define(function()
         )
       . then
         ( function(result)
-          { var hashElem
+          { result.html.prepend('<div id="ds-float-fix">&nbsp;</div>')
           ; $scope.renderedSrc = result
-          ; result.html.prepend('<div id="ds-float-fix">&nbsp;</div>')
-          ; angular.element('#ds-content').html('').append(result.html)
           ; return $location.hash()
           }
         )
@@ -105,7 +104,7 @@ define(function()
           { scrollToHash(hash, false)
           }
         , function(err)
-          { angular.element('#ds-content').html('<b>ERROR</b>')
+          { $scope.renderedSrc.html = angular.element('<b>ERROR</b>')
           }
         )
     ; setPath()
@@ -127,7 +126,7 @@ define(function()
       )
 
   ; $scope.$watch
-      ( function() { return $scope.repoForm.ref }
+      ( function() { return $scope.repoForm && $scope.repoForm.ref }
       , function(newVal, _old)
         { if (newVal)
           { $scope.changeRepo()

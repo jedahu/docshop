@@ -5,9 +5,9 @@ define(function()
     { scope.$watch
         ( attr.dsBindNode
         , function(value)
-          { elem[0].innerHTML = ''
+          { elem.html('')
           ; if (value)
-            { elem[0].appendChild(value)
+            { elem.append(value)
             }
           }
         )
