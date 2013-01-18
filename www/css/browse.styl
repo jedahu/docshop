@@ -3,11 +3,10 @@
 font-size = 12px
 line-height = 21px
 
-content-width = 40em
-manifest-width = 12em
-content-padding = 1em
+manifest-width = 168px
+pad = 12px
 manifest-bg = #e7eff3
-toc-width = 12em
+toc-width = 156px
 
 .content-trait
   margin-right toc-width
@@ -53,10 +52,10 @@ ul
 
 #ds-content
   display table-cell
-  box-shadow 0 0 1em black
+  box-shadow 0 0 12px black
   position relative
   z-index 100
-  max-width 10em
+  max-width 120px
   //@extends .content-trait
 
   p,
@@ -244,7 +243,7 @@ ul
         color red
 
 #ds-content
-  padding: 1.2em content-padding 3em content-padding
+  padding: (1.2 * pad) pad (3 * pad) pad
   //box-shadow 0.5em 0 1em -0.5em
 
   .paragraph,
@@ -260,10 +259,10 @@ ul
   pre
     padding-top 0
     margin-top 0
-    padding-left content-padding
-    padding-right content-padding
-    margin-left 0 - content-padding
-    margin-right 0 - content-padding
+    padding-left pad
+    padding-right pad
+    margin-left 0 - pad
+    margin-right 0 - pad
     margin-bottom 25px
     background-color #ffffe4
     float left
@@ -275,7 +274,7 @@ ul
 
     &:hover
       float left
-      box-shadow 0.5em 0 1em -0.5em
+      box-shadow 6px 0 pad -6px black
       min-width 100%
       max-width 200%
       width auto
@@ -284,7 +283,7 @@ ul
 
     &.collapsed,
     &.collapsed:hover
-      height 1em
+      height pad
       overflow hidden
       width content-width
 
@@ -300,11 +299,12 @@ ul
       left 0
 
 #ds-manifest
+  box-sizing border-box
   width manifest-width
   min-width manifest-width
   max-width manifest-width
-  padding-left 1em
-  padding-right 1em
+  padding-left pad
+  padding-right pad
   color grey
   background-color manifest-bg
   height 100%
@@ -315,14 +315,6 @@ ul
   a:link,
   a:hover
     color inherit
-
-  h1
-    color white
-    text-shadow -0.1em 0.1em 0.3em black
-    word-wrap break-word
-    padding 0
-    margin 0
-    padding-bottom 1em
 
     a:link
       text-decoration none
@@ -346,7 +338,7 @@ ul
 
   button[type='submit']
     visibility hidden
-    height 1em
+    height pad
 
   .select2-container
     width 100%
@@ -355,39 +347,39 @@ ul
   position relative
 
   .file
-    margin-left -2em
-    padding-left 2em
+    margin-left -(2 * pad)
+    padding-left 2 * pad
 
   h1
     padding-bottom: 0
     margin-bottom: 0
     color white
-    text-shadow -0.1em 0.1em 0.3em black
-    width manifest-width + 4em
+    text-shadow -2px 2px 3px black
+    width manifest-width + (4 * pad)
     text-transform uppercase
 
     &.file.current
-      text-shadow -0.1em 0.1em 0.3em pink
+      text-shadow -2px 2px 3px pink
       color crimson
 
   div
     margin 0
     padding 0
-    width manifest-width + 4em
-    height 1.8em
+    width manifest-width + (4 * pad)
+    height 22px
     white-space nowrap
 
   .file.current
     background-color white
     color crimson
-    box-shadow 0 0.5em 1em -0.5em black
-    margin-left -2em
-    padding-left 2em
+    box-shadow 0 6px pad -6px black
+    margin-left -(2 * pad)
+    padding-left 2 * pad
     position relative
     z-index 1000
 
   .file:hover
-    box-shadow 0 0.5em 1em -0.5em black
+    box-shadow 0 6px pad -6px black
     cursor pointer
     background-color lighten(manifest-bg, 4)
     position relative
@@ -398,9 +390,9 @@ ul
 
 #ds-file-nav-backing
   display table-cell
-  width toc-width + 1em
-  min-width toc-width + 1em
-  max-width toc-width + 1em
+  width toc-width + pad
+  min-width toc-width + pad
+  max-width toc-width + pad
   background-color #fafafa
 
 #ds-file-nav
@@ -413,7 +405,7 @@ ul
   list-style-type none
   padding 0
   margin 0
-  padding-left 1em
+  padding-left pad
   border none
   background none
   font-family inherit
@@ -449,7 +441,7 @@ ul
     cursor pointer
 
     a
-      padding 0 1em 0 0
+      padding 0 pad 0 0
 
     li
       border none
@@ -484,3 +476,14 @@ ul
 #ds-float-fix
   visibility hidden
   height 0
+
+#ds-repo-title
+  font-size pad
+  padding (2 * pad) pad (2.5 * pad) pad
+  margin 0 (0 - pad)
+  margin-bottom pad
+  text-overflow ellipsis
+  overflow hidden
+  white-space nowrap
+  background-color darken(manifest-bg, 16)
+  font-size 2 * pad
