@@ -487,3 +487,45 @@ ul
   white-space nowrap
   background-color darken(manifest-bg, 16)
   font-size 2 * pad
+
+#ds-show-settings
+  position fixed
+  top 0
+  right 0
+  z-index 1000
+  display inline-block
+
+#ds-settings-modal
+
+  bottom 10%
+  background-color white
+  overflow-y auto
+
+  .modal-body
+    overflow-y hidden
+    max-height none
+
+    input
+      display block
+
+    button
+      display block
+      margin-bottom (2 * pad)
+
+    background-color white
+
+//#ds-settings-modal
+//  position absolute
+//  top pad
+//  margin pad
+//  z-index 9000
+//  background-color white
+//
+//.modal-backdrop
+//  position fixed
+//  top 0
+//  left 0
+//  width 100%
+//  height 100%
+//  z-index 8999
+//  background-color #0009

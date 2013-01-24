@@ -32,13 +32,16 @@
             { deps: ['lib/jquery', 'lib/jquery-ui']
             }
         , 'lib/angular-ui':
-            { deps: ['lib/angular', 'lib/select2']
+            { deps: ['lib/angular', 'lib/select2', 'lib/bootstrap-modal']
             }
         , 'lib/angular-sanitize':
             { deps: ['lib/angular']
             }
         , 'lib/js-yaml':
             { exports: 'jsyaml'
+            }
+        , 'lib/bootstrap-modal':
+            { deps: ['lib/jquery']
             }
         }
     , nodeRequire: inNodeWebkit ? require : undefined
