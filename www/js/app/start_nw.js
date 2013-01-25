@@ -1,8 +1,8 @@
 define
-  ( [ 'browse'
-    , 'browse/repo_type/git'
-    , 'browse/repo_type/file'
-    , 'browse/service/spawn_capture'
+  ( [ 'es6!browse'
+    , 'es6!browse/repo_type/git'
+    , 'es6!browse/repo_type/file'
+    , 'es6!browse/service/spawn_capture'
     ]
   , function(browse, gitRepoType, fileRepoType, spawnCaptureService)
 

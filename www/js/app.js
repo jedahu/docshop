@@ -21,6 +21,7 @@
     { baseUrl: 'js/app'
     , paths:
         { lib: '../lib'
+        , 'source-map': '../lib/source-map'
         }
     , urlArgs: 'bust=' + new Date().getTime()
     , shim:
@@ -76,7 +77,7 @@
   else
   { requirejs.config(rconfig)
   ; requirejs
-      ( [mainModule]
+      ( ['es6!' + mainModule]
       , function(_)
         { globalObj['angular'].bootstrap(document, ['BrowseModule'])
         }

@@ -1,4 +1,4 @@
-define(['util/tick'], function(tick)
+define(['es6!util/tick'], function(tick)
 
 { var scrollToHashService = function($location)
   { return scrollToHash = function(id)

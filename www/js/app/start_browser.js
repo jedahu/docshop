@@ -1,1 +1,1 @@
-define(['browse'])
+define(['es6!browse'])

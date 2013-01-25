@@ -1,5 +1,5 @@
 define
-  ( [ 'util/src_parser'
+  ( [ 'es6!util/src_parser'
     , 'lib/HTMLOutliner'
     ]
   , function

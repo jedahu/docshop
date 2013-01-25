@@ -1,6 +1,6 @@
 define
   ( [ 'lib/micro_emitter'
-    , 'util/tick'
+    , 'es6!util/tick'
     , 'lib/js-yaml'
     ]
   , function(microEmitter, tick, jsyaml)
