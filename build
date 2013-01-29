@@ -21,6 +21,7 @@ run_build() {
     www/js/lib/jquery.js \
     www/js/lib/jquery-ui.js \
     www/js/lib/select2.js \
+    www/js/lib/bootstrap-modal.js \
     www/js/lib/angular.js \
     www/js/lib/angular-sanitize.js \
     www/js/lib/angular-ui.js \
