@@ -1,14 +1,11 @@
-define(['util/tick'], function(tick)
+//define(['util/tick'], function(tick)
+; import nextTick from '../../util/tick.js'
 
-{ var scrollToHashService = function($location)
-  { return scrollToHash = function(id)
-    { var elem = document.getElementById(id)
-    ; $location.hash(id)
-    ; tick.nextTick(function() {elem && elem.scrollIntoView()})
-    }
-  }
+; export const scrollToHashService = ($location) =>
+    (id) =>
+      { const elem = document.getElementById(id)
+      ; $location.hash(id)
+      ; nextTick(() => {elem && elem.scrollIntoView()})
+      }
 
 ; scrollToHashService.$inject = ['$location']
-; return scrollToHashService
-
-});

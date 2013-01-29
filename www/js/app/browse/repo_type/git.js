@@ -1,70 +1,53 @@
-define(function()
-
-{ var cp = require('child_process' + '')
-; var gitRepoService = function($q, spawnCapture, parseManifest)
-  { return function gitRepo(repoId)
-    { var repoPath = repoId.substr('git:'.length)
-        , repo =
-            { id: repoId
-            , tags: []
-            , branches: []
-            , name: repoPath
-            , readFile: function(path)
-              { return spawnCapture
-                  ( 'git'
-                  , ['show', this.ref + ':' + path]
-                  , {cwd: repoPath}
-                  )
-              }
-            }
-    ; return spawnCapture('git', ['branch', '--list'], {cwd: repoPath})
-      . then
-        ( function(branchesStr)
-          { branchesStr.split('\n').forEach
-              ( function(str)
-                { var branch = str.slice(1).trim()
+; const cp = require('child_process' + '')
+; export const gitRepoType = ($q, spawnCapture, parseManifest) =>
+    (repoId) =>
+      { const repoPath = repoId.substr('git:'.length)
+      ; const repo =
+          { id: repoId
+          , tags: []
+          , branches: []
+          , name: repoPath
+          , readFile: (path) =>
+              spawnCapture
+                ( 'git'
+                , ['show', this.ref + ':' + path]
+                , {cwd: repoPath}
+                )
+          }
+      ; return spawnCapture('git', ['branch', '--list'], {cwd: repoPath})
+          .then((branchesStr) =>
+            { branchesStr.split('\n').forEach((str) =>
+                { const branch = str.slice(1).trim()
                 ; if (branch == '') return
                 ; if (branch == '(no branch)') return
                 ; if (str[0] == '*')
-                  { repo.ref = branch
-                  }
+                    { repo.ref = branch
+                    }
                 ; repo.branches.push(branch)
-                }
-              )
-          // FIXME repo.ref must be set to what is in $location and only
-          // fall back to the *rred branch if $location is not set.
-          ; if (!repo.ref) repo.ref = repo.branches[0]
-          ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
-          }
-        )
-      . then
-        ( function(tagsStr)
-          { tagsStr.split('\n').forEach
-            ( function(str)
-              { var tag = str.trim()
-              ; if (tag != '') repo.tags.push(tag)
-              }
-            )
-          ; repo.refs = repo.branches.concat(repo.tags)
-          ; return spawnCapture
-              ('git'
-              , ['show', repo.ref + ':doc_manifest']
-              , { cwd: repoPath
-                , transformResponse: function(x) { return x }
-                }
-              )
-          }
-        )
-      . then
-        ( function(manifestStr)
-          { repo.manifest = parseManifest(manifestStr)
-          ; return repo
-          }
-        )
-    }
-  }
+                })
+            // FIXME repo.ref must be set to what is in $location and only
+            // fall back to the *rred branch if $location is not set.
+            ; if (!repo.ref) repo.ref = repo.branches[0]
+            ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
+            })
+          .then((tagsStr) =>
+            { tagsStr.split('\n').forEach((str) =>
+                { const tag = str.trim()
+                ; if (tag != '') repo.tags.push(tag)
+                })
+            ; repo.refs = repo.branches.concat(repo.tags)
+            ; return spawnCapture
+                ( 'git'
+                , ['show', repo.ref + ':doc_manifest']
+                , { cwd: repoPath
+                  , transformResponse: (x) => x
+                  }
+                )
+            })
+          .then((manifestStr) =>
+            { repo.manifest = parseManifest(manifestStr)
+            ; return repo
+            })
+      }
 
-; gitRepoService.$inject = ['$q', 'spawnCapture', 'parseManifest']
-; return gitRepoService
-
-});
+; gitRepoType.$inject = ['$q', 'spawnCapture', 'parseManifest']

@@ -1,43 +1,31 @@
-define(function()
+; const cp = require('child_process' + '')
 
-{ var cp = require('child_process' + '')
-
-; var spawnCaptureService = function($q, $rootScope)
-  { return function spawnCapture(cmd, args, opts)
-    { var outStr = ''
-        , errStr = ''
-        , proc = cp.spawn(cmd, args, opts)
-        , deferred = $q.defer()
-        , done = false
-    ; proc.stdout.setEncoding('utf8')
-    ; proc.stderr.setEncoding('utf8')
-    ; proc.stdout.on('data', function(data) { outStr += data })
-    ; proc.stderr.on('data', function(data) { errStr += data })
-    ; proc.stdout.on
-        ( 'end'
-        , function()
+; export const spawnCaptureService = ($q, $rootScope) =>
+    (cmd, args, opts) =>
+      { let outStr = ''
+      ; let errStr = ''
+      ; const proc = cp.spawn(cmd, args, opts)
+      ; const deferred = $q.defer()
+      ; let done = false
+      ; proc.stdout.setEncoding('utf8')
+      ; proc.stderr.setEncoding('utf8')
+      ; proc.stdout.on('data', (data) => {outStr += data})
+      ; proc.stderr.on('data', (data) => {errStr += data})
+      ; proc.stdout.on('end', () =>
           { if (!done)
-            { deferred.resolve(outStr)
-            ; $rootScope.$digest()
-            ; done = true
-            }
-          }
-        )
-    ; proc.on
-        ( 'exit'
-        , function(code, _signal)
+              { deferred.resolve(outStr)
+              ; $rootScope.$digest()
+              ; done = true
+              }
+          })
+      ; proc.on('exit', (code, _signal) =>
           { if (code != 0 && !done)
-            { deferred.reject({cmdErr: errStr, cmd: cmd, args: args})
-            ; $rootScope.$digest()
-            ; done = true
-            }
-          }
-        )
-    ; return deferred.promise
-    }
-  }
+              { deferred.reject({cmdErr: errStr, cmd: cmd, args: args})
+              ; $rootScope.$digest()
+              ; done = true
+              }
+          })
+      ; return deferred.promise
+      }
 
 ; spawnCaptureService.$inject = ['$q', '$rootScope']
-; return spawnCaptureService
-
-});

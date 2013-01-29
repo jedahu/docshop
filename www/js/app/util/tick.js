@@ -1,29 +1,23 @@
-define(
-
-{ nextTick: typeof process !== 'undefined'
+; export const nextTick = typeof process !== 'undefined'
     && process.nextTick
-    || function(fn) { setTimeout(fn, 0) }
+    || (fn) => {setTimeout(fn, 0)}
 
-, forEach: function(list, fn, cb, eb)
-  { var self = this
-      , i = 0
-      , next = function()
+; export const forEach = (list, fn, cb, eb) =>
+    { let i = 0
+    ; const next = () =>
         { if (i === list.length) cb()
-          else self.nextTick(fn.bind(null, list[i++], next, eb))
+          else nextTick(() => fn(list[i++], next, eb))
         }
-  ; next()
-  }
+    ; next()
+    }
 
-, for: function(init, test, incr, fn, cb, eb)
-  { var self = this
-      , next = function(val)
+; export const loop = (init, test, incr, fn, cb, eb) =>
+    { const next = (val) =>
         { init = typeof val === 'undefined' || val === null ? incr(init) : val
         ; if (test(init))
-          { self.nextTick(fn.bind(null, init, next, eb))
-          }
+            { nextTick(() => fn(init, next, eb))
+            }
           else cb(init)
         }
-  ; next(init)
-  }
-
-});
+    ; next(init)
+    }

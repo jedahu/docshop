@@ -1,46 +1,28 @@
-define(function()
+; export const httpRepoType = ($q, $http, parseManifest) =>
+    (repoId) =>
+      { const deferred = $q.defer()
+      ; const repo =
+          { id: repoId
+          , tags: []
+          , branches: []
+          , refs: []
+          , ref: null
+          , name: repoId
+          }
+      ; $http
+          ( { method: 'GET'
+            , url: repoId + 'doc_manifest'
+            , transformResponse: (x) => x
+            }
+          )
+          .success((data) =>
+            { repo.manifest = parseManfiest(data)
+            ; deferred.resolve(repo)
+            })
+          .error((err) =>
+            { deferred.reject(err)
+            })
+      ; return deferred.promise
+      }
 
-{ var service = function($q, $http, parseManifest)
-  { return function(repoId)
-    { var repo = {}
-        , deferred = $q.defer()
-    ; Object.defineProperties
-        ( repo
-        , { id: {value: repoId}
-          , tags: {value: []}
-          , branches: {value: []}
-          , refs: {value: []}
-          , ref: {value: 'N/A'}
-          , name: {value: repoId}
-          }
-        )
-    ; $http
-        ( { method: 'GET'
-          , url: repoId + 'doc_manifest'
-          , transformResponse: function(x) { return x }
-          }
-        )
-      . success
-        ( function(data)
-          { Object.defineProperties
-              ( repo
-              , { manifest: {value: parseManifest(data)}
-                }
-              )
-          ; console.log(repo)
-          ; deferred.resolve(repo)
-          }
-        )
-      . error
-        ( function(err)
-          { deferred.reject(err)
-          }
-        )
-    ; return deferred.promise
-    }
-  }
-
-; service.$inject = ['$q', '$http', 'parseManifest']
-; return service
-
-});
+; httpRepoType.$inject = ['$q', '$http', 'parseManifest']

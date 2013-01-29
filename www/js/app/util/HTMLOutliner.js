@@ -1,6 +1,3 @@
-//Wrapped in an outer function to preserve global this
-(function (root) { var amdExports; define([], function () { (function () {
-
 // Section class
 function Section() {
 	this.parentSection = null;
@@ -20,7 +17,7 @@ function Section() {
 }
 
 // Main function
-function HTMLOutline(root) {
+export function HTMLOutline(root) {
 	
 	// BEGIN OUTLINE ALGORITHM
 	// STEP 1
@@ -253,10 +250,3 @@ function HTMLOutline(root) {
 		}
 	}
 }
-
-
-amdExports = HTMLOutline
-
-}.call(root));
-    return amdExports;
-}); }(this));
