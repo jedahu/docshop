@@ -1,15 +1,16 @@
 #!/bin/sh
 
 run_build() {
-  rm -rf www-built
-  mkdir www-built
+  rm -rf dist
+  mkdir dist
 
   cp -R \
     www/docs.html \
-    www/css \
     www/worker \
+    www/css/*.png \
+    www/css/*.gif \
     www/package.json \
-    www-built
+    dist
 
   traceurc \
     --inline-modules \
@@ -18,20 +19,30 @@ run_build() {
     --trapMemberLookup=false \
     www/js/app/start_$1.js
 
+
+  cat \
+    www/css/jquery-ui/jquery-ui-1.9.2.custom.css \
+    www/css/angular-ui.css \
+    www/css/select2.css \
+    >dist/main.css
+
+  stylus -u nib -c \
+    <www/css/browse.styl \
+    >>dist/main.css
+
   cat \
     www/js/lib/jquery.js \
     www/js/lib/jquery-ui.js \
     www/js/lib/select2.js \
-    www/js/lib/bootstrap-modal.js \
     www/js/lib/angular.js \
     www/js/lib/angular-sanitize.js \
     www/js/lib/angular-ui.js \
     www/js/lib/js-yaml.js \
     www/js/lib/runtime.js \
     out/www/js/app/start_$1.compiled.js \
-    >www-built/main.js
+    >dist/main.js
 
-  cp out/www/js/app/start_$1.map www-built/main.map
+  cp out/www/js/app/start_$1.map dist/main.map
 }
 
 START=nw

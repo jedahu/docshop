@@ -3,11 +3,7 @@
   <head>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
-    <link rel='stylesheet' type='textcss' href='css/jquery-ui/jquery-ui-1.9.2.custom.css'>
-    <link rel='stylesheet' type='text/css' href='css/select2.css'>
-    <link rel='stylesheet' type='text/css' href='css/bootstrap.css'>
-    <link rel='stylesheet' type='text/css' href='css/angular-ui.css'>
-    <link rel='stylesheet' type='text/css' href='css/browse.css'>
+    <link rel='stylesheet' type='text/css' href='main.css'>
   </head>
   <body data-ng-controller='RepoController'>
     <div id='body'>
@@ -80,8 +76,6 @@
     <div>
       <div
         data-ng-controller-noop='SettingsController'
-        data-ui-modal
-        data-ng-model='settingsVisible'
         id='ds-settings-modal'>
         <h1 class='modal-header'>
           Settings
@@ -110,8 +104,10 @@
       <button
         id='ds-show-settings'
         data-ng-click='settingsVisible=!settingsVisible'
-        href='#ds-settings-modal'>&#9881;</div>
-    </button>
+        href='#ds-settings-modal'>
+        &#9881;
+      </button>
+    </div>
     <script src='main.js'></script>
   </body>
 </html>
