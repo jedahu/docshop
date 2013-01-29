@@ -85,3 +85,8 @@ ul{list-style-position:inside}
 #ds-toc div{cursor:pointer}
 #ds-float-fix{visibility:hidden;height:0}
 #ds-repo-title{font-size:12px;padding:24px 12px 30px 12px;margin:0 -12px;margin-bottom:12px;-o-text-overflow:ellipsis;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;background-color:#b1cbd8;font-size:24px}
+#ds-show-settings{position:fixed;top:0;right:0;z-index:1000;display:inline-block}
+#ds-settings-modal{bottom:10%;background-color:#fff;overflow-y:auto;}
+#ds-settings-modal .modal-body{overflow-y:hidden;max-height:none;background-color:#fff}
+#ds-settings-modal .modal-body input{display:block}
+#ds-settings-modal .modal-body button{display:block;margin-bottom:24px}
