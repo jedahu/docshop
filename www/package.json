@@ -1,5 +1,5 @@
 { "name": "docshop"
-, "main": "www-built/docs.html"
+, "main": "docs.html"
 , "version": "0.0.1"
 , "dependencies": {}
 , "engines":

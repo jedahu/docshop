@@ -8,6 +8,7 @@ run_build() {
     www/docs.html \
     www/css \
     www/worker \
+    www/package.json \
     www-built
 
   traceurc \
