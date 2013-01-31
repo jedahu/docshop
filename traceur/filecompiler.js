@@ -257,6 +257,7 @@
     loader.loadTextFile = function(filename, callback, errback) {
       console.log('Reading %s', path.join(dirname, filename));
       originalFiles.push(filename);
+      if (filename[0] === '/') filename = filename.slice(1);
       var text;
       fs.readFile(path.resolve(dirname, filename), 'utf8', function(err, data) {
         if (err) {

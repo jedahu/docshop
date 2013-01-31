@@ -1,5 +1,5 @@
 //define(['util/tick'], function(tick)
-; import nextTick from '../../util/tick.js'
+; import nextTick from '/util/tick.js'
 
 ; export const scrollToHashService = ($location) =>
     (id) =>

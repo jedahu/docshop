@@ -6,8 +6,8 @@
 //      ( srcParser
 //      , h5o
 //      )
-; import srcParser from '../../util/src_parser.js'
-; import HTMLOutline from '../../util/HTMLOutliner.js'
+; import srcParser from '/util/src_parser.js'
+; import HTMLOutline from '/util/HTMLOutliner.js'
 
 ; export const parseRenderSrcService = ($q, $http, $rootScope) =>
     { const process = (result) =>
