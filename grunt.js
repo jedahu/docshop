@@ -51,11 +51,14 @@ module.exports = function(grunt)
         }
     , watch:
         { css:
-            { files: 'www/css/**/*'
+            { files:
+                [ 'www/css/*‥css'
+                , 'www/css/*.styl'
+    ]
             , tasks: ['stylus']
             }
         , js:
-            { files: 'www/js/**/*.js'
+            { files: 'www/js/app/**/*.js'
             , tasks: ['traceur concat:js']
             }
         , copy:
