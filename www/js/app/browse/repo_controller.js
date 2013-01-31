@@ -122,23 +122,9 @@
 
     ; $scope.console = console
 
-    ; $scope.resizeOpts = (direction) =>
-        { const content = jQuery('#ds-content')
-        ; let originalWidth
-        ; let originalOffset
-        ; return (
-            { start: (evt, ui) =>
-                { originalWidth = content.width()
-                ; originalOffset = content.offset().left
-                }
-            , resize: (evt, ui) =>
-                { const travel = ui.size.width - ui.originalSize.width
-                ; if (direction === 'reverse')
-                    { content.offset({left: originalOffset + travel})
-                    }
-                }
-            , handles: direction === 'reverse' ? 'e' : 'w'
-            })
+    ; $scope.fileNavResizeOpts =
+        { handles: 'w'
+        , resize: (evt, ui) => ui.element.css('left', 'auto')
         }
 
     ; $scope.openExternal =

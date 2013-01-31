@@ -10,7 +10,7 @@
       <nav
         id='ds-manifest'
         data-ui-jq='resizable'
-        data-ui-options='resizeOpts("reverse")'>
+        data-ui-options='{handles: "e", distance: 1}'>
         <h1
           id='ds-repo-title'
           title='{{repo.name + " @ " + repo.url}}'
@@ -46,7 +46,10 @@
           data-ng-show='renderedSrc.meta.title'></h1>
         <div data-ds-bind-node='renderedSrc.html'></div>
       </article>
-      <nav id='ds-file-nav-backing'>
+      <nav
+        id='ds-file-nav-backing'
+        data-ui-jq='resizable'
+        data-ui-options='fileNavResizeOpts'>
         <div id='ds-file-nav' data-ui-jq='tabs'>
           <ul>
             <li data-ng-class='{hide: !renderedSrc.toc}'><a href='#ds-toc'><span>TOC</span></a></li>
