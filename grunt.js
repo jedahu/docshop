@@ -1,6 +1,13 @@
 module.exports = function(grunt)
 
-{ grunt.initConfig(
+{ var md5sum = require('MD5')
+    , fs = require('fs')
+
+; var bustCache = function(url)
+    { return url + '?z=' + md5sum(fs.readFileSync('dist/' + url, 'utf8'))
+    }
+
+; grunt.initConfig(
     { stylus:
         { compile:
             { options:
@@ -16,8 +23,7 @@ module.exports = function(grunt)
             { files:
                 [ { dest: 'dist/'
                   , src:
-                      [ 'www/docs.html'
-                      , 'www/package.json'
+                      [ 'www/package.json'
                       , 'www/worker/**'
                       ]
                   , flatten: true
@@ -49,6 +55,20 @@ module.exports = function(grunt)
             , dest: 'dist/main.js'
             }
         }
+    , template:
+        { index:
+            { src: 'www/docs.html'
+            , dest: 'dist/docs.html'
+            , engine: 'ejs'
+            , variables: {bustCache: bustCache}
+            }
+        , cachefile:
+            { src: 'www/offline.appcache'
+            , dest: 'dist/offline.appcache'
+            , engine: 'ejs'
+            , variables: {bustCache: bustCache}
+            }
+        }
     , watch:
         { css:
             { files:
@@ -65,11 +85,17 @@ module.exports = function(grunt)
             { files:
                 [ 'www/css/*.png'
                 , 'www/css/*.gif'
-                , 'www/docs.html'
                 , 'www/package.json'
                 , 'www/worker/**/*.js'
                 ]
             , tasks: ['copy']
+            }
+        , template:
+            { files:
+                [ 'www/docs.html'
+                , 'www/offline.appcache'
+                ]
+            , tasks: ['template']
             }
         }
     })
@@ -78,6 +104,7 @@ module.exports = function(grunt)
 ; grunt.loadNpmTasks('grunt-contrib-copy')
 ; grunt.loadNpmTasks('grunt-clean')
 ; grunt.loadNpmTasks('grunt-contrib-watch')
+; grunt.loadNpmTasks('grunt-templater')
 
 ; grunt.registerTask('traceur', function()
     { var done = this.async()
@@ -103,6 +130,6 @@ module.exports = function(grunt)
     ; spawn('nw', ['dist'])
     })
 
-; grunt.registerTask('default', 'stylus traceur concat:js copy')
+; grunt.registerTask('default', 'stylus traceur concat:js copy template')
 
 };

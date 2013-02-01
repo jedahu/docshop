@@ -3,7 +3,7 @@
   <head>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
-    <link rel='stylesheet' type='text/css' href='main.css'>
+    <link rel='stylesheet' type='text/css' href='<%= bustCache("main.css") %>'>
   </head>
   <body data-ng-controller='RepoController'>
     <div id='body'>
@@ -111,6 +111,6 @@
         &#9881;
       </button>
     </div>
-    <script src='main.js'></script>
+    <script src='<%= bustCache("main.js") %>'></script>
   </body>
 </html>
