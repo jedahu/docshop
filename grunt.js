@@ -56,13 +56,13 @@ module.exports = function(grunt)
             }
         }
     , template:
-        { index:
+        { html:
             { src: 'www/docs.html'
             , dest: 'dist/docs.html'
             , engine: 'ejs'
             , variables: {bustCache: bustCache}
             }
-        , cachefile:
+        , appcache:
             { src: 'www/offline.appcache'
             , dest: 'dist/offline.appcache'
             , engine: 'ejs'
@@ -74,28 +74,26 @@ module.exports = function(grunt)
             { files:
                 [ 'www/css/*‥css'
                 , 'www/css/*.styl'
-    ]
-            , tasks: ['stylus']
+                , 'www/css/*.png'
+                , 'www/css/*.gif'
+                ]
+            , tasks: 'css'
             }
         , js:
-            { files: 'www/js/app/**/*.js'
-            , tasks: ['traceur concat:js']
+            { files: 'www/**/*.js'
+            , tasks: 'js'
             }
-        , copy:
-            { files:
-                [ 'www/css/*.png'
-                , 'www/css/*.gif'
-                , 'www/package.json'
-                , 'www/worker/**/*.js'
-                ]
-            , tasks: ['copy']
+        , package:
+            { files: 'www/package.json'
+            , tasks: 'copy:package'
             }
-        , template:
-            { files:
-                [ 'www/docs.html'
-                , 'www/offline.appcache'
-                ]
-            , tasks: ['template']
+        , html:
+            { files: 'www/docs.html'
+            , tasks: 'template:html'
+            }
+        , appcache:
+            { files: 'www/offline.appcache'
+            , tasks: 'template:appcache'
             }
         }
     })
