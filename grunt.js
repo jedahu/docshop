@@ -19,25 +19,25 @@ module.exports = function(grunt)
             }
         }
     , copy:
-        { dist:
+        { package:
+            { files: {'dist/': 'www/package.json'}
+            }
+        , worker:
+            { files: {'dist/': 'www/worker/**'}
+            , options: {basePath: 'www'}
+            }
+        , css:
             { files:
-                [ { dest: 'dist/'
-                  , src:
-                      [ 'www/package.json'
-                      , 'www/worker/**'
-                      ]
-                  , flatten: true
-                  }
-                , { 'dist/':
-                      [ 'www/css/*.png'
-                      , 'www/css/*.gif'
-                      ]
-                  }
-                ]
+                { 'dist/':
+                    [ 'www/css/*.png'
+                    , 'www/css/*.gif'
+                    ]
+                }
             }
         }
     , clean:
         { dist: 'dist'
+        , tmp: 'tmp'
         }
     , concat:
         { js:
@@ -109,6 +109,7 @@ module.exports = function(grunt)
 ; grunt.registerTask('traceur', function()
     { var done = this.async()
     ; var spawn = require('child_process').spawn
+    ; fs.mkdir('tmp')
     ; var proc = spawn
         ( 'node'
         , [ './traceur/filecompiler.js'
@@ -130,6 +131,9 @@ module.exports = function(grunt)
     ; spawn('nw', ['dist'])
     })
 
-; grunt.registerTask('default', 'stylus traceur concat:js copy template')
+; grunt.registerTask('css', 'stylus copy:css')
+; grunt.registerTask('js', 'traceur concat:js copy:worker')
+; grunt.registerTask('html', 'stylus traceur concat:js template')
+; grunt.registerTask('all', 'stylus traceur concat copy template')
 
 };
