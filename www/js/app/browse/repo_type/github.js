@@ -12,9 +12,12 @@
           }
       ; $q
           .all
-            ( [ $http.get(API_PREFIX + 'repos/' + id)
-              , $http.get(API_PREFIX + 'repos/' + id + '/tags')
-              , $http.get(API_PREFIX + 'repos/' + id + '/branches')
+            ( [ $http.jsonp(API_PREFIX + 'repos/' + id
+                  + '?callback=JSON_CALLBACK')
+              , $http.jsonp(API_PREFIX + 'repos/' + id + '/tags'
+                  + '?callback=JSON_CALLBACK')
+              , $http.jsonp(API_PREFIX + 'repos/' + id + '/branches'
+                  + '?callback=JSON_CALLBACK')
               ]
             )
           .then
@@ -30,12 +33,10 @@
                 ; repo.name = data0.name
                 ; repo.ref = repoRef || data0.master_branch
                 ; repo.refs = repo.branches.concat(repo.tags)
-                ; $http
-                    ( { method: 'GET'
-                      , url: API_PREFIX + 'repos/' + id +
-                          '/contents/doc_manifest'
-                      , params: {ref: repo.ref}
-                      }
+                ; $http.jsonp
+                    ( API_PREFIX + 'repos/' + id + '/contents/doc_manifest'
+                        + '?callback=JSON_CALLBACK'
+                    , {params: {ref: repo.ref}}
                     )
                     .success((data) =>
                         { repo.manifest = parseManifest(data.content)
