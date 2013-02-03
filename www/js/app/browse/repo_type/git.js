@@ -1,11 +1,12 @@
 ; const cp = require('child_process' + '')
 ; export const gitRepoType = ($q, spawnCapture, parseManifest) =>
-    (repoId) =>
+    (repoId, repoRef) =>
       { const repoPath = repoId.substr('git:'.length)
       ; const repo =
           { id: repoId
           , tags: []
           , branches: []
+          , ref: repoRef
           , name: repoPath
           , readFile: (path) =>
               spawnCapture
@@ -20,13 +21,11 @@
                 { const branch = str.slice(1).trim()
                 ; if (branch == '') return
                 ; if (branch == '(no branch)') return
-                ; if (str[0] == '*')
+                ; if (!ref && str[0] == '*')
                     { repo.ref = branch
                     }
                 ; repo.branches.push(branch)
                 })
-            // FIXME repo.ref must be set to what is in $location and only
-            // fall back to the *rred branch if $location is not set.
             ; if (!repo.ref) repo.ref = repo.branches[0]
             ; return spawnCapture('git', ['tag', '--list'], {cwd: repoPath})
             })

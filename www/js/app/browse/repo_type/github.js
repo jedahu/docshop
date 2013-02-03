@@ -1,11 +1,12 @@
 ; const API_PREFIX = 'https://api.github.com/'
 
 ; export const githubRepoType = ($q, $http, parseManifest) =>
-    (repoId) =>
+    (repoId, repoRef) =>
       { const id = repoId.substr('github:'.length)
       ; const deferred = $q.defer()
       ; const repo =
           { id: id
+          , ref: repoRef
           , tags: []
           , branches: []
           }
@@ -27,7 +28,7 @@
                 ; for (let i in data2) repo.branches.push(data2[i].name)
                 ; repo.branches.sort()
                 ; repo.name = data0.name
-                ; repo.ref = data0.master_branch
+                ; repo.ref = repoRef || data0.master_branch
                 ; repo.refs = repo.branches.concat(repo.tags)
                 ; $http
                     ( { method: 'GET'

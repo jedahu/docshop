@@ -52,14 +52,13 @@
             }
           else if ($scope.repoForm)
             { if (!$scope.repoForm.ref) $scope.repoForm.ref = {}
-            ; createRepoObj($scope.repoForm.id)
+            ; createRepoObj($scope.repoForm.id, $scope.repoForm.ref.text)
                 .then
                   ( (repo) =>
                       { if (!repo) return $q.reject('No repo produced')
                       ; const renderFile = repo.ref !== $scope.repoForm.ref.text
                           || repo.path !== $scope.repoForm.path
                           || !repo.path
-                      ; repo.ref = $scope.repoForm.ref.text || repo.ref
                       ; repo.path = $scope.repoForm.path
                           || repo.path
                           || repo.manifest.files[0].path
