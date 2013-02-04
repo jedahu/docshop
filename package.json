@@ -1,5 +1,7 @@
 {
-  "devDependencies": {
+  "name": "docshop",
+  "version": "0.1.0",
+  "dependencies": {
     "grunt-stylus": "~0.2.0",
     "grunt-contrib-copy": "~0.3.2",
     "grunt-clean": "~0.4.0",
