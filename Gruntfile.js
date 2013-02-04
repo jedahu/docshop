@@ -11,6 +11,10 @@ module.exports = function(grunt)
         + md5sum(fs.readFileSync(path.resolve(root, 'dist', url)))
     }
 
+; var runTasks = function()
+    { grunt.task.run(Array.prototype.filter.call(arguments, function(task) {return !!task}))
+    }
+
 ; grunt.initConfig(
     { stylus:
         { compile:
@@ -19,7 +23,7 @@ module.exports = function(grunt)
                 , compress: true
                 }
             , files:
-                { 'tmp/concated.css': 'www/css/browse.styl'
+                { 'dist/main.css': 'www/css/browse.styl'
                 }
             }
         }
@@ -51,17 +55,12 @@ module.exports = function(grunt)
                   }
                 ]
             }
-        , uncompressed_js:
-            { files: {'dist/main.js': 'tmp/concated.js'}
-            }
-        , uncompressed_css:
-            { files: {'dist/main.css': 'tmp/concated.css'}
-            }
-        , uncompressed_html:
-            { files: {'dist/docs.html': 'tmp/docs.html'}
-            }
-        , uncompressed_appcache:
-            { files: {'dist/offline.appcache': 'tmp/offline.appcache'}
+        , unuglified_js:
+            { files:
+                [ { dest: 'dist/main.js'
+                  , src: ['tmp/concated.js']
+                  }
+                ]
             }
         }
     , clean: ['dist', 'tmp']
@@ -83,49 +82,49 @@ module.exports = function(grunt)
         }
     , uglify:
         { js:
-            { files: {'tmp/uglified.js': 'tmp/concated.js'}
+            { files: {'dist/main.js': 'tmp/concated.js'}
             }
         }
     , compress:
         { html:
             { options:
                 { mode: 'gzip'
-                , archive: 'dist/docs.html'
+                , archive: 'dist/docs.html.gz'
                 }
-            , files: {src: 'tmp/docs.html'}
+            , files: {src: 'dist/docs.html'}
             }
         , js:
             { options:
                 { mode: 'gzip'
-                , archive: 'dist/main.js'
+                , archive: 'dist/main.js.gz'
                 }
-            , files: {src: 'tmp/uglified.js'}
+            , files: {src: 'dist/main.js'}
             }
         , css:
             { options:
                 { mode: 'gzip'
-                , archive: 'dist/main.css'
+                , archive: 'dist/main.css.gs'
                 }
-            , files: {src: 'tmp/concated.css'}
+            , files: {src: 'dist/main.css'}
             }
         , appcache:
             { options:
                 { mode: 'gzip'
-                , archive: 'dist/offline.appcache'
+                , archive: 'dist/offline.appcache.gz'
                 }
-            , files: {src: 'tmp/offline.appcache'}
+            , files: {src: 'dist/offline.appcache'}
             }
         }
     , template:
         { html:
             { src: 'www/docs.html'
-            , dest: 'tmp/docs.html'
+            , dest: 'dist/docs.html'
             , engine: 'ejs'
             , variables: {bustCache: bustCache}
             }
         , appcache:
             { src: 'www/offline.appcache'
-            , dest: 'tmp/offline.appcache'
+            , dest: 'dist/offline.appcache'
             , engine: 'ejs'
             , variables: {bustCache: bustCache}
             }
@@ -222,39 +221,40 @@ module.exports = function(grunt)
     })
 
 ; grunt.registerTask('css', function(arg)
-    { grunt.task.run(
-        [ 'stylus'
+    { runTasks
+        ( 'stylus'
         , 'copy:css'
-        , arg === 'min' ? 'compress:css' : 'copy:uncompressed_css'
-        ])
+        , arg === 'min' ? 'compress:css' : null
+        )
     })
 
 ; grunt.registerTask('js', function(arg)
-    { grunt.task.run(
-        [ 'traceur:main'
+    { runTasks
+        ( 'traceur:main'
         , 'concat:js'
         , 'copy:worker'
-        , arg === 'min' ? 'uglify:js' : 'copy:uncompressed_js'
-        ])
-    ; if (arg === 'min') grunt.task.run('compress:js')
+        , arg === 'min' ? 'uglify:js' : 'copy:unuglified_js'
+        , arg === 'min' ? 'compress:js' : null
+        )
     })
 
 ; grunt.registerTask('html', function(arg)
-    { grunt.task.run(
-        [ 'css:' + (arg || '')
+    { runTasks
+        ( 'css:' + (arg || '')
         , 'js:' + (arg || '')
         , 'template:html'
-        , arg === 'min' ? 'compress:html' : 'copy:uncompressed_html'
-        ])
+        , arg === 'min' ? 'compress:html' : null
+        )
     })
 
 ; grunt.registerTask('all', function(arg)
-    { grunt.task.run(
-        [ 'html:' + (arg || '')
+    { runTasks
+        ( 'html'
         , 'template:appcache'
-        , arg === 'min' ? 'compress:appcache' : 'copy:uncompressed_appcache'
         , 'copy:package'
-        , 'copy:worker'])
+        , 'copy:worker'
+        )
+    ; if (arg === 'min') runTasks('uglify:js', 'compress')
     })
 
 ; grunt.registerTask('heroku', 'all:min')
