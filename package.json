@@ -8,6 +8,8 @@
     "grunt-contrib-watch": "~0.1.4",
     "MD5": "~1.0.3",
     "ejs": "~0.8.3",
-    "grunt-templater": "0.0.3-1"
+    "grunt-templater": "0.0.3-1",
+    "grunt": "~0.3.17",
+    "gruntacular": "~0.1.1"
   }
 }
