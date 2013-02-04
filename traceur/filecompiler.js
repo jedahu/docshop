@@ -225,7 +225,7 @@
             createIdentifierToken(name), tree.programElements)]);
   }
 
-  function inlineAndCompile(filename, outfilename) {
+  function inlineAndCompile(filename, outfilename, root) {
     console.log('Reading %s', filename);
     var source = fs.readFileSync(filename, 'utf8');
     if (!source) {
@@ -257,9 +257,14 @@
     loader.loadTextFile = function(filename, callback, errback) {
       console.log('Reading %s', path.join(dirname, filename));
       originalFiles.push(filename);
-      if (filename[0] === '/') filename = filename.slice(1);
+      var resolvedName;
+      if (filename[0] === '/') {
+        resolvedName = path.resolve(root, filename.slice(1));
+      } else {
+        resolvedName = path.resolve(dirname, filename);
+      }
       var text;
-      fs.readFile(path.resolve(dirname, filename), 'utf8', function(err, data) {
+      fs.readFile(resolvedName, 'utf8', function(err, data) {
         if (err) {
           errback(err);
         } else {
@@ -332,7 +337,7 @@
     return !/^--/.test(value);
   });
 
-  if (flags.inlineModules && files.length !== 2) {
+  if (flags.inlineModules && files.length < 2) {
     console.log('Only two files are supported with --inline-modules. ' +
                 'Use import statements instead');
     console.log('Usage: node ' + process.argv[1] +
@@ -344,7 +349,7 @@
 
   var success;
   if (flags.inlineModules)
-    success = inlineAndCompile(files[0], files[1]);
+    success = inlineAndCompile(files[0], files[1], files[2]);
   else
     success = compileFiles(files);
 
