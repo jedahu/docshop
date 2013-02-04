@@ -95,6 +95,19 @@ module.exports = function(grunt)
             { files: 'www/offline.appcache'
             , tasks: 'template:appcache'
             }
+        , tests:
+            { files: 'www/**/*.js'
+            , tasks: 'testacular:unit:run'
+            }
+        }
+    , testacular:
+        { unit:
+            { configFile: 'testacular.js'
+            }
+        , headless:
+            { configFile: 'testacular.js'
+            , browsers: ['PhantomJS']
+            }
         }
     })
 
@@ -103,6 +116,7 @@ module.exports = function(grunt)
 ; grunt.loadNpmTasks('grunt-clean')
 ; grunt.loadNpmTasks('grunt-contrib-watch')
 ; grunt.loadNpmTasks('grunt-templater')
+; grunt.loadNpmTasks('gruntacular')
 
 ; grunt.registerTask('traceur', function()
     { var done = this.async()
@@ -124,6 +138,27 @@ module.exports = function(grunt)
     ; proc.on('exit', function(code) {done(!code)})
     })
 
+; grunt.registerTask('traceur-test', function()
+    { var done = this.async()
+    ; var spawn = require('child_process').spawn
+    ; fs.mkdir('tmp')
+    ; var proc = spawn
+        ( 'node'
+        , [ './traceur/filecompiler.js'
+          , '--inline-modules'
+          , '--freeVariableChecker=false'
+          , 'test/all.js'
+          , 'tmp/test.js'
+          , 'www/js/app/'
+          ]
+        )
+    ; proc.stdout.setEncoding('utf8')
+    ; proc.stderr.setEncoding('utf8')
+    ; proc.stdout.on('data', function(data) {process.stdout.write(data)})
+    ; proc.stderr.on('data', function(data) {process.stderr.write(data)})
+    ; proc.on('exit', function(code) {done(!code)})
+    })
+
 ; grunt.registerTask('run', function()
     { var spawn = require('child_process').spawn
     ; spawn('nw', ['dist'])
@@ -133,5 +168,7 @@ module.exports = function(grunt)
 ; grunt.registerTask('js', 'traceur concat:js copy:worker')
 ; grunt.registerTask('html', 'stylus traceur concat:js template')
 ; grunt.registerTask('all', 'stylus traceur concat copy template')
+; grunt.registerTask('heroku', 'all')
+; grunt.registerTask('test', 'js testacular:unit:run')
 
 };
