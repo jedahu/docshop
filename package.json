@@ -18,7 +18,7 @@
   },
   "subdomain": "docshop",
   "scripts": {
-    "test": "node -e 'require(\"grunt\").tasks(\"test:once\")'",
+    "test": "node -e 'require(\"grunt\").tasks(\"travis\")'",
     "start": "server.js"
   },
   "engines": {
