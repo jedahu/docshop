@@ -15,5 +15,12 @@
     "grunt-contrib-concat": "~0.1.2rc6",
     "grunt-contrib-compress": "~0.4.0rc7",
     "q": "~0.8.12"
+  },
+  "subdomain": "docshop",
+  "scripts": {
+    "start": "server.js"
+  },
+  "engines": {
+    "node": "0.8.x"
   }
 }
