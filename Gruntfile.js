@@ -209,7 +209,7 @@ module.exports = function(grunt)
             , browsers: ['PhantomJS']
             , singleRun: true
             }
-        , travis:
+        , once:
             { configFile: 'testacular.js'
             , browsers: ['Chrome']
             , singleRun: true
@@ -286,6 +286,6 @@ module.exports = function(grunt)
     })
 
 ; grunt.registerTask('test', ['traceur:test', 'testacular:unit:run'])
-; grunt.registerTask('travis', ['traceur:test', 'testacular:travis'])
+; grunt.registerTask('test:once', ['traceur:test', 'testacular:once'])
 
 };
