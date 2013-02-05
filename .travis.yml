@@ -1,3 +1,10 @@
 language: node_js
 node_js:
   - 0.8
+
+notifications:
+  email:
+    recipients:
+      - jedahu@gmail.com
+    on_success: [change]
+    on_failure: [always]
