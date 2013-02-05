@@ -3,6 +3,7 @@ module.exports = function(grunt)
 { var md5sum = require('MD5')
     , fs = require('fs')
     , path = require('path')
+    , cp = require('child_process')
     , root = process.cwd()
 
 ; var bustCache = function(url)
@@ -13,6 +14,15 @@ module.exports = function(grunt)
 
 ; var runTasks = function()
     { grunt.task.run(Array.prototype.filter.call(arguments, function(task) {return !!task}))
+    }
+
+; var commonArgs = function(argsObj)
+    { var args = Array.prototype.slice.call(argsObj)
+    ; return (
+        { min: args.indexOf('min') > -1
+        , nw: args.indexOf('nw') > -1
+        , gzip: args.indexOf('gzip') > -1
+        })
     }
 
 ; grunt.initConfig(
@@ -93,6 +103,13 @@ module.exports = function(grunt)
                 }
             , files: {src: 'dist/docs.html'}
             }
+        , not_found:
+            { options:
+                { mode: 'gzip'
+                , archive: 'dist/404.html.gz'
+                }
+            , files: {src: 'dist/404.html'}
+            }
         , js:
             { options:
                 { mode: 'gzip'
@@ -122,6 +139,12 @@ module.exports = function(grunt)
             , engine: 'ejs'
             , variables: {bustCache: bustCache}
             }
+        , not_found:
+            { src: 'www/404.html'
+            , dest: 'dist/404.html'
+            , engine: 'ejs'
+            , variables: {bustCache: bustCache}
+            }
         , appcache:
             { src: 'www/offline.appcache'
             , dest: 'dist/offline.appcache'
@@ -130,8 +153,13 @@ module.exports = function(grunt)
             }
         }
     , traceur:
-        { main:
+        { main_nw:
             { in: 'www/js/app/start_nw.js'
+            , out: 'tmp/compiled.js'
+            , root: 'www/js/app'
+            }
+        , main_browser:
+            { in: 'www/js/app/start_browser.js'
             , out: 'tmp/compiled.js'
             , root: 'www/js/app'
             }
@@ -161,7 +189,7 @@ module.exports = function(grunt)
             }
         , html:
             { files: 'www/docs.html'
-            , tasks: 'template:html'
+            , tasks: ['template:html', 'template:not_found']
             }
         , appcache:
             { files: 'www/offline.appcache'
@@ -196,9 +224,8 @@ module.exports = function(grunt)
 
 ; grunt.registerMultiTask('traceur', '', function()
     { var done = this.async()
-    ; var spawn = require('child_process').spawn
     ; fs.mkdir('tmp')
-    ; var proc = spawn
+    ; var proc = cp.spawn
         ( 'node'
         , [ './traceur/filecompiler.js'
           , '--inline-modules'
@@ -220,44 +247,39 @@ module.exports = function(grunt)
     ; spawn('nw', ['dist'])
     })
 
-; grunt.registerTask('css', function(arg)
-    { runTasks
-        ( 'stylus'
-        , 'copy:css'
-        , arg === 'min' ? 'compress:css' : null
-        )
-    })
+; grunt.registerTask('css', ['stylus', 'copy:css'])
 
-; grunt.registerTask('js', function(arg)
-    { runTasks
-        ( 'traceur:main'
+; grunt.registerTask('js', function(/* args */)
+    { var args = commonArgs(arguments)
+    ; runTasks
+        ( args.nw ? 'traceur:main_nw' : 'traceur:main_browser'
         , 'concat:js'
         , 'copy:worker'
-        , arg === 'min' ? 'uglify:js' : 'copy:unuglified_js'
-        , arg === 'min' ? 'compress:js' : null
+        , args.min ? 'uglify:js' : 'copy:unuglified_js'
         )
     })
 
-; grunt.registerTask('html', function(arg)
-    { runTasks
-        ( 'css:' + (arg || '')
-        , 'js:' + (arg || '')
+; grunt.registerTask('html', function(/* args */)
+    { var args = commonArgs(arguments)
+    ; runTasks
+        ( 'css'
+        , 'js' + (args.min ? ':min' : '') + (args.nw ? ':nw' : '')
         , 'template:html'
-        , arg === 'min' ? 'compress:html' : null
+        , 'template:not_found'
         )
     })
 
-; grunt.registerTask('all', function(arg)
-    { runTasks
-        ( 'html'
+; grunt.registerTask('all', function(/* args */)
+    { var args = commonArgs(arguments)
+    ; runTasks
+        ( 'html' + (args.min ? ':min' : '') + (args.nw ? ':nw' : '')
         , 'template:appcache'
         , 'copy:package'
         , 'copy:worker'
+        , args.gzip ? 'compress' : null
         )
-    ; if (arg === 'min') runTasks('uglify:js', 'compress')
     })
 
-; grunt.registerTask('heroku', 'all:min')
-; grunt.registerTask('test', 'traceur:test testacular:unit:run')
+; grunt.registerTask('test', ['traceur:test', 'testacular:unit:run'])
 
 };
