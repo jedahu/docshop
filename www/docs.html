@@ -6,7 +6,7 @@
     <link rel='stylesheet' type='text/css' href='<%= bustCache("main.css") %>'>
   </head>
   <body data-ng-controller='RepoController'>
-    <div id='body'>
+    <div id='body' data-ng-class='{show: show.body}'>
       <nav
         id='ds-manifest'
         data-ui-jq='resizable'
@@ -79,6 +79,7 @@
     <div>
       <div
         data-ng-controller-noop='SettingsController'
+        data-ng-class='{show: show.settings}'
         id='ds-settings-modal'>
         <h1 class='modal-header'>
           Settings
@@ -106,7 +107,7 @@
       </div>
       <button
         id='ds-show-settings'
-        data-ng-click='settingsVisible=!settingsVisible'
+        data-ng-click='toggleSettings()'
         href='#ds-settings-modal'>
         &#9881;
       </button>

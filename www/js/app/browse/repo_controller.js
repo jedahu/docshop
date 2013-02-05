@@ -131,6 +131,16 @@
           ? require('nw.gui').Shell.openExternal
           : (url) => { window.location = url }
 
+    ; $scope.show =
+        { body: true
+        , settings: false
+        }
+
+    ; $scope.toggleSettings = () =>
+        { $scope.show.body = $scope.show.settings
+        ; $scope.show.settings = !$scope.show.settings
+        }
+
     }
 
 ; repoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
