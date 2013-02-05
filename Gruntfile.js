@@ -288,4 +288,8 @@ module.exports = function(grunt)
 ; grunt.registerTask('test', ['traceur:test', 'testacular:unit:run'])
 ; grunt.registerTask('test:once', ['traceur:test', 'testacular:once'])
 
+; grunt.registerTask('travis', function()
+    { process.env['DISPLAY'] = ':99'
+    ; runTasks('test:once')
+    })
 };
