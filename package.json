@@ -18,6 +18,7 @@
   },
   "subdomain": "docshop",
   "scripts": {
+    "test": "grunt travis",
     "start": "server.js"
   },
   "engines": {
