@@ -211,7 +211,7 @@ module.exports = function(grunt)
             }
         , once:
             { configFile: 'testacular.js'
-            , browsers: ['Chrome']
+            , browsers: ['Firefox']
             , singleRun: true
             }
         }
