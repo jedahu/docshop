@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# set -x
+set -e
+set -o pipefail
+
+BRANCH=`git symbolic-ref HEAD --short`
+if [ "$BRANCH" = 'prebuilt' ]; then
+  exit 0
+fi
+git stash
+git checkout prebuilt
+git merge master
+grunt clean
+git rm -r dist
+grunt all:min
+npm shrinkwrap
+git add dist
+git add npm-shrinkwrap.json
+if [ ! `git diff-index --quiet --cached HEAD` ]; then
+  git commit -m'rebuild dist'
+fi
+git checkout "$BRANCH"
+git stash pop
