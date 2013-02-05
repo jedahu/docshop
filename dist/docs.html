@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name='MSSmartTagsPreventParsing' content='true'>
+    <meta charset='UTF-8'>
+    <link rel='stylesheet' type='text/css' href='main.css?z=5a7504aa9b5d1ad6cf17ba6303bb0312'>
+  </head>
+  <body data-ng-controller='RepoController'>
+    <div id='body' data-ng-class='{show: show.body}'>
+      <nav
+        id='ds-manifest'
+        data-ui-jq='resizable'
+        data-ui-options='{handles: "e", distance: 1}'>
+        <h1
+          id='ds-repo-title'
+          title='{{repo.name + " @ " + repo.url}}'
+          data-url='{{repo.url}}'
+          data-ng-click='openExternal(repo.url)'
+          data-ng-bind='repo.name'>
+        </h1>
+        <form data-ng-submit='changeRepo()'>
+          <input
+            data-ng-model='repoForm.id'
+            type='text'
+            placeholder='repository id'
+            title='Change repository'>
+          <input
+            data-ui-select2='refQuery'
+            data-ng-model='repoForm.ref'
+            data-placeholder='branch|tag|commit'
+            data-ng-disabled='!repo.refs'>
+          <button type='submit'></button>
+        </form>
+        <section class='paths' data-ds-file-nav='item in repo.manifest.files'>
+          <h1
+            data-ng-bind='item.text'
+            data-ng-class='{current: repo.path == item.path, file: !!item.path}'></h1>
+          <div
+            data-ng-bind='item.name'
+            data-ng-class='{current: repo.path == item.path, file: !!item.path}'></div>
+        </section>
+      </nav>
+      <article id='ds-content'>
+        <h1
+          data-ng-bind='renderedSrc.meta.title'
+          data-ng-show='renderedSrc.meta.title'></h1>
+        <div data-ds-bind-node='renderedSrc.html'></div>
+      </article>
+      <nav
+        id='ds-file-nav-backing'
+        data-ui-jq='resizable'
+        data-ui-options='fileNavResizeOpts'>
+        <div id='ds-file-nav' data-ui-jq='tabs'>
+          <ul>
+            <li data-ng-class='{hide: !renderedSrc.toc}'><a href='#ds-toc'><span>TOC</span></a></li>
+            <li data-ng-class='{hide: !renderedSrc.names}'><a href='#ds-names'><span>Names</span></a></li>
+          </ul>
+          <div id='ds-toc' data-ng-class='{hide: !renderedSrc.toc}'>
+            <div
+              data-ng-repeat='h in renderedSrc.toc'
+              data-ng-bind='h.innerText'
+              data-ng-click='scrollToHash(h.id)'
+              data-indent='{{0 - h.rank}}'
+              style='padding-left: {{-1 - h.rank}}em'></div>
+          </div>
+          <div id='ds-names' data-ng-class='{hide: !renderedSrc.names}'>
+            <ul>
+              <li
+                data-ng-repeat='n in renderedSrc.names'
+                data-ng-click-scroll-to='"id:" + n'
+                data-ng-click='scrollToHash("id:" + n)'
+                data-ng-bind='n'>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div>
+      <div
+        data-ng-controller-noop='SettingsController'
+        data-ng-class='{show: show.settings}'
+        id='ds-settings-modal'>
+        <h1 class='modal-header'>
+          Settings
+        </h1>
+        <div class='modal-body'>
+          <section>
+            <h1>Github</h1>
+            <input type='text' placeholder='username'>
+            <input type='password' placeholder='password'>
+            <button data-ng-click='requestGithubAuthToken()'>
+              Create Github Auth Token
+            </button>
+            <input type='text' placeholder='auth-token'>
+            <button data-ng-click='setGithubAuthToken()'>
+              Set Github Auth Token
+            </button>
+          </section>
+        </div>
+        <div class='modal-footer'>
+          <button
+            data-ng-click='settingsVisible=false'>
+            Close
+          </button>
+        </div>
+      </div>
+      <button
+        id='ds-show-settings'
+        data-ng-click='toggleSettings()'
+        href='#ds-settings-modal'>
+        &#9881;
+      </button>
+    </div>
+    <script src='main.js?z=9e191bb2e8b8c0a8ddd5d37e94fc3c2c'></script>
+  </body>
+</html>
