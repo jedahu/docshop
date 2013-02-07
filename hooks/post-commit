@@ -18,7 +18,7 @@ grunt all:min
 npm shrinkwrap
 git add dist
 git add npm-shrinkwrap.json
-if [ `git diff-index --quiet --cached HEAD` ]; then
+if [ ! `git diff-index --quiet --cached HEAD` ]; then
   git commit -m'rebuild dist'
 fi
 git checkout "$BRANCH"
