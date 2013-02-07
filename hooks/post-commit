@@ -8,6 +8,7 @@ BRANCH=`git symbolic-ref HEAD --short`
 if [ "$BRANCH" = 'prebuilt' ]; then
   exit 0
 fi
+grunt clean
 git stash
 git checkout prebuilt
 git merge master
