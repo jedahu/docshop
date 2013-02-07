@@ -196,8 +196,8 @@ module.exports = function(grunt)
             , tasks: 'template:appcache'
             }
         , tests:
-            { files: 'www/**/*.js'
-            , tasks: 'traceur:test testacular:unit:run'
+            { files: '**/*.js'
+            , tasks: ['traceur:test', 'testacular:unit:run']
             }
         }
     , testacular:
@@ -235,6 +235,7 @@ module.exports = function(grunt)
         , [ './traceur/filecompiler.js'
           , '--inline-modules'
           , '--freeVariableChecker=false'
+          , '--cascadeExpression=true'
           , this.data.in
           , this.data.out
           , this.data.root

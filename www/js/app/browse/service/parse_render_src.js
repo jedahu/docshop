@@ -6,10 +6,9 @@
 //      ( srcParser
 //      , h5o
 //      )
-; import srcParser from '/util/src_parser.js'
 ; import HTMLOutline from '/util/HTMLOutliner.js'
 
-; export const parseRenderSrcService = ($q, $http, $rootScope) =>
+; export const parseRenderSrcService = ($q, $http, $rootScope, srcParser) =>
     { const process = (result) =>
         { const wrapper = angular.element('<div>')
         ; let idCount = 0
@@ -69,6 +68,9 @@
                                     ; $rootScope.$digest()
                                     }
                                   ; break
+                                case 'log'
+                                  : console.log('LOG', msg.data)
+                                  ; break
                               }
                             })
                         ; worker.postMessage
@@ -84,9 +86,10 @@
                                 )
                             }
                         ; parser.on('*', (evtName, arg) =>
-                            {worker.postMessage
-                              ( JSON.stringify({type: evtName, data: arg})
-                              ); console.log(evtName, arg)})
+                            { worker.postMessage
+                                ( JSON.stringify({type: evtName, data: arg})
+                                )
+                            })
                         }
                     , (err) =>
                         { deferred.reject(err)
@@ -102,4 +105,4 @@
         }
     }
 
-; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope']
+; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', 'srcParser']

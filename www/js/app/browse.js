@@ -3,6 +3,8 @@
 ; import scrollToHashService from 'browse/service/scroll_to_hash.js'
 ; import parseRenderSrcService from 'browse/service/parse_render_src.js'
 ; import manifestParserService from 'browse/service/manifest_parser.js'
+; import tickService from 'browse/service/tick.js'
+; import srcParserService from 'browse/service/src_parser.js'
 ; import createRepoService from 'browse/service/create_repo.js'
 ; import httpRepoType from 'browse/repo_type/http.js'
 ; import githubRepoType from 'browse/repo_type/github.js'
@@ -16,6 +18,8 @@
     .factory('parseManifest', manifestParserService)
     .factory('parseRenderSrc', parseRenderSrcService)
     .factory('scrollToHash', scrollToHashService)
+    .factory('tick', tickService)
+    .factory('srcParser', srcParserService)
     .directive('dsFileNav', fileNavDirective)
     .directive('dsBindNode', bindNodeDirective)
     .config(['$locationProvider', function($locationProvider)

@@ -92,7 +92,8 @@
                   { scrollToHash(hash, false)
                   }
               , (err) =>
-                  { $scope.renderedSrc.html = angular.element('<b>ERROR</b>')
+                  { console.log('ERROR'); console.log(err)
+                  ; $scope.renderedSrc.html = angular.element('<b>ERROR</b>')
                   }
               )
         ; setPath()
@@ -140,6 +141,8 @@
         { $scope.show.body = $scope.show.settings
         ; $scope.show.settings = !$scope.show.settings
         }
+
+    ; $location.path('/file:/home/jdh/proj/docshop/@master:www/js/app/browse/service/src_parser.js')
 
     }
 

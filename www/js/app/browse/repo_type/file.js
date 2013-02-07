@@ -13,7 +13,8 @@ without having to check it in to one of Docshop's supported SCMs.
 
 /*
 The service requires the `$q` and `$rootScope` services from AngularJs and
-`parseManifest` from Docshop. The `$rootScope` service is used only to trigger a digest after resolving a deferred object.
+`parseManifest` from Docshop. The `$rootScope` service is used only to trigger a
+digest after resolving a deferred object.
 */
 ; export const fileRepoType = ($q, $rootScope, parseManifest) =>
     (repoId) =>

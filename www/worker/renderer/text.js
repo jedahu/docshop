@@ -1,34 +1,11 @@
-; var lang = null
-
-; receiveOnce
-    ( 'lang'
-    , function(str)
-      { lang = str
-      }
-    )
 ; receive
-    ( 'comment'
+    ( 'comment.open'
     , function()
-      { sendHtml('<pre class="comment">')
+      { sendHtml('<pre class="comment" style="background-color: lightblue">')
       }
     )
 ; receive
-    ( '/comment'
-    , function()
-      { sendHtml('</pre>')
-      }
-    )
-; receive
-    ( 'code'
-    , function()
-      { sendHtml
-          ( '<pre class="code prettyprint lang-'
-              + lang + '">'
-          )
-      }
-    )
-; receive
-    ( '/code'
+    ( 'comment.close'
     , function()
       { sendHtml('</pre>')
       }
@@ -40,17 +17,15 @@
       }
     )
 ; receive
-    ( 'code.line'
-    , function(line)
-      { sendHtml(escapeHtml(line))
+    ( 'html'
+    , function(html)
+      { sendHtml(html)
       }
     )
 ; receive
     ( 'end'
     , function()
-      { send('toc', null)
-      ; send('names', null)
-      ; ack('end')
+      { ack('end')
       ; close()
       }
     )
