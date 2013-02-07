@@ -270,9 +270,6 @@
                 }
               }
             },
-            "q": {
-              "version": "0.8.12"
-            },
             "LiveScript": {
               "version": "1.1.1",
               "dependencies": {
