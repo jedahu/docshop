@@ -235,6 +235,7 @@ module.exports = function(grunt)
         , [ './traceur/filecompiler.js'
           , '--inline-modules'
           , '--freeVariableChecker=false'
+          , '--cascadeExpression=true'
           , this.data.in
           , this.data.out
           , this.data.root
