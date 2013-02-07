@@ -196,8 +196,8 @@ module.exports = function(grunt)
             , tasks: 'template:appcache'
             }
         , tests:
-            { files: 'www/**/*.js'
-            , tasks: 'traceur:test testacular:unit:run'
+            { files: '**/*.js'
+            , tasks: ['traceur:test', 'testacular:unit:run']
             }
         }
     , testacular:
