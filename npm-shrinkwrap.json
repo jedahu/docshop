@@ -469,6 +469,10 @@
     },
     "q": {
       "version": "0.8.12"
+    },
+    "grunt-bump": {
+      "version": "0.0.1",
+      "from": "git://github.com/vojtajina/grunt-bump.git#0f4d27b770b523fa7a21a10fe8e991e0c62782bc"
     }
   }
 }
