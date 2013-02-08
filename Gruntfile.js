@@ -25,6 +25,17 @@ module.exports = function(grunt)
         })
     }
 
+; var spawn = function(task, cmd, args)
+    { var done = task.async()
+    ; fs.mkdir('tmp')
+    ; var proc = cp.spawn(cmd, args)
+    ; proc.stdout.setEncoding('utf8')
+    ; proc.stderr.setEncoding('utf8')
+    ; proc.stdout.on('data', function(data) {process.stdout.write(data)})
+    ; proc.stderr.on('data', function(data) {process.stderr.write(data)})
+    ; proc.on('exit', function(code) {done(!code)})
+    }
+
 ; grunt.initConfig(
     { stylus:
         { compile:
@@ -197,22 +208,7 @@ module.exports = function(grunt)
             }
         , tests:
             { files: '**/*.js'
-            , tasks: ['traceur:test', 'testacular:unit:run']
-            }
-        }
-    , testacular:
-        { unit:
-            { configFile: 'testacular.js'
-            }
-        , headless:
-            { configFile: 'testacular.js'
-            , browsers: ['PhantomJS']
-            , singleRun: true
-            }
-        , once:
-            { configFile: 'testacular.js'
-            , browsers: ['Firefox']
-            , singleRun: true
+            , tasks: ['traceur:test', 'testem']
             }
         }
     })
@@ -222,17 +218,15 @@ module.exports = function(grunt)
 ; grunt.loadNpmTasks('grunt-contrib-clean')
 ; grunt.loadNpmTasks('grunt-contrib-watch')
 ; grunt.loadNpmTasks('grunt-templater')
-; grunt.loadNpmTasks('gruntacular')
 ; grunt.loadNpmTasks('grunt-contrib-uglify')
 ; grunt.loadNpmTasks('grunt-contrib-concat')
 ; grunt.loadNpmTasks('grunt-contrib-compress')
 ; grunt.loadNpmTasks('grunt-bump')
 
 ; grunt.registerMultiTask('traceur', '', function()
-    { var done = this.async()
-    ; fs.mkdir('tmp')
-    ; var proc = cp.spawn
-        ( 'node'
+    { spawn
+        ( this
+        , 'node'
         , [ './traceur/filecompiler.js'
           , '--inline-modules'
           , '--freeVariableChecker=false'
@@ -242,16 +236,10 @@ module.exports = function(grunt)
           , this.data.root
           ]
         )
-    ; proc.stdout.setEncoding('utf8')
-    ; proc.stderr.setEncoding('utf8')
-    ; proc.stdout.on('data', function(data) {process.stdout.write(data)})
-    ; proc.stderr.on('data', function(data) {process.stderr.write(data)})
-    ; proc.on('exit', function(code) {done(!code)})
     })
 
 ; grunt.registerTask('run', function()
-    { var spawn = require('child_process').spawn
-    ; spawn('nw', ['dist'])
+    { cp.spawn('nw', ['dist'])
     })
 
 ; grunt.registerTask('css', ['stylus', 'copy:css'])
@@ -290,8 +278,7 @@ module.exports = function(grunt)
 ; grunt.registerTask('test', ['traceur:test', 'testacular:unit:run'])
 ; grunt.registerTask('test:once', ['traceur:test', 'testacular:once'])
 
-; grunt.registerTask('travis', function()
-    { process.env['DISPLAY'] = ':99'
-    ; runTasks('test:once')
+; grunt.registerTask('testem', function()
+    { spawn(this, 'xvfb-run', ['-a', 'testem', 'ci'])
     })
 };
