@@ -2,13 +2,14 @@ language: node_js
 node_js:
   - 0.8
 
+script: xvfb-run -a testem ci
+
 branches:
   only:
-    - prebuilt
+    - master
 
 before_install:
-  - "export DISPLAY=:99"
-  - "sh -e /etc/init.d/xvfb start"
+  - npm install -g testem
 
 notifications:
   webhooks:
