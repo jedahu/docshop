@@ -114,7 +114,7 @@
     ; $scope.$watch
         ( () => $scope.repoForm && $scope.repoForm.ref
         , (newVal, _old) =>
-            { if (newVal) $scope.changeRepo
+            { if (newVal) $scope.changeRepo()
             }
         )
 
