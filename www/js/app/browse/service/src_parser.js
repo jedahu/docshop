@@ -145,7 +145,7 @@ of this parser’s events. All directives are case agnostic.
               })
         }
     ; const emitCommentOpen = (label) =>
-        { const [_, tag, str] = /^!(\S+)\s*?(.*)$/.exec(label) || []
+        { const [_, tag, str] = /^!(\S+)\s*(.*)$/.exec(label) || []
         ; const dir = directive[(tag || '').toLowerCase()]
         ; if (tag && dir)
             { me.emit('html', dir(str))
