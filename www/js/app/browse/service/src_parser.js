@@ -79,10 +79,10 @@ of this, consumers of parser events must be able to handle HTML strings.
 /*
 # Comment Blocks
 
-Comment blocks are delimited by `open`, `close`, and `middle` strings, each
+Comment blocks are delimited by `open`, `middle`, and `close` strings, each
 being the first non-whitespace strings on a line. These strings are
-configurable. For Javascript they could be `['/\**', '* ', '*\/']`, or equally
-`['#.', '# ', '#.']`.
+configurable. For Javascript they could be `['/\**', ' *', '*\/']`, or equally
+`['#.', '#', '#.']`. Note that if the middle string is indented relative to the open string, it must start with that amount of white space.
 
 Each comment block can be labeled with a directive. [Directives beginning with
 "!"][builtin] are reserved for docshop use and are parsed by this parser. Other
@@ -99,22 +99,28 @@ of this parser’s events. All directives are case agnostic.
         line.trimLeft().indexOf(lang.open) === 0
     ; const isCommentClose = (line) =>
         line.trimLeft().indexOf(lang.close) === 0
-    ; const consumeMetaComment = () =>
+    ; const indentMiddle = (line, base) =>
+        line.slice
+          ( base + lang.middle.length
+              + (/^\s*$/.exec(lang.middle) ? 0 : 1)
+          )
+          || '\n'
+    ; const consumeMetaComment = (indent) =>
         { let line
         ; return tick.doWhileTick
             ( () => lines.length > 0
                 && (line = lines.pop() + '\n')
                 && !isCommentClose(line)
             , (next, err, metaStr = '') =>
-                { next(metaStr + line)
+                { next(metaStr + indentMiddle(line, indent))
                 }
             )
             .then(([metaStr]) =>
               { me.metaData = jsyaml.load(metaStr)
               })
         }
-    ; const consumeCodeComment = (lang) =>
-        { const langClass = lang ? 'lang-' + lang : ''
+    ; const consumeCodeComment = (indent, commentLang) =>
+        { const langClass = commentLang ? 'lang-' + commentLang : ''
         ; let line
         ; me.emit
             ( 'html'
@@ -128,7 +134,10 @@ of this parser’s events. All directives are case agnostic.
                 && (line = lines.pop() + '\n')
                 && !isCommentClose(line)
             , (next) =>
-                { next(me.emit('html', escapeHtml(line)))
+                { next(me.emit
+                    ( 'html'
+                    , escapeHtml(indentMiddle(line, indent))
+                    ))
                 }
             )
             .then(() =>
@@ -164,9 +173,8 @@ of this parser’s events. All directives are case agnostic.
         }
     ; tick.doWhileTick
         ( () => lines.length > 0
-        , (next, err, prev, label) =>
+        , (next, err, prev, label, indent) =>
             { let line = lines.pop() + '\n'
-            ; const trimmed = line.trimLeft()
             ; const maybeOpenCodeSection = (current) =>
                 { while
                     ( lines.length > 0
@@ -188,18 +196,20 @@ of this parser’s events. All directives are case agnostic.
                 }
             ; if (isCommentOpen(line))
                 { if (prev === 'html') me.emit('html', closeCodeBlock)
-                ; const label = trimmed.slice(lang.open.length).trim() || null
+                ; const indent = line.search(/\S/)
+                ; const label = line.slice(indent + lang.open.length + 1).trim()
+                    || null
                 ; let match;
                 ; if (/^!meta\b/.exec(label))
-                    { return consumeMetaComment()
+                    { return consumeMetaComment(indent)
                         .then(() => next('comment.close'), err)
                     }
                 ; if (match = /^!code(?:\b|\s+(\w+))/.exec(label))
-                    { return consumeCodeComment(match[1])
+                    { return consumeCodeComment(indent, match[1])
                         .then(() => next('comment.close'), err)
                     }
                 ; emitCommentOpen(label)
-                ; return next('comment.open', label)
+                ; return next('comment.open', label, indent)
                 }
             ; if (isCommentClose(line))
                 { me.emit('comment.close', label)
@@ -209,10 +219,10 @@ of this parser’s events. All directives are case agnostic.
                 { me.emit
                     ( 'comment.line'
                     , { label: label
-                      , text: trimmed.slice(lang.middle.length) || '\n'
+                      , text: indentMiddle(line, indent)
                       }
                     )
-                ; return next('comment.line', label)
+                ; return next('comment.line', label, indent)
                 }
             ; if (prev === 'html')
                 { me.emit('html', escapeHtml(line))
