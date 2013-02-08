@@ -14,7 +14,8 @@
     "grunt-contrib-stylus": "git://github.com/jedahu/grunt-contrib-stylus.git",
     "grunt-contrib-concat": "~0.1.2rc6",
     "grunt-contrib-compress": "~0.4.0rc7",
-    "q": "~0.8.12"
+    "q": "~0.8.12",
+    "grunt-bump": "git://github.com/vojtajina/grunt-bump.git#0f4d27b770b523fa7a21a10fe8e991e0c62782bc"
   },
   "subdomain": "docshop",
   "scripts": {

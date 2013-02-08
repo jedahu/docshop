@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# set -x
+set -e
+set -o pipefail
+
+BRANCH=`git symbolic-ref HEAD --short`
+if [ "$BRANCH" = 'master' ]; then
+  grunt bump:patch
+  git add package.json
+fi
