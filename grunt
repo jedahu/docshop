@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+; var grunt = require('grunt')
+
+; grunt.tasks(process.argv.slice(2), null, function()
+    { process.exit(0)
+    })

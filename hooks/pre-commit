@@ -5,7 +5,8 @@ set -e
 set -o pipefail
 
 BRANCH=`git symbolic-ref HEAD --short`
-if [ "$BRANCH" = 'master' ] && [ -z "${SKIP+not_set}" ]; then
+if [ "$BRANCH" = 'master' ]; then
+  npm shrinkwrap
   grunt bump:patch
-  git add package.json
+  git add npm-shrinkwrap.json package.json
 fi
