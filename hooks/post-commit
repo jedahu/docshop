@@ -5,9 +5,11 @@ set -e
 set -o pipefail
 
 BRANCH=`git symbolic-ref HEAD --short`
-if [ "$BRANCH" = 'prebuilt' ]; then
+if [ "$BRANCH" != 'master' ]; then
   exit 0
 fi
+VERSION=`node -e 'process.stdout.write(require("./package.json").version)'`
+git tag "$VERSION" -m"version $VERSION" || echo 'WARNING: Tagging failed.'
 grunt clean
 git stash
 git checkout prebuilt
