@@ -27,13 +27,13 @@
         { const final = $q.defer()
         ; const eb = (err) =>
             { final.reject(err)
-            ; $rootScope.$digest()
+            ; $rootScope.$apply()
             }
         ; const next = (...args) =>
             { if (test()) fn(next, eb, ...args)
               else
                 { final.resolve(args)
-                ; $rootScope.$digest()
+                ; $rootScope.$apply()
                 }
             }
         ; next()

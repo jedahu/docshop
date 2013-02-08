@@ -14,14 +14,14 @@
       ; proc.stdout.on('end', () =>
           { if (!done)
               { deferred.resolve(outStr)
-              ; $rootScope.$digest()
+              ; $rootScope.$apply()
               ; done = true
               }
           })
       ; proc.on('exit', (code, _signal) =>
           { if (code != 0 && !done)
               { deferred.reject({cmdErr: errStr, cmd: cmd, args: args})
-              ; $rootScope.$digest()
+              ; $rootScope.$apply()
               ; done = true
               }
           })

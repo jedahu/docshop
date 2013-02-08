@@ -8,7 +8,7 @@
 //      )
 ; import HTMLOutline from '/util/HTMLOutliner.js'
 
-; export const parseRenderSrcService = ($q, $http, $rootScope, srcParser) =>
+; export const parseRenderSrcService = ($q, $http, $rootScope, $timeout, srcParser) =>
     { const process = (result) =>
         { const wrapper = angular.element('<div>')
         ; let idCount = 0
@@ -35,20 +35,21 @@
             })
         }
     ; return (repo, file) =>
-        { const deferred = $q.defer()
-        ; $http
+        { return $http
             ( { method: 'GET'
               , url: 'worker/renderer/' + file.markup + '.js?' + new Date()
               , transformResponse: (x) => x
               }
             )
-            .success((rendererSrc) =>
+            .then(({data: rendererSrc}) =>
               { return repo.readFile(file.path)
                   .then
                     ( (text) =>
                         { const worker = new Worker('worker/renderer.js?' + new Date())
                         ; const out = {html: ''}
                         ; const parser = srcParser(file.lang, text)
+                        ; const deferredOut = $q.defer()
+                        ; $timeout(() => deferredOut.reject('timeout'), 10000)
                         ; worker.addEventListener('message', (evt) =>
                             { const msg = JSON.parse(evt.data)
                             ; switch (msg.type)
@@ -64,8 +65,8 @@
                                 case 'ack'
                                   : if (msg.data === 'end')
                                     { out.meta = parser.metaData
-                                    ; deferred.resolve(process(out))
-                                    ; $rootScope.$digest()
+                                    ; deferredOut.resolve(process(out))
+                                    ; $rootScope.$apply()
                                     }
                                   ; break
                                 case 'log'
@@ -90,19 +91,11 @@
                                 ( JSON.stringify({type: evtName, data: arg})
                                 )
                             })
-                        }
-                    , (err) =>
-                        { deferred.reject(err)
-                        ; $rootScope.$digest()
+                        ; return deferredOut.promise
                         }
                     )
               })
-            .error((err) =>
-              { deferred.reject(err)
-              ; $rootScope.$digest()
-              })
-        ; return deferred.promise
         }
     }
 
-; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', 'srcParser']
+; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', 'srcParser']

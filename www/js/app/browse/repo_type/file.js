@@ -36,7 +36,7 @@ digest after resolving a deferred object.
                   , (err, data) =>
                       { if (err) deferred.reject(err)
                         else deferred.resolve(data)
-                      ; $rootScope.$digest()
+                      ; $rootScope.$apply()
                       }
                   )
               ; return deferred.promise
@@ -51,7 +51,7 @@ digest after resolving a deferred object.
                   { repo.manifest = parseManifest(data)
                   ; deferredRepo.resolve(repo)
                   }
-              ; $rootScope.$digest()
+              ; $rootScope.$apply()
               }
           )
       ; return deferredRepo.promise
