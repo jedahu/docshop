@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 BRANCH=`git symbolic-ref HEAD --short`
-if [ "$BRANCH" != 'master' ]; then
+if [ "$BRANCH" != 'master' ] || [ -n "${SKIP+is_set}" ]; then
   exit 0
 fi
 VERSION=`node -e 'process.stdout.write(require("./package.json").version)'`
