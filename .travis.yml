@@ -8,8 +8,9 @@ branches:
   only:
     - master
 
-before_install:
-  - npm install -g testem
+before_install: npm install -g testem
+
+before_script: ./grunt traceur:test
 
 notifications:
   webhooks:
