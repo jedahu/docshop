@@ -192,7 +192,7 @@ module.exports = function(grunt)
             }
         , js:
             { files: 'www/**/*.js'
-            , tasks: 'js'
+            , tasks: 'js:nw'
             }
         , package:
             { files: 'www/package.json'
