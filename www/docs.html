@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
   <head>
+    <script defer src='<%= bustCache("lib.js") %>'></script>
+    <script defer src='<%= bustCache("main.js") %>'></script>
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
     <link rel='stylesheet' type='text/css' href='<%= bustCache("main.css") %>'>
@@ -119,7 +121,5 @@
         &#9881;
       </button>
     </div>
-    <script src='<%= bustCache("lib.js") %>'></script>
-    <script src='<%= bustCache("main.js") %>'></script>
   </body>
 </html>
