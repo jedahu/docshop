@@ -155,13 +155,19 @@
     inStream.pipe(outStream);
   }
 
-  function writeTreeToFile(tree, filename, outfilename) {
+  function writeTreeToFile(tree, root, sourceMapPrefix, filename, outfilename) {
     var options = null;
     if (flags.sourceMaps) {
-      var sourceMapFilePath = getSourceMapFileName(filename);
-      var config = {file: path.basename(outfilename || filename)};
+      var sourceMapFilePath = getSourceMapFileName(outfilename || filename);
+      var config = {
+        file: path.basename(outfilename || filename),
+        sourceRoot: sourceMapPrefix + root};
       var sourceMapGenerator = new SourceMapGenerator(config);
       options = {sourceMapGenerator: sourceMapGenerator};
+      sourceMapGenerator.addMapping = function(mapping) {
+        if (mapping.source[0] === '/') mapping.source = mapping.source.slice(1);
+        return SourceMapGenerator.prototype.addMapping.call(this, mapping);
+      };
     }
 
     var compiledCode = TreeWriter.write(tree, options);
@@ -171,7 +177,7 @@
     }
     writeFile(filename, compiledCode, outfilename);
     if (flags.sourceMaps)
-      writeFile(sourceMapFilePath, options.sourceMap);
+      writeFile(sourceMapFilePath, options.sourceMap, outfilename && sourceMapFilePath);
   }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -225,7 +231,7 @@
             createIdentifierToken(name), tree.programElements)]);
   }
 
-  function inlineAndCompile(filename, outfilename, root) {
+  function inlineAndCompile(filename, outfilename, root, sourceMapPrefix) {
     console.log('Reading %s', filename);
     var source = fs.readFileSync(filename, 'utf8');
     if (!source) {
@@ -296,7 +302,7 @@
       var transformer = new ProgramTransformer(reporter, project);
       var tree = transformer.transform(programTree);
 
-      writeTreeToFile(tree, filename, outfilename);
+      writeTreeToFile(tree, root, sourceMapPrefix, filename, outfilename);
 
       if (flags.copyOriginals) {
         originalFiles.forEach(function(filename) {
@@ -349,7 +355,7 @@
 
   var success;
   if (flags.inlineModules)
-    success = inlineAndCompile(files[0], files[1], files[2]);
+    success = inlineAndCompile(files[0], files[1], files[2], files[3]);
   else
     success = compileFiles(files);
 

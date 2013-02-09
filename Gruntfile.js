@@ -76,10 +76,19 @@ module.exports = function(grunt)
                   }
                 ]
             }
+        , source_map:
+            { files:
+                [ { dest: 'dist/main.map'
+                  , src: ['tmp/main.map']
+                  }
+                ]
+            }
         , unuglified_js:
             { files:
-                [ { dest: 'dist/main.js'
-                  , src: ['tmp/concated.js']
+                [ { dest: 'dist/'
+                  , src: ['main.js', 'lib.js']
+                  , cwd: 'tmp/'
+                  , expand: true
                   }
                 ]
             }
@@ -96,14 +105,16 @@ module.exports = function(grunt)
                 , 'www/js/lib/angular-ui.js'
                 , 'www/js/lib/js-yaml.js'
                 , 'www/js/lib/runtime.js'
-                , 'tmp/compiled.js'
                 ]
-            , dest: 'tmp/concated.js'
+            , dest: 'tmp/lib.js'
             }
         }
     , uglify:
         { js:
-            { files: {'dist/main.js': 'tmp/concated.js'}
+            { files:
+                { 'dist/main.js': 'tmp/main.js'
+                , 'dist/lib.js': 'tmp/lib.js'
+                }
             }
         }
     , compress:
@@ -166,18 +177,21 @@ module.exports = function(grunt)
     , traceur:
         { main_nw:
             { in: 'www/js/app/start_nw.js'
-            , out: 'tmp/compiled.js'
+            , out: 'tmp/main.js'
             , root: 'www/js/app'
+            , sourceMapPrefix: '../'
             }
         , main_browser:
             { in: 'www/js/app/start_browser.js'
-            , out: 'tmp/compiled.js'
+            , out: 'tmp/main.js'
             , root: 'www/js/app'
+            , sourceMapPrefix: '../'
             }
         , test:
             { in: 'test/all.js'
             , out: 'tmp/test.js'
             , root: 'www/js/app'
+            , sourceMapPrefix: '../'
             }
         }
     , watch:
@@ -230,10 +244,11 @@ module.exports = function(grunt)
         , [ './traceur/filecompiler.js'
           , '--inline-modules'
           , '--freeVariableChecker=false'
-          , '--cascadeExpression=true'
+          , '--source-maps'
           , this.data.in
           , this.data.out
           , this.data.root
+          , this.data.sourceMapPrefix
           ]
         )
     })
@@ -250,6 +265,7 @@ module.exports = function(grunt)
         ( args.nw ? 'traceur:main_nw' : 'traceur:main_browser'
         , 'concat:js'
         , 'copy:worker'
+        , 'copy:source_map'
         , args.min ? 'uglify:js' : 'copy:unuglified_js'
         )
     })
