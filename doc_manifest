@@ -22,6 +22,8 @@ files:
           - github: github.js
           - http: http.js
           - file: file.js
+  - Utilities @app/util/:
+      - html variable: html_var.js
   - Markup types @/www/worker/renderer/:
       - text: text.js
       - markdown: markdown.js
