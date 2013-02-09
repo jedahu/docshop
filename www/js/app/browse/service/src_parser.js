@@ -62,27 +62,83 @@ Well, that was easy!
 ; import directive from 'src_parser/directive.js'
 
 /*
+# Angular Service
+
+The parser is meant to be used as an AngularJs service. It depends on the
+[tick](tick.js) service.
+*/
+/* !name srcParserService (tick-dependency) => ((lang, text) => parser)
+The service factory returns the actual parser service, which is a function which
+takes a language definition, some source text, and returns a parser for that
+text.
+*/
+; export const srcParserService = (tick) =>
+    (lang, text) => Object.create(parser).init(tick, lang, text).parse()
+
+; srcParserService.$inject = ['tick']
+
+/*
+All of the heavy lifting happens in the `parser` object which exposes a
+`parse()` method to the service.
+*/
+; const parser =
+    { init(tick, lang, text)
+        { this.lines = text.split('\n').reverse()
+        ; this.me = Object.create(microEmitter)
+        ; this.lang = lang
+        ; this.tick = tick
+        ; return this
+        }
+
+    , parse()
+        { this.lang ? this.parseCode() : this.parseText()
+        ; return this.me
+        }
+/*
 # Code Blocks
 
 Code blocks are HTML escaped and emitted line by line as `html` events. Because
 of this, consumers of parser events must be able to handle HTML strings.
 */
+    , openCodeBlock()
+        { return `\n\n<pre class='ds:code prettyprint'
+            ><code class='lang-${this.lang.name}'>`
+        }
 
-; const openCodeBlock = (lang) =>
-    '\n\n<pre class="ds:code prettyprint">'
-    + '<code class="lang-'
-    + lang
-    + '">'
+    , closeCodeBlock: '</code></pre>\n\n'
 
-; const closeCodeBlock = '</code></pre>\n\n'
+    , maybeOpenCodeBlock(current)
+        { let line
+        ; while
+            ( this.lines.length > 0
+            && (line = this.lines.pop() + '\n')
+            && line.trim() === ''
+            )
+            { // pass
+            }
+        ; if (this.lines.length === 0 && line.trim() === '')
+            { return current
+            }
+        ; if (!this.isCommentOpen(line))
+            { this.me.emit('html', this.openCodeBlock())
+            ; this.me.emit('html', escapeHtml(line))
+            ; return 'html'
+            }
+        ; this.lines.push(line)
+        ; return current
+        }
 
 /*
 # Comment Blocks
 
-Comment blocks are delimited by `open`, `middle`, and `close` strings, each
-being the first non-whitespace strings on a line. These strings are
-configurable. For Javascript they could be `['/\**', ' *', '*\/']`, or equally
-`['#.', '#', '#.']`. Note that if the middle string is indented relative to the open string, it must start with that amount of white space.
+Comment blocks are delimited by `open`, `middle`, and `close` syntax, each
+being the first non-whitespace syntax on a line. They are configurable. For
+Javascript they could be `['/\**', ' *', '*\/']`, or equally `['#.', '#',
+'#.']`. Note that if the middle syntax is indented relative to the open
+syntax, its config string must start with that amount of white space.
+
+
+## Directives
 
 Each comment block can be labeled with a directive. [Directives beginning with
 "!"][builtin] are reserved for docshop use and are parsed by this parser. Other
@@ -91,155 +147,170 @@ of this parser’s events. All directives are case agnostic.
 
 [builtin]: directive.js
 */
+    , isCommentOpen(line)
+        { return line.trimLeft().indexOf(this.lang.open) === 0
+        }
 
-; export const srcParser = (tick, lang, text) =>
-    { const lines = text.split('\n').reverse()
-    ; const me = Object.create(microEmitter)
-    ; const isCommentOpen = (line) =>
-        line.trimLeft().indexOf(lang.open) === 0
-    ; const isCommentClose = (line) =>
-        line.trimLeft().indexOf(lang.close) === 0
-    ; const indentMiddle = (line, base) =>
-        line.slice
-          ( base + lang.middle.length
-              + (/^\s*$/.exec(lang.middle) ? 0 : 1)
-          )
-          || '\n'
-    ; const consumeMetaComment = (indent) =>
+    , isCommentClose(line)
+        { return line.trimLeft().indexOf(this.lang.close) === 0
+        }
+
+    , indentMiddle(line, baseIndent)
+        { return line.slice
+            ( baseIndent + this.lang.middle.length
+                + (/^\s*$/.exec(this.lang.middle) ? 0 : 1)
+            )
+            || '\n'
+        }
+
+    , emitCommentOpen(label)
+        { const [_, tag, str] = /^!(\S+)\s*(.*)$/.exec(label) || []
+        ; const dir = directive[(tag || '').toLowerCase()]
+        ; if (tag && dir)
+            { this.me.emit('html', dir(str))
+            ; this.me.emit('comment.open')
+            }
+          else
+            { this.me.emit('comment.open', label)
+            }
+        }
+
+/*
+Two directives are handled specially by this parser: `!meta` and `!code`.
+
+
+### !meta
+
+A `!meta` comment block is parsed as YAML and added to the file’s meta data. The
+following attributes are recognised:
+
+title
+: Title to be displayed in documentation.
+
+author
+authors
+: Single author or list of authors. Format `Author Name <author@email.org>`.
+*/
+    , consumeMetaComment(indent)
         { let line
-        ; return tick.doWhileTick
-            ( () => lines.length > 0
-                && (line = lines.pop() + '\n')
-                && !isCommentClose(line)
+        ; return this.tick.doWhileTick
+            ( () => this.lines.length > 0
+                && (line = this.lines.pop() + '\n')
+                && !this.isCommentClose(line)
             , (next, err, metaStr = '') =>
-                { next(metaStr + indentMiddle(line, indent))
+                { next(metaStr + this.indentMiddle(line, indent))
                 }
             )
             .then(([metaStr]) =>
-              { me.metaData = jsyaml.load(metaStr)
+              { this.me.metaData = jsyaml.load(metaStr)
               })
         }
-    ; const consumeCodeComment = (indent, commentLang) =>
-        { const langClass = commentLang ? 'lang-' + commentLang : ''
+
+/*
+### !code
+
+A `!code` comment block is parsed as source code and emitted in `html` events.
+The directive takes a single language argument.
+*/
+    , consumeCodeComment(indent, codeLang)
+        { const langClass = codeLang ? 'lang-' + codeLang : ''
         ; let line
-        ; me.emit
+        ; this.me.emit
             ( 'html'
-            , '\n\n<pre class="ds:comment-code prettyprint">'
-              + '<code class="'
-              + langClass
-              + '">'
+            , `\n\n<pre class='ds:comment-code prettyprint'
+                ><code class='${langClass}'>`
             )
-        ; return tick.doWhileTick
-            ( () => lines.length > 0
-                && (line = lines.pop() + '\n')
-                && !isCommentClose(line)
+        ; return this.tick.doWhileTick
+            ( () => this.lines.length > 0
+                && (line = this.lines.pop() + '\n')
+                && !this.isCommentClose(line)
             , (next) =>
-                { next(me.emit
+                { next(this.me.emit
                     ( 'html'
-                    , escapeHtml(indentMiddle(line, indent))
+                    , escapeHtml(this.indentMiddle(line, indent))
                     ))
                 }
             )
             .then(() =>
-              { me.emit('html', '</code></pre>\n\n')
+              { this.me.emit('html', '</code></pre>\n\n')
               })
         }
-    ; const emitCommentOpen = (label) =>
-        { const [_, tag, str] = /^!(\S+)\s*(.*)$/.exec(label) || []
-        ; const dir = directive[(tag || '').toLowerCase()]
-        ; if (tag && dir)
-            { me.emit('html', dir(str))
-            ; me.emit('comment.open')
-            }
-          else
-            { me.emit('comment.open', label)
-            }
-        }
-    ; if (!lang)
-        { me.emit('comment.open')
-        ; tick.forEach
-            ( lines
+
+/*
+# Text Files
+*/
+    , parseText()
+        { this.me.emit('comment.open')
+        ; this.tick.forEach
+            ( this.lines
             , (line, next) =>
-                { me.emit('comment.line', {text: line + '\n'})
+                { this.me.emit('comment.line', {text: line + '\n'})
                 ; next()
                 }
             , (err) =>
-                { if (err) { /* handle error */ }
-                ; me.emit('comment.close')
-                ; me.emit('end')
+                { if (err) { /* FIXME handle error */ }
+                ; this.me.emit('comment.close')
+                ; this.me.emit('end')
                 }
             )
-        ; return me
         }
-    ; tick.doWhileTick
-        ( () => lines.length > 0
-        , (next, err, prev, label, indent) =>
-            { let line = lines.pop() + '\n'
-            ; const maybeOpenCodeSection = (current) =>
-                { while
-                    ( lines.length > 0
-                    && (line = lines.pop() + '\n')
-                    && line.trim() === ''
-                    )
-                    { //pass
+
+/*
+# Source Files
+*/
+    , parseCode()
+        { this.tick.doWhileTick
+            ( () => this.lines.length > 0
+            , (next, err, prev, label, indent) =>
+                { let line = this.lines.pop() + '\n'
+                ; if (this.isCommentOpen(line))
+                    { if (prev === 'html')
+                        { this.me.emit('html', this.closeCodeBlock)
+                        }
+                    ; const indent = line.search(/\S/)
+                    ; const label = line.slice
+                        ( indent
+                        + this.lang.open.length
+                        + 1
+                        )
+                        .trim()
+                        || null
+                    ; let match;
+                    ; if (/^!(?:meta|META)\b/.exec(label))
+                        { return this.consumeMetaComment(indent)
+                            .then(() => next('comment.close'), err)
+                        }
+                    ; if (match = /^!(?:code|CODE)(?:\b|\s+(\w+))/.exec(label))
+                        { return this.consumeCodeComment(indent, match[1])
+                            .then(() => next('comment.close'), err)
+                        }
+                    ; this.emitCommentOpen(label)
+                    ; return next('comment.open', label, indent)
                     }
-                ; if (lines.length === 0 && line.trim() === '')
-                    { return current
+                ; if (this.isCommentClose(line))
+                    { this.me.emit('comment.close', label)
+                    ; return next(this.maybeOpenCodeBlock('comment.close'))
                     }
-                ; if (!isCommentOpen(line))
-                    { me.emit('html', openCodeBlock(lang.name))
-                    ; me.emit('html', escapeHtml(line))
-                    ; return 'html'
+                ; if (prev === 'comment.open' || prev === 'comment.line')
+                    { this.me.emit
+                        ( 'comment.line'
+                        , { label: label
+                          , text: this.indentMiddle(line, indent)
+                          }
+                        )
+                    ; return next('comment.line', label, indent)
                     }
-                ; lines.push(line)
-                ; return current
-                }
-            ; if (isCommentOpen(line))
-                { if (prev === 'html') me.emit('html', closeCodeBlock)
-                ; const indent = line.search(/\S/)
-                ; const label = line.slice(indent + lang.open.length + 1).trim()
-                    || null
-                ; let match;
-                ; if (/^!meta\b/.exec(label))
-                    { return consumeMetaComment(indent)
-                        .then(() => next('comment.close'), err)
+                ; if (prev === 'html')
+                    { this.me.emit('html', escapeHtml(line))
+                    ; return next('html')
                     }
-                ; if (match = /^!code(?:\b|\s+(\w+))/.exec(label))
-                    { return consumeCodeComment(indent, match[1])
-                        .then(() => next('comment.close'), err)
-                    }
-                ; emitCommentOpen(label)
-                ; return next('comment.open', label, indent)
+                ; return next(this.maybeOpenCodeBlock(prev))
                 }
-            ; if (isCommentClose(line))
-                { me.emit('comment.close', label)
-                ; return next(maybeOpenCodeSection('comment.close'))
-                }
-            ; if (prev === 'comment.open' || prev === 'comment.line')
-                { me.emit
-                    ( 'comment.line'
-                    , { label: label
-                      , text: indentMiddle(line, indent)
-                      }
-                    )
-                ; return next('comment.line', label, indent)
-                }
-            ; if (prev === 'html')
-                { me.emit('html', escapeHtml(line))
-                ; return next('html')
-                }
-            ; return next(maybeOpenCodeSection(prev))
-            }
-        )
-        .then(([prev]) =>
-          { if (prev === 'html') me.emit('html', closeCodeBlock)
-            else me.emit('comment.close', label)
-          ; me.emit('end')
-          })
-    ; return me
+            )
+            .then(([prev]) =>
+              { if (prev === 'html') this.me.emit('html', this.closeCodeBlock)
+                else this.me.emit('comment.close', label)
+              ; this.me.emit('end')
+              })
+        }
     }
-
-; export const srcParserService = (tick) =>
-    (lang, text) => srcParser(tick, lang, text)
-
-; srcParserService.$inject = ['tick']
