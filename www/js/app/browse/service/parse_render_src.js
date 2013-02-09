@@ -7,6 +7,7 @@
 //      , h5o
 //      )
 ; import HTMLOutline from '/util/HTMLOutliner.js'
+; import htmlVar from '/util/html_var.js'
 
 ; export const parseRenderSrcService = ($q, $http, $rootScope, $timeout, srcParser) =>
     { const process = (result) =>
@@ -37,7 +38,7 @@
     ; return (repo, file) =>
         { return $http
             ( { method: 'GET'
-              , url: 'worker/renderer/' + file.markup + '.js?' + new Date()
+              , url: htmlVar('ds:var:rendererParserUrl')[file.markup]
               , transformResponse: (x) => x
               }
             )
@@ -45,7 +46,8 @@
               { return repo.readFile(file.path)
                   .then
                     ( (text) =>
-                        { const worker = new Worker('worker/renderer.js?' + new Date())
+                        { const worker =
+                            new Worker(htmlVar('ds:var:rendererWorkerUrl').value)
                         ; const out = {html: ''}
                         ; const parser = srcParser(file.lang, text)
                         ; const deferredOut = $q.defer()
