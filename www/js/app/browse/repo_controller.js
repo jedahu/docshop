@@ -142,8 +142,6 @@
         ; $scope.show.settings = !$scope.show.settings
         }
 
-    ; $location.path('/file:/home/jdh/proj/docshop/@master:www/js/app/browse/service/src_parser.js')
-
     }
 
 ; repoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
