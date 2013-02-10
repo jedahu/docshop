@@ -34,6 +34,9 @@
         })
     }
 
+; const handlers = []
+; const posters = []
+
 ; const parseRenderSrc =
     ($q, $http, $rootScope, $timeout, srcParser, repo, file) =>
       { if (!workerCache[file.markup])
@@ -47,7 +50,6 @@
               .then(({data: rendererSrc}) =>
                 { const worker =
                     new Worker(htmlVar('ds:var:rendererWorkerUrl').value)
-                ; console.log('new worker')
                 ; worker.postMessage
                     ( JSON.stringify(
                         { type: 'ds-renderer-src'
@@ -63,41 +65,60 @@
             ; const parser = srcParser(file.lang, text)
             ; const deferredOut = $q.defer()
             ; $timeout(() => deferredOut.reject('timeout'), 10000)
-            ; worker.addEventListener('message', (evt) =>
-                { const msg = JSON.parse(evt.data)
-                ; switch (msg.type)
-                  { case 'html'
-                      : out.html += msg.data
-                      ; break
-                    case 'toc'
-                      : out.toc = msg.data
-                      ; break
-                    case 'names'
-                      : out.names = msg.data
-                      ; break
-                    case 'ack'
-                      : if (msg.data === 'end')
-                        { out.meta = parser.metaData
-                        ; deferredOut.resolve(process(out))
-                        ; $rootScope.$apply()
-                        }
-                      ; break
-                    case 'log'
-                      : console.log('LOG', msg.data)
-                      ; break
+            ; const post = (evtName, arg) =>
+                worker.postMessage(JSON.stringify({type: evtName, data: arg}))
+            ; const handler =
+                { handle(evt)
+                  { const msg = JSON.parse(evt.data)
+                  ; switch (msg.type)
+                    { case 'html'
+                        : out.html += msg.data
+                        ; break
+                      case 'toc'
+                        : out.toc = msg.data
+                        ; break
+                      case 'names'
+                        : out.names = msg.data
+                        ; break
+                      case 'ack'
+                        : if (msg.data === 'end')
+                            { worker.removeEventListener(handler)
+                            ; parser.off('*', post)
+                            ; out.meta = parser.metaData
+                            ; deferredOut.resolve(
+                                { type: 'resolve'
+                                , result: process(out)
+                                })
+                            ; $rootScope.$apply()
+                            }
+                        ; break
+                      case 'log'
+                        : console.log('LOG', msg.data)
+                        ; break
+                    }
                   }
-                })
+                , cancel()
+                    { deferredOut.resolve({type: 'cancel'})
+                    }
+                }
+            ; while (handlers.length > 0)
+                { const h = handlers.pop()
+                ; h.cancel()
+                ; worker.removeEventListener('message', h.handle)
+                }
+            ; while (posters.length > 0)
+                { parser.off('*', posters.pop())
+                }
+            ; worker.addEventListener('message', handler.handle)
+            ; parser.on('*', post)
+            ; handlers.push(handler)
+            ; posters.push(post)
             ; worker.postMessage
                 ( JSON.stringify(
                     { type: 'start'
                     , data: file.lang.name
                     })
                 )
-            ; parser.on('*', (evtName, arg) =>
-                { worker.postMessage
-                    ( JSON.stringify({type: evtName, data: arg})
-                    )
-                })
             ; return deferredOut.promise
             })
           )

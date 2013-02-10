@@ -82,14 +82,15 @@
             ( $scope.repo
             , fileFromPath($scope.repo, $scope.repo.path)
             )
-            .then((result) =>
-                { result.html.prepend('<div id="ds-float-fix">&nbsp;</div>')
-                ; $scope.renderedSrc = result
-                ; return $location.hash()
-                })
             .then
-              ( (hash) =>
-                  { scrollToHash(hash, false)
+              ( ({type, result}) =>
+                  { if (type === 'resolve')
+                      { result.html.prepend
+                          ( '<div id="ds-float-fix">&nbsp;</div>'
+                          )
+                      ; $scope.renderedSrc = result
+                      ; scrollToHash($location.hash(), false)
+                      }
                   }
               , (err) =>
                   { console.log('ERROR'); console.log(err)
