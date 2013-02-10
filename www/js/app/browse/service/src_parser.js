@@ -258,54 +258,56 @@ The directive takes a single language argument.
 /*
 # Source Files
 */
+    , parseCodeLoop(next, err, prev, label, indent)
+        { let line = this.lines.pop() + '\n'
+        ; if (this.isCommentOpen(line))
+            { if (prev === 'html')
+                { this.me.emit('html', this.closeCodeBlock)
+                }
+            ; const indent = line.search(/\S/)
+            ; const label = line.slice
+                ( indent
+                + this.lang.open.length
+                + 1
+                )
+                .trim()
+                || null
+            ; let match;
+            ; if (/^!(?:meta|META)\b/.exec(label))
+                { return this.consumeMetaComment(indent)
+                    .then(() => next('comment.close'), err)
+                }
+            ; if (match = /^!(?:code|CODE)(?:\b|\s+(\w+))/.exec(label))
+                { return this.consumeCodeComment(indent, match[1])
+                    .then(() => next('comment.close'), err)
+                }
+            ; this.emitCommentOpen(label)
+            ; return next('comment.open', label, indent)
+            }
+        ; if (this.isCommentClose(line))
+            { this.me.emit('comment.close', label)
+            ; return next(this.maybeOpenCodeBlock('comment.close'))
+            }
+        ; if (prev === 'comment.open' || prev === 'comment.line')
+            { this.me.emit
+                ( 'comment.line'
+                , { label: label
+                  , text: this.indentMiddle(line, indent)
+                  }
+                )
+            ; return next('comment.line', label, indent)
+            }
+        ; if (prev === 'html')
+            { this.me.emit('html', escapeHtml(line))
+            ; return next('html')
+            }
+        ; return next(this.maybeOpenCodeBlock(prev))
+        }
+
     , parseCode()
         { this.tick.doWhileTick
             ( () => this.lines.length > 0
-            , (next, err, prev, label, indent) =>
-                { let line = this.lines.pop() + '\n'
-                ; if (this.isCommentOpen(line))
-                    { if (prev === 'html')
-                        { this.me.emit('html', this.closeCodeBlock)
-                        }
-                    ; const indent = line.search(/\S/)
-                    ; const label = line.slice
-                        ( indent
-                        + this.lang.open.length
-                        + 1
-                        )
-                        .trim()
-                        || null
-                    ; let match;
-                    ; if (/^!(?:meta|META)\b/.exec(label))
-                        { return this.consumeMetaComment(indent)
-                            .then(() => next('comment.close'), err)
-                        }
-                    ; if (match = /^!(?:code|CODE)(?:\b|\s+(\w+))/.exec(label))
-                        { return this.consumeCodeComment(indent, match[1])
-                            .then(() => next('comment.close'), err)
-                        }
-                    ; this.emitCommentOpen(label)
-                    ; return next('comment.open', label, indent)
-                    }
-                ; if (this.isCommentClose(line))
-                    { this.me.emit('comment.close', label)
-                    ; return next(this.maybeOpenCodeBlock('comment.close'))
-                    }
-                ; if (prev === 'comment.open' || prev === 'comment.line')
-                    { this.me.emit
-                        ( 'comment.line'
-                        , { label: label
-                          , text: this.indentMiddle(line, indent)
-                          }
-                        )
-                    ; return next('comment.line', label, indent)
-                    }
-                ; if (prev === 'html')
-                    { this.me.emit('html', escapeHtml(line))
-                    ; return next('html')
-                    }
-                ; return next(this.maybeOpenCodeBlock(prev))
-                }
+            , this.parseCodeLoop.bind(this)
             )
             .then(([prev]) =>
               { if (prev === 'html') this.me.emit('html', this.closeCodeBlock)
@@ -313,4 +315,9 @@ The directive takes a single language argument.
               ; this.me.emit('end')
               })
         }
+    }
+
+; export module _test
+    { export srcParserService
+    ; export parser
     }
