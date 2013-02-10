@@ -202,26 +202,32 @@ module.exports = function(grunt)
                 , 'www/css/*.png'
                 , 'www/css/*.gif'
                 ]
+            , options: {interrupt: true}
             , tasks: 'css'
             }
         , js:
             { files: 'www/**/*.js'
+            , options: {interrupt: true}
             , tasks: 'js:nw'
             }
         , package:
             { files: 'www/package.json'
+            , options: {interrupt: true}
             , tasks: 'copy:package'
             }
         , html:
             { files: 'www/docs.html'
+            , options: {interrupt: true}
             , tasks: ['template:html', 'template:not_found']
             }
         , appcache:
             { files: 'www/offline.appcache'
+            , options: {interrupt: true}
             , tasks: 'template:appcache'
             }
         , tests:
             { files: '**/*.js'
+            , options: {interrupt: true}
             , tasks: ['traceur:test', 'testem']
             }
         }
