@@ -2,6 +2,10 @@
 
 ; importScripts('lib/evilstreak-markdown.js')
 
+; receive('start', function()
+    { text = ''
+    })
+
 ; receive('comment.open', function(_label)
     { text = ''
     })
@@ -20,5 +24,4 @@
 
 ; receive('end', function()
     { ack('end')
-    ; close()
     })
