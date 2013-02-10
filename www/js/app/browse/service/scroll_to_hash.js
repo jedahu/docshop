@@ -1,8 +1,8 @@
-; export const scrollToHashService = ($location, tick) =>
+; export const scrollToHashService = ($location, $rootScope) =>
     (id) =>
       { const elem = document.getElementById(id)
       ; $location.hash(id)
-      ; tick.nextTick(() => {elem && elem.scrollIntoView()})
+      ; $rootScope.$evalAsync(() => {elem && elem.scrollIntoView()})
       }
 
-; scrollToHashService.$inject = ['$location', 'tick']
+; scrollToHashService.$inject = ['$location', '$rootScope']

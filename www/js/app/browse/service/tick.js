@@ -1,13 +1,9 @@
 ; export const tickService = ($q, $rootScope) =>
-    { const nextTick = typeof process !== 'undefined'
-        && process.nextTick
-        || (fn) => {setTimeout(fn, 0)}
-
-    ; const forEach = (list, fn, cb, eb) =>
+    { const forEach = (list, fn, cb, eb) =>
         { let i = 0
         ; const next = () =>
             { if (i === list.length) cb()
-              else nextTick(() => fn(list[i++], next, eb))
+              else $rootScope.$evalAsync(() => fn(list[i++], next, eb))
             }
         ; next()
         }
@@ -16,34 +12,38 @@
         { const next = (val) =>
             { init = typeof val === 'undefined' || val === null ? incr(init) : val
             ; if (test(init))
-                { nextTick(() => fn(init, next, eb))
+                { $rootScope.$evalAsync(() => fn(init, next, eb))
                 }
               else cb(init)
             }
         ; next(init)
         }
 
-    ; const doWhile = (test, fn) =>
-        { const final = $q.defer()
-        ; const eb = (err) =>
-            { final.reject(err)
-            ; $rootScope.$apply()
-            }
-        ; const next = (...args) =>
-            { if (test()) fn(next, eb, ...args)
-              else
-                { final.resolve(args)
-                ; $rootScope.$apply()
+    ; const recurseWhile = (test, fn, finish, ...args) =>
+        { const finish = finish || $q.defer()
+        ; const eb = (err) => {finish.reject(err)}
+        ; if (test())
+            { let sync = true
+            ; const next = (...args) =>
+                { if (sync)
+                    { $rootScope.$evalAsync(() =>
+                        { recurseWhile(test, fn, finish, ...args)
+                        })
+                    }
+                  else
+                    { recurseWhile(test, fn, finish, ...args)
+                    }
                 }
+            ; fn(next, eb, ...args)
+            ; sync = false
             }
-        ; next()
-        ; return final.promise
+          else
+            { finish.resolve(args)
+            }
+        ; return finish.promise
         }
 
-    ; const doWhileTick = (test, fn) =>
-        doWhile(test, (...args) => nextTick(() => fn(...args)))
-
-    ; return {nextTick, forEach, loop, doWhile, doWhileTick}
+    ; return {forEach, loop, recurseWhile}
     }
 
 tickService.$inject = ['$q', '$rootScope']

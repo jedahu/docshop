@@ -193,7 +193,7 @@ authors
 */
     , consumeMetaComment(indent)
         { let line
-        ; return this.tick.doWhileTick
+        ; return this.tick.recurseWhile
             ( () => this.lines.length > 0
                 && (line = this.lines.pop() + '\n')
                 && !this.isCommentClose(line)
@@ -220,7 +220,7 @@ The directive takes a single language argument.
             , `\n\n<pre class='ds:comment-code prettyprint'
                 ><code class='${langClass}'>`
             )
-        ; return this.tick.doWhileTick
+        ; return this.tick.recurseWhile
             ( () => this.lines.length > 0
                 && (line = this.lines.pop() + '\n')
                 && !this.isCommentClose(line)
@@ -305,7 +305,7 @@ The directive takes a single language argument.
         }
 
     , parseCode()
-        { this.tick.doWhileTick
+        { this.tick.recurseWhile
             ( () => this.lines.length > 0
             , this.parseCodeLoop.bind(this)
             )
