@@ -8,7 +8,7 @@
       (repo, file) =>
         parseRenderSrc($q, $http, $rootScope, $timeout, srcParser, repo, file)
 
-; const process = (result) =>
+; const processResult = (result) =>
     { const wrapper = angular.element('<div>')
     ; let idCount = 0
     ; wrapper.html(result.html)
@@ -87,7 +87,7 @@
                             ; out.meta = parser.metaData
                             ; deferredOut.resolve(
                                 { type: 'resolve'
-                                , result: process(out)
+                                , result: processResult(out)
                                 })
                             ; $rootScope.$apply()
                             }
