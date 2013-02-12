@@ -6,6 +6,7 @@
 ; import tickService from 'browse/service/tick.js'
 ; import srcParserService from 'browse/service/src_parser.js'
 ; import createRepoService from 'browse/service/create_repo.js'
+; import exceptionHandlerService from 'browse/service/exception_handler.js'
 ; import httpRepoType from 'browse/repo_type/http.js'
 ; import githubRepoType from 'browse/repo_type/github.js'
 ; import repoController from 'browse/repo_controller.js'
@@ -20,6 +21,7 @@
     .factory('scrollToHash', scrollToHashService)
     .factory('tick', tickService)
     .factory('srcParser', srcParserService)
+    .factory('$exceptionHandler', exceptionHandlerService)
     .directive('dsFileNav', fileNavDirective)
     .directive('dsBindNode', bindNodeDirective)
     .config(['$locationProvider', function($locationProvider)
