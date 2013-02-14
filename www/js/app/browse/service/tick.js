@@ -1,5 +1,7 @@
 ; export const tickService = ($q, $rootScope) =>
-    { const forEach = (list, fn, cb, eb) =>
+    { const nextTick = (fn) => $rootScope.$evalAsync(fn)
+
+    ; const forEach = (list, fn, cb, eb) =>
         { let i = 0
         ; const next = () =>
             { if (i === list.length) cb()
@@ -43,7 +45,7 @@
         ; return finish.promise
         }
 
-    ; return {forEach, loop, recurseWhile}
+    ; return {nextTick, forEach, loop, recurseWhile}
     }
 
 tickService.$inject = ['$q', '$rootScope']
