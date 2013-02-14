@@ -104,6 +104,7 @@ module.exports = function(grunt)
                 , 'www/js/lib/angular-sanitize.js'
                 , 'www/js/lib/angular-ui.js'
                 , 'www/js/lib/js-yaml.js'
+                , 'www/js/lib/evilstreak_markdown.js'
                 , 'www/js/lib/runtime.js'
                 ]
             , dest: 'tmp/lib.js'

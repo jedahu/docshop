@@ -2,6 +2,7 @@
 title: Source Parser
 author: Jeremy Hughes <jedahu@gmail.com>
 tests: /test/util/src_parser.js
+...
 */
 /*
 # Synopsis
@@ -91,7 +92,7 @@ All of the heavy lifting happens in the `parser` object which exposes a
         }
 
     , parse()
-        { this.lang ? this.parseCode() : this.parseText()
+        { this.tick.nextTick(() => this.lang ? this.parseCode() : this.parseText())
         ; return this.me
         }
 /*
@@ -163,16 +164,10 @@ of this parser’s events. All directives are case agnostic.
             || '\n'
         }
 
-    , emitCommentOpen(label)
+    , emitCommentDirective(label)
         { const [_, tag, str] = /^!(\S+)\s*(.*)$/.exec(label) || []
         ; const dir = directive[(tag || '').toLowerCase()]
-        ; if (tag && dir)
-            { this.me.emit('html', dir(str))
-            ; this.me.emit('comment.open')
-            }
-          else
-            { this.me.emit('comment.open', label)
-            }
+        ; if (tag && dir) this.me.emit('html', dir(str))
         }
 
 /*
@@ -258,7 +253,7 @@ The directive takes a single language argument.
 /*
 # Source Files
 */
-    , parseCodeLoop(next, err, prev, label, indent)
+    , parseCodeLoop(next, err, prev, label, indent, text)
         { let line = this.lines.pop() + '\n'
         ; if (this.isCommentOpen(line))
             { if (prev === 'html')
@@ -281,27 +276,31 @@ The directive takes a single language argument.
                 { return this.consumeCodeComment(indent, match[1])
                     .then(() => next('comment.close'), err)
                 }
-            ; this.emitCommentOpen(label)
-            ; return next('comment.open', label, indent)
+            ; this.emitCommentDirective(label)
+            ; return next('comment.open', label, indent, '')
             }
         ; if (this.isCommentClose(line))
-            { this.me.emit('comment.close', label)
-            ; return next(this.maybeOpenCodeBlock('comment.close'))
+            { this.me.emit('comment', {label, text})
+            ; this.me.emit('html', this.openCodeBlock())
+            ; return next('html')
+            //; return next(this.maybeOpenCodeBlock('comment.close'))
             }
         ; if (prev === 'comment.open' || prev === 'comment.line')
-            { this.me.emit
+            { return next
                 ( 'comment.line'
-                , { label: label
-                  , text: this.indentMiddle(line, indent)
-                  }
+                , label
+                , indent
+                , text + this.indentMiddle(line, indent)
                 )
-            ; return next('comment.line', label, indent)
             }
         ; if (prev === 'html')
             { this.me.emit('html', escapeHtml(line))
             ; return next('html')
             }
-        ; return next(this.maybeOpenCodeBlock(prev))
+        ; this.me.emit('html', this.openCodeBlock())
+        ; this.me.emit('html', escapeHtml(line))
+        ; return next('html')
+        //; return next(this.maybeOpenCodeBlock(prev))
         }
 
     , parseCode()
@@ -309,9 +308,9 @@ The directive takes a single language argument.
             ( () => this.lines.length > 0
             , this.parseCodeLoop.bind(this)
             )
-            .then(([prev]) =>
+            .then(([prev, label, indent, text]) =>
               { if (prev === 'html') this.me.emit('html', this.closeCodeBlock)
-                else this.me.emit('comment.close', label)
+                else this.emit('comment', {label, text})
               ; this.me.emit('end')
               })
         }

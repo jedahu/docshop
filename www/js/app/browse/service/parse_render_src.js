@@ -1,25 +1,32 @@
 ; import HTMLOutline from '/util/HTMLOutliner.js'
 ; import htmlVar from '/util/html_var.js'
 
-; const workerCache = {}
-
 ; export const parseRenderSrcService =
-    ($q, $http, $rootScope, $timeout, srcParser) =>
+    ($q, $http, $rootScope, $timeout, $injector, srcParser) =>
       (repo, file) =>
-        parseRenderSrc($q, $http, $rootScope, $timeout, srcParser, repo, file)
+        parseRenderSrc($q, $http, $rootScope, $timeout, $injector, srcParser, repo, file)
 
-; const processResult = (result) =>
+; const processResult = (html, meta) =>
     { const wrapper = angular.element('<div>')
     ; let idCount = 0
-    ; wrapper.html(result.html)
+    ; wrapper.html(html)
     ; HTMLOutline(wrapper[0])
-    ; const names =
-        result.names
-        || [].map.call
-             ( wrapper.find('[id^="id:"]')
-             , (elm) => elm.getAttribute('id').slice(3)
-             )
-           .sort()
+    ; const elems = wrapper.find('pre > code')
+    ; for (let i = 0; i < elems.length; ++i)
+        { const elem = elems[i]
+        ; if (elem.innerHTML.match(/^(?:\s*\n)*$/))
+            { elem.remove()
+            ; continue
+            }
+        ; elem.innerHTML = elem.innerHTML
+            .replace(/^(?:\s*\n)*/, '')
+            .replace(/(?:\n\s*)*$/, '')
+        }
+    ; const names = [].map.call
+        ( wrapper.find('[id^="id:"]')
+        , (elm) => elm.getAttribute('id').slice(3)
+        )
+        .sort()
     ; const toc = [].slice.call(wrapper.find('h1,h2,h3,h4'), 0)
     ; toc.forEach((h) =>
         { if (!h.id)
@@ -30,98 +37,89 @@
         { html: wrapper
         , names: names.length > 0 ? names : null
         , toc: toc.length > 0 ? toc : null
-        , meta: result.meta
+        , meta
         })
     }
 
-; const handlers = []
-; const posters = []
+; const parseMeta = (text) =>
+    { const matcher =
+        /^(\S+)\s+!meta\b.*\n([\s\S]*?\n)(\s*\S*?)\s*?\.\.\.\n(\S+)/
+    ; const [_, open, content, middle, close] = matcher.exec(text) || []
+    ; if (!_) return null
+    ; const metaStr = ''
+    ; for (let line of content.split(/\n/))
+        { metaStr += line.slice(middle.length) + '\n'
+        }
+    ; const meta = jsyaml.load(metaStr)
+    ; meta.lang =
+        { name: meta.lang
+        , open
+        , middle
+        , close
+        }
+    ; return meta
+    }
+
+; const readFile = (repo, file) =>
+    repo.readFile(file.path).then((text) =>
+      { const meta = parseMeta(text)
+      ; if (meta)
+          { file.meta = meta
+          ; file = Object.create(file)
+          ; if (meta.lang) meta.lang.name = meta.lang.name || file.lang.name
+          ; file.lang = meta.lang || file.lang
+          ; file.markup = file.markup || meta.markup
+          }
+      ; file.text = text
+      ; return file
+      })
+
+; const jobs = []
 
 ; const parseRenderSrc =
-    ($q, $http, $rootScope, $timeout, srcParser, repo, file) =>
-      { if (!workerCache[file.markup])
-          { const deferredWorker = $q.defer()
-          ; workerCache[file.markup] = deferredWorker.promise
-          ; $http(
-              { method: 'GET'
-              , url: htmlVar('ds:var:rendererParserUrl')[file.markup]
-              , transformResponse: (x) => x
-              })
-              .then(({data: rendererSrc}) =>
-                { const worker =
-                    new Worker(htmlVar('ds:var:rendererWorkerUrl').value)
-                ; worker.postMessage
-                    ( JSON.stringify(
-                        { type: 'ds-renderer-src'
-                        , data: rendererSrc
-                        })
-                    )
-                ; deferredWorker.resolve(worker)
-                })
-          }
-      ; return workerCache[file.markup].then((worker) =>
-          repo.readFile(file.path).then((text) =>
-            { const out = {html: ''}
-            ; const parser = srcParser(file.lang, text)
-            ; const deferredOut = $q.defer()
-            ; $timeout(() => deferredOut.reject('timeout'), 10000)
-            ; const post = (evtName, arg) =>
-                worker.postMessage(JSON.stringify({type: evtName, data: arg}))
-            ; const handler =
-                { handle(evt)
-                  { const msg = JSON.parse(evt.data)
-                  ; switch (msg.type)
-                    { case 'html'
-                        : out.html += msg.data
-                        ; break
-                      case 'toc'
-                        : out.toc = msg.data
-                        ; break
-                      case 'names'
-                        : out.names = msg.data
-                        ; break
-                      case 'ack'
-                        : if (msg.data === 'end')
-                            { worker.removeEventListener(handler)
-                            ; parser.off('*', post)
-                            ; out.meta = parser.metaData
-                            ; deferredOut.resolve(
-                                { type: 'resolve'
-                                , result: processResult(out)
-                                })
-                            ; $rootScope.$apply()
-                            }
-                        ; break
-                      case 'log'
-                        : console.log('LOG', msg.data)
-                        ; break
-                    }
-                  }
-                , cancel()
-                    { deferredOut.resolve({type: 'cancel'})
-                    }
+    ($q, $http, $rootScope, $timeout, $injector, srcParser, repo, file) =>
+      readFile(repo, file).then((file) =>
+        { const parser = srcParser(file.lang, file.text)
+        ; let html = ''
+        ; const renderer = $injector.get(file.markup + 'Renderer')
+        ; const render = (arg) =>
+            { try
+                { return renderer(arg.text, arg.label)
                 }
-            ; while (handlers.length > 0)
-                { const h = handlers.pop()
-                ; h.cancel()
-                ; worker.removeEventListener('message', h.handle)
+              catch(e)
+                { parser.offAll()
+                ; $rootScope.$broadcast('renderer-error', file)
                 }
-            ; while (posters.length > 0)
-                { parser.off('*', posters.pop())
+            }
+        ; const handle = (evt, arg) =>
+            { switch (evt)
+                { case 'html'
+                    : html += arg
+                    ; break
+                  case 'comment'
+                    : html += render(arg)
+                    ; break
+                  case 'end'
+                    : parser.offAll()
+                    ; $rootScope.$broadcast
+                        ( 'renderer-result'
+                        , file
+                        , processResult(html, file.meta)
+                        )
+                    ; break
                 }
-            ; worker.addEventListener('message', handler.handle)
-            ; parser.on('*', post)
-            ; handlers.push(handler)
-            ; posters.push(post)
-            ; worker.postMessage
-                ( JSON.stringify(
-                    { type: 'start'
-                    , data: file.lang.name
-                    })
-                )
-            ; return deferredOut.promise
-            })
-          )
-      }
+            }
+        ; while (jobs.length > 0)
+            { let job = jobs.pop()
+            ; job.parser.offAll()
+            ; $rootScope.$broadcast('renderer-cancel', file)
+            }
+        ; jobs.push({parser, file})
+        ; parser.onAll(handle)
+        ; $timeout
+            ( () => $rootScope.$broadcast('renderer-timeout', file)
+            , 10000 // TODO parameterise
+            )
+        })
 
-; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', 'srcParser']
+; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', '$injector', 'srcParser']

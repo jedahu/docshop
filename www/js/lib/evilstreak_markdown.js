@@ -1607,9 +1607,8 @@ function merge_text_nodes( jsonml ) {
 
 } )( (function() {
   if ( typeof exports === "undefined" ) {
-    var globalObj = typeof window === 'undefined' ? self : window;
-    globalObj.markdown = {};
-    return globalObj.markdown;
+    window.markdown = {};
+    return window.markdown;
   }
   else {
     return exports;

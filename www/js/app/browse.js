@@ -10,6 +10,8 @@
 ; import httpRepoType from 'browse/repo_type/http.js'
 ; import githubRepoType from 'browse/repo_type/github.js'
 ; import repoController from 'browse/repo_controller.js'
+; import markdownRenderer from 'browse/renderer/markdown.js'
+; import textRenderer from 'browse/renderer/text.js'
 
 ; export const browse = angular.module('BrowseModule', ['ngSanitize', 'ui.directives'])
     .controller('RepoController', repoController)
@@ -22,6 +24,8 @@
     .factory('tick', tickService)
     .factory('srcParser', srcParserService)
     .factory('$exceptionHandler', exceptionHandlerService)
+    .factory('markdownRenderer', markdownRenderer)
+    .factory('textRenderer', textRenderer)
     .directive('dsFileNav', fileNavDirective)
     .directive('dsBindNode', bindNodeDirective)
     .config(['$locationProvider', function($locationProvider)

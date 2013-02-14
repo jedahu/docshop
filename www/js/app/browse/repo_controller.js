@@ -82,24 +82,27 @@
             ( $scope.repo
             , fileFromPath($scope.repo, $scope.repo.path)
             )
-            .then
-              ( ({type, result}) =>
-                  { if (type === 'resolve')
-                      { result.html.prepend
-                          ( '<div id="ds-float-fix">&nbsp;</div>'
-                          )
-                      ; $scope.renderedSrc = result
-                      ; scrollToHash($location.hash(), false)
-                      }
-                  }
-              , (err) =>
-                  { console.log('ERROR'); console.log(err)
-                  ; $scope.renderedSrc.html = angular.element('<b>ERROR</b>')
-                  }
-              )
         ; setPath()
         ; $scope.repoForm.updateHack = new Date().getTime()
         }
+
+    ; $scope.$on('renderer-result', (_evt, file, result) =>
+        { result.html.prepend('<div id="ds-float-fix">&nbsp;</div>')
+        ; $scope.renderedSrc = result
+        ; scrollToHash($location.hash(), false)
+        })
+
+    ; $scope.$on('renderer-cancel', (_evt, file) =>
+        { console.log('cancel', file.name)
+        })
+
+    ; $scope.$on('renderer-timeout', (_evt, file) =>
+        { console.log('timeout', file.name)
+        })
+
+    ; $scope.$on('renderer-error', (_evt, file) =>
+        { console.log('error', file.name)
+        })
 
     ; $scope.changePathTo = (path) =>
         { if (!path || !$scope.repo) return
