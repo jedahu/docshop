@@ -20,32 +20,6 @@
 
 ; const jsLang = {open: '/*', middle: '', close: '*/'}
 
-; const metaText =
-`/* !meta
-title: Meta Test
-...
-*/
-`
-
-; const metaTexts =
-`/* !meta
-title: Meta Test
-...
-*/
-/* !meta
-author: Me
-time: Now
-...
-*/`
-
-; const justCode =
-`a < b`
-
-; const justComment =
-`/*
-A single line comment.
-*/`
-
 ; beforeEach(() =>
     { //browse.factory('nextTick', nextTickMockService)
     //; browse.value('$q', when)
@@ -58,7 +32,13 @@ A single line comment.
 ; describe('src_parser', function()
     { this.timeout(100000)
     ; that('should parse meta data', (done) =>
-        { const parser = srcParser(jsLang, metaText)
+        { const parser = srcParser
+            ( jsLang
+            , '/* !meta\n'
+                + 'title: Meta Test\n'
+                + '...\n'
+                + '*/\n'
+            )
         ; parser.parse().then
             ( () =>
                 { assert.deepEqual({title: 'Meta Test'}, parser.metaData)
@@ -68,7 +48,17 @@ A single line comment.
             )
         })
     ; that('should parse multiple meta datas', (done) =>
-        { const parser = srcParser(jsLang, metaTexts)
+        { const parser = srcParser
+            ( jsLang
+            , '/* !meta\n'
+                + 'title: Meta Test\n'
+                + '...\n'
+                + '*/\n'
+                + '/* !meta\n'
+                + 'author: Me\n'
+                + 'time: Now\n'
+                + '*/\n'
+            )
         ; parser.parse().then(() =>
             { assert.deepEqual
                 ( { title: 'Meta Test'
@@ -80,8 +70,8 @@ A single line comment.
             })
             .then(done, done)
         })
-    ; that('should parse code', (done) =>
-        { const parser = srcParser(jsLang, justCode)
+    ; that('should parse code (and escape it)', (done) =>
+        { const parser = srcParser(jsLang, 'a < b')
         ; const events = []
         ; parser.events.onAll((evt, arg) => events.push([evt, arg]))
         ; parser.parse().then(() =>
@@ -99,7 +89,12 @@ A single line comment.
             .then(done, done)
         })
     ; that('should parse comment', (done) =>
-        { const parser = srcParser(jsLang, justComment)
+        { const parser = srcParser
+            ( jsLang
+            , '/*\n'
+                + 'A single line comment.\n'
+                + '*/\n'
+            )
         ; const events = []
         ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
         ; parser.parse().then(() =>
