@@ -101,9 +101,11 @@ All of the heavy lifting happens in the `parser` object which exposes a
 Code blocks are HTML escaped and emitted line by line as `html` events. Because
 of this, consumers of parser events must be able to handle HTML strings.
 */
-    , openCodeBlock()
-        { return `\n\n<pre class='ds:code prettyprint'
-            ><code class='lang-${this.lang.name}'>`
+    , openCodeBlock(lang)
+        { lang = lang || this.lang.name
+        ; const className = lang ? 'comment' : ''
+        ; return `\n\n<pre class='ds:code ${className} prettyprint'>`
+            + `<code class='lang-${lang}'>`
         }
 
     , closeCodeBlock: '</code></pre>\n\n'
@@ -213,13 +215,8 @@ A `!code` comment block is parsed as source code and emitted in `html` events.
 The directive takes a single language argument.
 */
     , consumeCodeComment(indent, codeLang)
-        { const langClass = codeLang ? 'lang-' + codeLang : ''
-        ; let line
-        ; this.events.emit
-            ( 'html'
-            , `\n\n<pre class='ds:comment-code prettyprint'
-                ><code class='${langClass}'>`
-            )
+        { let line
+        ; this.events.emit('html', this.openCodeBlock(codeLang))
         ; return this.tick.recurseWhile
             ( () => this.lines.length > 0
                 && (line = this.lines.pop() + '\n')
@@ -232,7 +229,7 @@ The directive takes a single language argument.
                 }
             )
             .then(() =>
-              { this.events.emit('html', '</code></pre>\n\n')
+              { this.events.emit('html', this.closeCodeBlock)
               })
         }
 
@@ -277,7 +274,7 @@ The directive takes a single language argument.
                 { return this.consumeMetaComment(indent)
                     .then(() => next('comment.close'), err)
                 }
-            ; if (match = /^!(?:code|CODE)(?:\b|\s+(\w+))/.exec(label))
+            ; if (match = /^!(?:code|CODE)(?:\s+(\w+))?/.exec(label))
                 { return this.consumeCodeComment(indent, match[1])
                     .then(() => next('comment.close'), err)
                 }
