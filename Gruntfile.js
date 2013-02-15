@@ -189,7 +189,7 @@ module.exports = function(grunt)
             , sourceMapPrefix: '../'
             }
         , test:
-            { in: 'test/all.js'
+            { in: 'www/js/app/test_all.js'
             , out: 'tmp/test.js'
             , root: 'www/js/app'
             , sourceMapPrefix: '../'

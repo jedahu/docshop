@@ -1,4 +1,5 @@
-framework: jasmine
+framework: mocha
+#test_page: test.html
 launch_in_ci:
   - Firefox
   - Chrome
@@ -11,11 +12,9 @@ src_files:
   - www/js/lib/angular-ui.js
   - www/js/lib/js-yaml.js
   - www/js/lib/runtime.js
-  - test/lib/chai.js
-  - test/lib/angular-mocks.js
+  - www/js/lib/chai.js
   - tmp/test.js
 watch_files:
-  - test/**/*.js
-  - www/**/*.js
+  - Gruntfile.js
+#   - www/**/*.js
 before_tests: ./grunt traceur:test
-after_tests: rm -f tmp/test.js
