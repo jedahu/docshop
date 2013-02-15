@@ -104,5 +104,26 @@
             })
             .then(done, done)
         })
-
+    ; that('should parse code comment', (done) =>
+        { const parser = srcParser
+            ( jsLang
+            , '/* !code python\n'
+                + 'a > b\n'
+                + '*/\n'
+            )
+        ; const events = []
+        ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
+        ; parser.parse().then(() =>
+            { const expect =
+                [ ['html', parser.openCodeBlock('python')]
+                , ['html', 'a &#62; b\n']
+                , ['html', parser.closeCodeBlock]
+                ]
+            ; for (let i in expect)
+                { assert.equal(expect[i][0], events[i][0])
+                ; assert.equal(expect[i][1], events[i][1])
+                }
+            })
+            .then(done, done)
+        })
     })
