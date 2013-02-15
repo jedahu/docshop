@@ -74,7 +74,7 @@ takes a language definition, some source text, and returns a parser for that
 text.
 */
 ; export const srcParserService = (tick) =>
-    (lang, text) => Object.create(parser).init(tick, lang, text).parse()
+    (lang, text) => Object.create(parser).init(tick, lang, text)
 
 ; srcParserService.$inject = ['tick']
 
@@ -85,15 +85,15 @@ All of the heavy lifting happens in the `parser` object which exposes a
 ; const parser =
     { init(tick, lang, text)
         { this.lines = text.split('\n').reverse()
-        ; this.me = Object.create(microEmitter)
+        ; this.events = Object.create(microEmitter)
         ; this.lang = lang
         ; this.tick = tick
+        ; this.metaData = {}
         ; return this
         }
 
     , parse()
-        { this.tick.nextTick(() => this.lang ? this.parseCode() : this.parseText())
-        ; return this.me
+        { return this.lang ? this.parseCode() : this.parseText()
         }
 /*
 # Code Blocks
@@ -121,8 +121,8 @@ of this, consumers of parser events must be able to handle HTML strings.
             { return current
             }
         ; if (!this.isCommentOpen(line))
-            { this.me.emit('html', this.openCodeBlock())
-            ; this.me.emit('html', escapeHtml(line))
+            { this.events.emit('html', this.openCodeBlock())
+            ; this.events.emit('html', escapeHtml(line))
             ; return 'html'
             }
         ; this.lines.push(line)
@@ -167,7 +167,7 @@ of this parser’s events. All directives are case agnostic.
     , emitCommentDirective(label)
         { const [_, tag, str] = /^!(\S+)\s*(.*)$/.exec(label) || []
         ; const dir = directive[(tag || '').toLowerCase()]
-        ; if (tag && dir) this.me.emit('html', dir(str))
+        ; if (tag && dir) this.events.emit('html', dir(str))
         }
 
 /*
@@ -193,11 +193,16 @@ authors
                 && (line = this.lines.pop() + '\n')
                 && !this.isCommentClose(line)
             , (next, err, metaStr = '') =>
-                { next(metaStr + this.indentMiddle(line, indent))
+                { try
+                    { return next(metaStr + this.indentMiddle(line, indent))
+                    }
+                  catch(e)
+                    { return err(e)
+                    }
                 }
             )
             .then(([metaStr]) =>
-              { this.me.metaData = jsyaml.load(metaStr)
+              { angular.extend(this.metaData, jsyaml.load(metaStr))
               })
         }
 
@@ -210,7 +215,7 @@ The directive takes a single language argument.
     , consumeCodeComment(indent, codeLang)
         { const langClass = codeLang ? 'lang-' + codeLang : ''
         ; let line
-        ; this.me.emit
+        ; this.events.emit
             ( 'html'
             , `\n\n<pre class='ds:comment-code prettyprint'
                 ><code class='${langClass}'>`
@@ -220,14 +225,14 @@ The directive takes a single language argument.
                 && (line = this.lines.pop() + '\n')
                 && !this.isCommentClose(line)
             , (next) =>
-                { next(this.me.emit
+                { next(this.events.emit
                     ( 'html'
                     , escapeHtml(this.indentMiddle(line, indent))
                     ))
                 }
             )
             .then(() =>
-              { this.me.emit('html', '</code></pre>\n\n')
+              { this.events.emit('html', '</code></pre>\n\n')
               })
         }
 
@@ -235,17 +240,17 @@ The directive takes a single language argument.
 # Text Files
 */
     , parseText()
-        { this.me.emit('comment.open')
+        { this.events.emit('comment.open')
         ; this.tick.forEach
             ( this.lines
             , (line, next) =>
-                { this.me.emit('comment.line', {text: line + '\n'})
+                { this.events.emit('comment.line', {text: line + '\n'})
                 ; next()
                 }
             , (err) =>
                 { if (err) { /* FIXME handle error */ }
-                ; this.me.emit('comment.close')
-                ; this.me.emit('end')
+                ; this.events.emit('comment.close')
+                ; this.events.emit('end')
                 }
             )
         }
@@ -257,7 +262,7 @@ The directive takes a single language argument.
         { let line = this.lines.pop() + '\n'
         ; if (this.isCommentOpen(line))
             { if (prev === 'html')
-                { this.me.emit('html', this.closeCodeBlock)
+                { this.events.emit('html', this.closeCodeBlock)
                 }
             ; const indent = line.search(/\S/)
             ; const label = line.slice
@@ -280,8 +285,8 @@ The directive takes a single language argument.
             ; return next('comment.open', label, indent, '')
             }
         ; if (this.isCommentClose(line))
-            { this.me.emit('comment', {label, text})
-            ; this.me.emit('html', this.openCodeBlock())
+            { this.events.emit('comment', text, label)
+            ; this.events.emit('html', this.openCodeBlock())
             ; return next('html')
             //; return next(this.maybeOpenCodeBlock('comment.close'))
             }
@@ -294,24 +299,24 @@ The directive takes a single language argument.
                 )
             }
         ; if (prev === 'html')
-            { this.me.emit('html', escapeHtml(line))
+            { this.events.emit('html', escapeHtml(line))
             ; return next('html')
             }
-        ; this.me.emit('html', this.openCodeBlock())
-        ; this.me.emit('html', escapeHtml(line))
+        ; this.events.emit('html', this.openCodeBlock())
+        ; this.events.emit('html', escapeHtml(line))
         ; return next('html')
         //; return next(this.maybeOpenCodeBlock(prev))
         }
 
     , parseCode()
-        { this.tick.recurseWhile
+        { return this.tick.recurseWhile
             ( () => this.lines.length > 0
             , this.parseCodeLoop.bind(this)
             )
             .then(([prev, label, indent, text]) =>
-              { if (prev === 'html') this.me.emit('html', this.closeCodeBlock)
-                else this.emit('comment', {label, text})
-              ; this.me.emit('end')
+              { if (prev === 'html') this.events.emit('html', this.closeCodeBlock)
+                else this.events.emit('comment', text, label)
+              ; this.events.emit('end')
               })
         }
     }

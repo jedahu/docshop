@@ -87,7 +87,7 @@
                 { return renderer(arg.text, arg.label)
                 }
               catch(e)
-                { parser.offAll()
+                { parser.events.offAll()
                 ; $rootScope.$broadcast('renderer-error', file)
                 }
             }
@@ -100,7 +100,7 @@
                     : html += render(arg)
                     ; break
                   case 'end'
-                    : parser.offAll()
+                    : parser.events.offAll()
                     ; $rootScope.$broadcast
                         ( 'renderer-result'
                         , file
@@ -111,15 +111,18 @@
             }
         ; while (jobs.length > 0)
             { let job = jobs.pop()
-            ; job.parser.offAll()
+            ; job.parser.events.offAll()
             ; $rootScope.$broadcast('renderer-cancel', file)
             }
         ; jobs.push({parser, file})
-        ; parser.onAll(handle)
+        ; parser.events.onAll(handle)
         ; $timeout
             ( () => $rootScope.$broadcast('renderer-timeout', file)
             , 10000 // TODO parameterise
             )
+        ; parser.parse().then(null, (err) =>
+            { $rootScope.$broadcast('parser-error', file, err)
+            })
         })
 
 ; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', '$injector', 'srcParser']
