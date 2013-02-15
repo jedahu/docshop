@@ -4,6 +4,7 @@
 ; import parseRenderSrcService from 'browse/service/parse_render_src.js'
 ; import manifestParserService from 'browse/service/manifest_parser.js'
 ; import tickService from 'browse/service/tick.js'
+; import nextTickService from 'browse/service/next_tick.js'
 ; import srcParserService from 'browse/service/src_parser.js'
 ; import createRepoService from 'browse/service/create_repo.js'
 ; import exceptionHandlerService from 'browse/service/exception_handler.js'
@@ -22,6 +23,7 @@
     .factory('parseRenderSrc', parseRenderSrcService)
     .factory('scrollToHash', scrollToHashService)
     .factory('tick', tickService)
+    .factory('nextTick', nextTickService)
     .factory('srcParser', srcParserService)
     .factory('$exceptionHandler', exceptionHandlerService)
     .factory('markdownRenderer', markdownRenderer)

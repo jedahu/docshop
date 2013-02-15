@@ -1,11 +1,9 @@
-; export const tickService = ($q, $rootScope) =>
-    { const nextTick = (fn) => $rootScope.$evalAsync(fn)
-
-    ; const forEach = (list, fn, cb, eb) =>
+; export const tickService = ($q, nextTick) =>
+    { const forEach = (list, fn, cb, eb) =>
         { let i = 0
         ; const next = () =>
             { if (i === list.length) cb()
-              else $rootScope.$evalAsync(() => fn(list[i++], next, eb))
+              else nextTick(() => fn(list[i++], next, eb))
             }
         ; next()
         }
@@ -14,7 +12,7 @@
         { const next = (val) =>
             { init = typeof val === 'undefined' || val === null ? incr(init) : val
             ; if (test(init))
-                { $rootScope.$evalAsync(() => fn(init, next, eb))
+                { nextTick(() => fn(init, next, eb))
                 }
               else cb(init)
             }
@@ -28,7 +26,7 @@
             { let sync = true
             ; const next = (...args) =>
                 { if (sync)
-                    { $rootScope.$evalAsync(() =>
+                    { nextTick(() =>
                         { recurseWhile(test, fn, finish, ...args)
                         })
                     }
@@ -45,7 +43,7 @@
         ; return finish.promise
         }
 
-    ; return {nextTick, forEach, loop, recurseWhile}
+    ; return {forEach, loop, recurseWhile}
     }
 
-tickService.$inject = ['$q', '$rootScope']
+tickService.$inject = ['$q', 'nextTick']
