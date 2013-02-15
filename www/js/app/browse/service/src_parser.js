@@ -66,7 +66,7 @@ Well, that was easy!
 # Angular Service
 
 The parser is meant to be used as an AngularJs service. It depends on the
-[tick](tick.js) service.
+[nextTick](next_tick.js) and [tick](tick.js) services.
 */
 /* !name srcParserService (tick-dependency) => ((lang, text) => parser)
 The service factory returns the actual parser service, which is a function which
