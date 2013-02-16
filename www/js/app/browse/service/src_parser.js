@@ -78,6 +78,13 @@ text.
 
 ; srcParserService.$inject = ['tick']
 
+; const isBlank = (str) => !!/^(?:\s*\n)*$/.exec(str)
+
+; const trimLines = (str) =>
+    str
+      .replace(/^(?:\s*\n)*/, '')
+      .replace(/(?:\s*\n)*$/, '')
+
 /*
 All of the heavy lifting happens in the `parser` object which exposes a
 `parse()` method to the service.
@@ -256,13 +263,19 @@ The directive takes a single language argument.
 # Source Files
 */
     , parseCodeLoop(next, err, prev, label, indent, text)
-        { let line = this.lines.pop() + '\n'
+        { const append = (type, str) => next(type, lable, indent, text + str)
+        ; let line = this.lines.pop() + '\n'
         ; if (this.isCommentOpen(line))
-            { if (prev === 'html')
-                { this.events.emit('html', this.closeCodeBlock)
+            { if (prev === 'html' && !isBlank(text))
+                { this.events.emit
+                    ( 'html'
+                    , this.openCodeBlock()
+                        + trimLines(text)
+                        + this.closeCodeBlock
+                    )
                 }
-            ; const indent = line.search(/\S/)
-            ; const label = line.slice
+            ; indent = line.search(/\S/)
+            ; label = line.slice
                 ( indent
                 + this.lang.open.length
                 + 1
@@ -282,10 +295,10 @@ The directive takes a single language argument.
             ; return next('comment.open', label, indent, '')
             }
         ; if (this.isCommentClose(line))
-            { this.events.emit('comment', text, label)
-            ; this.events.emit('html', this.openCodeBlock())
-            ; return next('html')
-            //; return next(this.maybeOpenCodeBlock('comment.close'))
+            { if (!isBlank(text))
+                { this.events.emit('comment', trimLines(text), label)
+                }
+            ; return next('html', null, null, '')
             }
         ; if (prev === 'comment.open' || prev === 'comment.line')
             { return next
@@ -296,13 +309,9 @@ The directive takes a single language argument.
                 )
             }
         ; if (prev === 'html')
-            { this.events.emit('html', escapeHtml(line))
-            ; return next('html')
+            { return next('html', null, null, text + escapeHtml(line))
             }
-        ; this.events.emit('html', this.openCodeBlock())
-        ; this.events.emit('html', escapeHtml(line))
-        ; return next('html')
-        //; return next(this.maybeOpenCodeBlock(prev))
+        ; return next('html', null, null, escapeHtml(line))
         }
 
     , parseCode()
@@ -311,8 +320,17 @@ The directive takes a single language argument.
             , this.parseCodeLoop.bind(this)
             )
             .then(([prev, label, indent, text]) =>
-              { if (prev === 'html') this.events.emit('html', this.closeCodeBlock)
-                else this.events.emit('comment', text, label)
+              { if (prev === 'html' && !isBlank(text))
+                  { this.events.emit
+                      ( 'html'
+                      , this.openCodeBlock()
+                          + trimLines(text)
+                          + this.closeCodeBlock
+                      )
+                  }
+                else if (!isBlank(text))
+                  { this.events.emit('comment', trimLines(text), label)
+                  }
               ; this.events.emit('end')
               })
         }
