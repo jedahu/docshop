@@ -23,8 +23,8 @@
             .replace(/(?:\n\s*)*$/, '')
         }
     ; const names = [].map.call
-        ( wrapper.find('[id^="id:"]')
-        , (elm) => elm.getAttribute('id').slice(3)
+        ( wrapper.find('[id^="name:"]')
+        , (elm) => elm.getAttribute('id').slice('name:'.length)
         )
         .sort()
     ; const toc = [].slice.call(wrapper.find('h1,h2,h3,h4'), 0)
@@ -35,9 +35,9 @@
         })
     ; return (
         { html: wrapper
-        , names: names.length > 0 ? names : null
-        , toc: toc.length > 0 ? toc : null
-        , meta
+        , names: names
+        , toc: toc
+        , meta: meta || {}
         })
     }
 
@@ -126,3 +126,9 @@
         })
 
 ; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', '$injector', 'srcParser']
+
+; export module _test
+    { export processResult
+    ; export parseMeta
+    ; export readFile
+    }
