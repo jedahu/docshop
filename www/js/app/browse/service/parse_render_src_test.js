@@ -54,4 +54,54 @@
                 )
             })
         })
+    ; describe('parseMeta', () =>
+        { it('should return {} when no metadata is found at ^', () =>
+            { assert.deepEqual({}, _test.parseMeta(''))
+            ; assert.deepEqual
+                ( {}
+                , _test.parseMeta
+                    ( '\n'
+                        + '/* !meta\n'
+                        + 'foo: bar\n'
+                        + '...\n'
+                        + '*/\n'
+                    )
+                )
+            })
+        ; it('should guess comment syntax', () =>
+            { assert.deepEqual
+                ( { foo: 'bar'
+                  , lang:
+                      { open: '/*'
+                      , middle: ''
+                      , close: '*/'
+                      , name: undefined
+                      }
+                  }
+                , _test.parseMeta
+                    ( '/* !meta\n'
+                        + 'foo: bar\n'
+                        + '...\n'
+                        + '*/\n'
+                    )
+                )
+            ; assert.deepEqual
+                ( { date: 'Today'
+                  , lang:
+                      { open: '#.'
+                      , middle: '#'
+                      , close: '#.'
+                      , name: 'shell'
+                      }
+                  }
+                , _test.parseMeta
+                    ( '#. !meta\n'
+                        + '# date: Today\n'
+                        + '# lang: shell\n'
+                        + '# ...\n'
+                        + '#.\n'
+                    )
+                )
+            })
+        })
     })
