@@ -1,29 +1,20 @@
 ; import browse from '/browse.js'
 ; import nextTickMockService from 'next_tick_mock.js'
+; import ngIt from '/test/util.js'
 
 ; const assert = chai.assert
-; const inject = (fn) => fn(angular.injector(['ng', 'BrowseModule']))
-; const that = (text, fn) =>
-    it(text, (done) =>
-      { let fin
-      ; const finished = (err) =>
-          { fin = true
-          ; done(err)
-          }
-      ; fn(finished)
-      ; while (!fin) {$rootScope.$digest()}
-      ; $rootScope.$digest()
-      })
+; const $injector = angular.injector(['ng', 'BrowseModule'])
+; const inject = (fn) => fn($injector)
 
 ; let srcParser
 ; let $rootScope
+; const $it = ngIt($injector)
 
-; const jsLang = {open: '/*', middle: '', close: '*/', name: 'javascript'}
+; const pyLang = {open: '"""', middle: '', close: '"""', name: 'python'}
+; const jsLang = {open: '/*', middle: ' *', close: '*/', name: 'javascript'}
 
 ; beforeEach(() =>
-    { //browse.factory('nextTick', nextTickMockService)
-    //; browse.value('$q', when)
-    ; inject(($injector) =>
+    { inject(($injector) =>
         { srcParser = $injector.get('srcParser')
         ; $rootScope = $injector.get('$rootScope')
         })
@@ -31,13 +22,13 @@
 
 ; describe('src_parser', function()
     { this.timeout(100000)
-    ; that('should parse meta data', (done) =>
+    ; $it('should parse meta data', (done) =>
         { const parser = srcParser
-            ( jsLang
-            , '/* !meta\n'
+            ( pyLang
+            , '""" !meta\n'
                 + 'title: Meta Test\n'
                 + '...\n'
-                + '*/\n'
+                + '"""\n'
             )
         ; parser.parse().then
             ( () =>
@@ -47,17 +38,17 @@
             , done
             )
         })
-    ; that('should parse multiple meta datas', (done) =>
+    ; $it('should parse multiple meta datas', (done) =>
         { const parser = srcParser
-            ( jsLang
-            , '/* !meta\n'
+            ( pyLang
+            , '""" !meta\n'
                 + 'title: Meta Test\n'
                 + '...\n'
-                + '*/\n'
-                + '/* !meta\n'
+                + '"""\n'
+                + '""" !meta\n'
                 + 'author: Me\n'
                 + 'time: Now\n'
-                + '*/\n'
+                + '"""\n'
             )
         ; parser.parse().then(() =>
             { assert.deepEqual
@@ -70,8 +61,8 @@
             })
             .then(done, done)
         })
-    ; that('should parse code (and escape it)', (done) =>
-        { const parser = srcParser(jsLang, 'a < b')
+    ; $it('should parse code (and escape it)', (done) =>
+        { const parser = srcParser(pyLang, 'a < b')
         ; const events = []
         ; parser.events.onAll((evt, arg) => events.push([evt, arg]))
         ; parser.parse().then(() =>
@@ -90,12 +81,12 @@
             })
             .then(done, done)
         })
-    ; that('should parse comment', (done) =>
+    ; $it('should parse comment', (done) =>
         { const parser = srcParser
-            ( jsLang
-            , '/*\n'
+            ( pyLang
+            , '"""\n'
                 + 'A single line comment.\n'
-                + '*/\n'
+                + '"""\n'
             )
         ; const events = []
         ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
@@ -106,12 +97,12 @@
             })
             .then(done, done)
         })
-    ; that('should parse code comment', (done) =>
+    ; $it('should parse code comment', (done) =>
         { const parser = srcParser
-            ( jsLang
-            , '/* !code python\n'
+            ( pyLang
+            , '""" !code python\n'
                 + 'a > b\n'
-                + '*/\n'
+                + '"""\n'
             )
         ; const events = []
         ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))

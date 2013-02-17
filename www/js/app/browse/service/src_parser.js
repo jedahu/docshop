@@ -265,7 +265,13 @@ The directive takes a single language argument.
     , parseCodeLoop(next, err, prev, label, indent, text)
         { const append = (type, str) => next(type, lable, indent, text + str)
         ; let line = this.lines.pop() + '\n'
-        ; if (this.isCommentOpen(line))
+        ; if
+            ( this.isCommentOpen(line)
+            && ( this.lang.open !== this.lang.close
+               || prev === 'html'
+               || !prev
+               )
+            )
             { if (prev === 'html' && !isBlank(text))
                 { this.events.emit
                     ( 'html'
@@ -285,11 +291,11 @@ The directive takes a single language argument.
             ; let match;
             ; if (/^!(?:meta|META)\b/.exec(label))
                 { return this.consumeMetaComment(indent)
-                    .then(() => next('comment.close'), err)
+                    .then(() => next('html', null, null, ''), err)
                 }
             ; if (match = /^!(?:code|CODE)(?:\s+(\w+))?/.exec(label))
                 { return this.consumeCodeComment(indent, match[1])
-                    .then(() => next('comment.close'), err)
+                    .then(() => next('html', null, null, ''), err)
                 }
             ; this.emitCommentDirective(label)
             ; return next('comment.open', label, indent, '')
