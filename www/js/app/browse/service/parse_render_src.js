@@ -82,22 +82,22 @@
         { const parser = srcParser(file.lang, file.text)
         ; let html = ''
         ; const renderer = $injector.get(file.markup + 'Renderer')
-        ; const render = (arg) =>
+        ; const render = (...args) =>
             { try
-                { return renderer(arg.text, arg.label)
+                { return renderer(...args)
                 }
               catch(e)
                 { parser.events.offAll()
                 ; $rootScope.$broadcast('renderer-error', file, e)
                 }
             }
-        ; const handle = (evt, arg) =>
+        ; const handle = (evt, ...args) =>
             { switch (evt)
                 { case 'html'
-                    : html += arg
+                    : html += args[0]
                     ; break
                   case 'comment'
-                    : html += render(arg)
+                    : html += render(...args)
                     ; break
                   case 'end'
                     : parser.events.offAll()
