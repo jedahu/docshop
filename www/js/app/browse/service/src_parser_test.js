@@ -38,6 +38,22 @@
             , done
             )
         })
+    ; $it('should parse meta data (with middle)', (done) =>
+        { const parser = srcParser
+            ( jsLang
+            , '/* !meta\n'
+                + ' * title: Meta Test\n'
+                + ' * ...\n'
+                + '*/\n'
+            )
+        ; parser.parse().then
+            ( () =>
+                { assert.deepEqual({title: 'Meta Test'}, parser.metaData)
+                ; done()
+                }
+            , done
+            )
+        })
     ; $it('should parse multiple meta datas', (done) =>
         { const parser = srcParser
             ( pyLang
@@ -49,6 +65,29 @@
                 + 'author: Me\n'
                 + 'time: Now\n'
                 + '"""\n'
+            )
+        ; parser.parse().then(() =>
+            { assert.deepEqual
+                ( { title: 'Meta Test'
+                  , author: 'Me'
+                  , time: 'Now'
+                  }
+                , parser.metaData
+                )
+            })
+            .then(done, done)
+        })
+    ; $it('should parse multiple meta datas (with middle)', (done) =>
+        { const parser = srcParser
+            ( jsLang
+            , '/* !meta\n'
+                + ' * title: Meta Test\n'
+                + ' * ...\n'
+                + '*/\n'
+                + '/* !meta\n'
+                + ' * author: Me\n'
+                + ' * time: Now\n'
+                + '*/\n'
             )
         ; parser.parse().then(() =>
             { assert.deepEqual
@@ -97,12 +136,50 @@
             })
             .then(done, done)
         })
+    ; $it('should parse comment (with middle)', (done) =>
+        { const parser = srcParser
+            ( jsLang
+            , '/*\n'
+                + ' * A single line comment.\n'
+                + '*/\n'
+            )
+        ; const events = []
+        ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
+        ; parser.parse().then(() =>
+            { const expect = [['comment', 'A single line comment.']]
+            ; assert.equal(expect[0][0], events[0][0])
+            ; assert.deepEqual(expect[0][1], events[0][1])
+            })
+            .then(done, done)
+        })
     ; $it('should parse code comment', (done) =>
         { const parser = srcParser
             ( pyLang
             , '""" !code python\n'
                 + 'a > b\n'
                 + '"""\n'
+            )
+        ; const events = []
+        ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
+        ; parser.parse().then(() =>
+            { const expect =
+                [ ['html', parser.openCodeBlock('python')]
+                , ['html', 'a &#62; b\n']
+                , ['html', parser.closeCodeBlock]
+                ]
+            ; for (let i in expect)
+                { assert.equal(expect[i][0], events[i][0])
+                ; assert.equal(expect[i][1], events[i][1])
+                }
+            })
+            .then(done, done)
+        })
+    ; $it('should parse code comment (with middle)', (done) =>
+        { const parser = srcParser
+            ( jsLang
+            , '/* !code python\n'
+                + ' * a > b\n'
+                + '*/\n'
             )
         ; const events = []
         ; parser.events.onAll((evt, ...args) => events.push([evt, ...args]))
