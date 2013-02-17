@@ -88,7 +88,7 @@
                 }
               catch(e)
                 { parser.events.offAll()
-                ; $rootScope.$broadcast('renderer-error', file)
+                ; $rootScope.$broadcast('renderer-error', file, e)
                 }
             }
         ; const handle = (evt, arg) =>

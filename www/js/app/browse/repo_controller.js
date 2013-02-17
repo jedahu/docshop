@@ -100,8 +100,8 @@
         { console.log('timeout', file.name)
         })
 
-    ; $scope.$on('renderer-error', (_evt, file) =>
-        { console.log('error', file.name)
+    ; $scope.$on('renderer-error', (_evt, file, err) =>
+        { console.log('error', file.name, err)
         })
 
     ; $scope.changePathTo = (path) =>
