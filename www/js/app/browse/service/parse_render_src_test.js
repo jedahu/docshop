@@ -1,13 +1,22 @@
 ; import browse from '/browse.js'
 ; import _test from 'parse_render_src.js'
 ; import ngIt from '/test/util.js'
+; import {exceptionHandlerMockService, setEhCallback}
+    from 'exception_handler_mock.js'
 
 ; const assert = chai.assert
-; const $injector = angular.injector(['ng', 'BrowseModule'])
+; const testModule = angular.module('TestModule', ['BrowseModule'])
+    .factory('$exceptionHandler', exceptionHandlerMockService)
+; const $injector = angular.injector(['ng', 'TestModule'])
 ; const $it = ngIt($injector)
 
+; let parseRenderSrc
+; let $rootScope
+
 ; beforeEach(() =>
-    {
+    { parseRenderSrc = $injector.get('parseRenderSrc')
+    ; $rootScope = $injector.get('$rootScope')
+    ; setEhCallback(null)
     })
 
 ; describe('parse_render_src', () =>
@@ -102,6 +111,36 @@
                         + '#.\n'
                     )
                 )
+            })
+        })
+    ; describe('parseRenderSrc', () =>
+        { $it('should fire result event', (done) =>
+            { parseRenderSrc
+                ( { name: 'foo'
+                  , path: 'foo.js'
+                  , markup: 'text'
+                  , lang: {open: '/*', middle: '', close: '*/', name: 'js'}
+                  }
+                , '"A single line of code."'
+                , {}
+                )
+            ; $rootScope.$on('renderer-result', (_evt, file, result) =>
+                { done()
+                })
+            })
+        ; $it('should fire error events', (done) =>
+            { setEhCallback((err, cause) =>
+                { if (err.name === 'parser-error') done()
+                })
+            ; $rootScope.$apply(() => parseRenderSrc
+                ( { name: 'foo'
+                  , path: 'foo.js'
+                  , markup: 'text'
+                  , lang: {open: '/*', middle: '', close: '*/', name: 'js'}
+                  }
+                , ['Not', 'a', 'string']
+                , {}
+                ))
             })
         })
     })

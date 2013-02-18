@@ -3,8 +3,11 @@
 
 ; export const parseRenderSrcService =
     ($q, $http, $rootScope, $timeout, $injector, srcParser) =>
-      (repo, file) =>
-        parseRenderSrc($q, $http, $rootScope, $timeout, $injector, srcParser, repo, file)
+      (file, text, meta) =>
+        parseRenderSrc
+          ( $q, $http, $rootScope, $timeout, $injector, srcParser
+          , file, text, meta
+          )
 
 ; const processResult = (html, meta) =>
     { const wrapper = angular.element('<div>')
@@ -60,70 +63,63 @@
     ; return meta
     }
 
-; const readFile = (repo, file) =>
-    repo.readFile(file.path).then((text) =>
-      { const meta = parseMeta(text)
-      ; if (meta)
-          { file.meta = meta
-          ; file = Object.create(file)
-          ; if (meta.lang) meta.lang.name = meta.lang.name || file.lang.name
-          ; file.lang = meta.lang || file.lang
-          ; file.markup = file.markup || meta.markup
-          }
-      ; file.text = text
-      ; return file
-      })
-
 ; const jobs = []
 
+; const cancelJobs = ($rootScope) =>
+    { while (jobs.length > 0)
+        { let job = jobs.pop()
+        ; job.parser.events.offAll()
+        ; $rootScope.$broadcast('renderer-cancel', file)
+        }
+    }
+
 ; const parseRenderSrc =
-    ($q, $http, $rootScope, $timeout, $injector, srcParser, repo, file) =>
-      readFile(repo, file).then((file) =>
-        { const parser = srcParser(file.lang, file.text)
-        ; let html = ''
-        ; const renderer = $injector.get(file.markup + 'Renderer')
-        ; const render = (...args) =>
-            { try
-                { return renderer(...args)
-                }
-              catch(e)
-                { parser.events.offAll()
-                ; $rootScope.$broadcast('renderer-error', file, e)
-                }
+    ( $q, $http, $rootScope, $timeout, $injector, srcParser
+    , file, text, meta
+    )
+    =>
+    { const parser = srcParser(file.lang, text)
+    ; let html = ''
+    ; const render = $injector.get(file.markup + 'Renderer')
+    ; const handle = (evt, ...args) =>
+        { switch (evt)
+            { case 'html'
+                : html += args[0]
+                ; break
+              case 'comment'
+                : try
+                    { html += render(...args)
+                    }
+                  catch (err)
+                    { parser.events.offAll()
+                    ; throw (
+                        { name: 'renderer-error'
+                        , error: err
+                        , file: file
+                        })
+                    }
+                ; break
+              case 'end'
+                : parser.events.offAll()
+                ; $rootScope.$broadcast
+                    ( 'renderer-result'
+                    , file
+                    , processResult(html, meta)
+                    )
+                ; break
             }
-        ; const handle = (evt, ...args) =>
-            { switch (evt)
-                { case 'html'
-                    : html += args[0]
-                    ; break
-                  case 'comment'
-                    : html += render(...args)
-                    ; break
-                  case 'end'
-                    : parser.events.offAll()
-                    ; $rootScope.$broadcast
-                        ( 'renderer-result'
-                        , file
-                        , processResult(html, file.meta)
-                        )
-                    ; break
-                }
-            }
-        ; while (jobs.length > 0)
-            { let job = jobs.pop()
-            ; job.parser.events.offAll()
-            ; $rootScope.$broadcast('renderer-cancel', file)
-            }
-        ; jobs.push({parser, file})
-        ; parser.events.onAll(handle)
-        ; $timeout
-            ( () => $rootScope.$broadcast('renderer-timeout', file)
-            , 10000 // TODO parameterise
-            )
-        ; parser.parse().then(null, (err) =>
-            { $rootScope.$broadcast('parser-error', file, err)
-            })
+        }
+    ; cancelJobs($rootScope)
+    ; jobs.push({parser, file})
+    ; parser.events.onAll(handle)
+    ; $timeout
+        ( () => $rootScope.$broadcast('renderer-timeout', file)
+        , 10000 // TODO parameterise
+        )
+    ; parser.parse().then(null, (err) =>
+        { throw {name: 'parser-error', error: err}
         })
+    }
 
 ; parseRenderSrcService.$inject = ['$q', '$http', '$rootScope', '$timeout', '$injector', 'srcParser']
 
@@ -131,4 +127,6 @@
     { export processResult
     ; export parseMeta
     ; export readFile
+    ; export jobs
+    ; export cancelJobs
     }

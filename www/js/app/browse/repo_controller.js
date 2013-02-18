@@ -5,6 +5,7 @@
     , createRepoObj
     , parseRenderSrc
     , scrollToHash
+    , readFile
     )
     =>
     { $scope.repo = null
@@ -26,9 +27,6 @@
             ; q.callback(data)
             }
         }
-
-    ; const fileFromPath = (repo, path) =>
-        repo.manifest.fileMap[path]
 
     ; const parseRepoString = (str) =>
         { const match = str && str.match(/([^@]+)(?:@([^:]+):?(.*))?/)
@@ -78,10 +76,9 @@
         }
 
     ; const changePath = () =>
-        { parseRenderSrc
-            ( $scope.repo
-            , fileFromPath($scope.repo, $scope.repo.path)
-            )
+        { readFile($scope.repo, path).then((args) =>
+            { $scope.$apply(() => parseRenderSrc($scope.repo, ...args))
+            })
         ; setPath()
         ; $scope.repoForm.updateHack = new Date().getTime()
         }
@@ -148,4 +145,12 @@
 
     }
 
-; repoController.$inject = ['$scope', '$q', '$location', 'createRepoObj', 'parseRenderSrc', 'scrollToHash']
+; repoController.$inject =
+    [ '$scope'
+    , '$q'
+    , '$location'
+    , 'createRepoObj'
+    , 'parseRenderSrc'
+    , 'scrollToHash'
+    , 'readFile'
+    ]

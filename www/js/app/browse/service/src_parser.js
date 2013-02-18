@@ -91,11 +91,19 @@ All of the heavy lifting happens in the `parser` object which exposes a
 */
 ; const parser =
     { init(tick, lang, text)
-        { this.lines = text.split('\n').reverse()
-        ; this.events = Object.create(microEmitter)
-        ; this.lang = lang
-        ; this.tick = tick
-        ; this.metaData = {}
+        { try
+            { this.lines = text.split('\n').reverse()
+            ; this.events = Object.create(microEmitter)
+            ; this.lang = lang
+            ; this.tick = tick
+            ; this.metaData = {}
+            }
+          catch (err)
+            { throw (
+                { name: 'parser-error'
+                , error: err
+                })
+            }
         ; return this
         }
 

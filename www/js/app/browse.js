@@ -8,6 +8,7 @@
 ; import srcParserService from 'browse/service/src_parser.js'
 ; import createRepoService from 'browse/service/create_repo.js'
 ; import exceptionHandlerService from 'browse/service/exception_handler.js'
+; import readFileService from 'browse/service/read_file.js'
 ; import httpRepoType from 'browse/repo_type/http.js'
 ; import githubRepoType from 'browse/repo_type/github.js'
 ; import repoController from 'browse/repo_controller.js'
@@ -25,6 +26,7 @@
     .factory('tick', tickService)
     .factory('nextTick', nextTickService)
     .factory('srcParser', srcParserService)
+    .factory('readFile', readFileService)
     .factory('$exceptionHandler', exceptionHandlerService)
     .factory('markdownRenderer', markdownRenderer)
     .factory('textRenderer', textRenderer)

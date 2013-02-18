@@ -21,8 +21,7 @@
     })
 
 ; describe('src_parser', function()
-    { this.timeout(100000)
-    ; $it('should parse meta data', (done) =>
+    { $it('should parse meta data', (done) =>
         { const parser = srcParser
             ( pyLang
             , '""" !meta\n'
