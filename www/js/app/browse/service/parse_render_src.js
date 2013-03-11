@@ -44,32 +44,13 @@
         })
     }
 
-; const parseMeta = (text) =>
-    { const matcher =
-        /^(\S+)\s+!meta\b.*\n([\s\S]*?\n)(\s*\S*?)\s*?\.\.\.\n(\S+)/
-    ; const [_, open, content, middle, close] = matcher.exec(text) || []
-    ; if (!_) return {}
-    ; const metaStr = ''
-    ; for (let line of content.split(/\n/))
-        { metaStr += line.slice(middle.length) + '\n'
-        }
-    ; const meta = jsyaml.load(metaStr)
-    ; meta.lang =
-        { name: meta.lang
-        , open
-        , middle
-        , close
-        }
-    ; return meta
-    }
-
 ; const jobs = []
 
 ; const cancelJobs = ($rootScope) =>
     { while (jobs.length > 0)
         { let job = jobs.pop()
         ; job.parser.events.offAll()
-        ; $rootScope.$broadcast('renderer-cancel', file)
+        ; $rootScope.$broadcast('renderer-cancel', job.file)
         }
     }
 
@@ -125,7 +106,6 @@
 
 ; export module _test
     { export processResult
-    ; export parseMeta
     ; export readFile
     ; export jobs
     ; export cancelJobs

@@ -2,3 +2,4 @@
 ; module _2 from 'browse/service/src_parser/directive_test.js'
 ; module _3 from 'browse/service/src_parser_test.js'
 ; module _4 from 'browse/service/parse_render_src_test.js'
+; module _5 from 'browse/service/parse_meta_test.js'
