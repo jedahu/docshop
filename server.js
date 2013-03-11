@@ -54,7 +54,7 @@
     ; zcache[file] = Q.defer()
     })
 
-; fork('./grunt', ['all:min']).on('exit', function()
+; fork('./grunt', [process.argv[2] || 'all:min']).on('exit', function()
     { files.forEach(function(file)
         { var data = cache[file]
             , zdata = zcache[file]
