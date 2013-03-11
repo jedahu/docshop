@@ -8,6 +8,7 @@
         [ 'docs.html'
         , 'main.js'
         , 'main.css'
+        , 'lib.js'
         , 'select2.png'
         , 'select2x2.png'
         , 'spinner.gif'
