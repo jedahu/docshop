@@ -101,6 +101,7 @@ All of the heavy lifting happens in the `parser` object which exposes a
           catch (err)
             { throw (
                 { name: 'parser-error'
+                , message: err.message
                 , error: err
                 })
             }

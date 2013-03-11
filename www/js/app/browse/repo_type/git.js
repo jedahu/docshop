@@ -8,12 +8,13 @@
           , branches: []
           , ref: repoRef
           , name: repoPath
-          , readFile: (path) =>
-              spawnCapture
+          , readFile: function(path) {
+              return spawnCapture
                 ( 'git'
                 , ['show', this.ref + ':' + path]
                 , {cwd: repoPath}
                 )
+            }
           }
       ; return spawnCapture('git', ['branch', '--list'], {cwd: repoPath})
           .then((branchesStr) =>

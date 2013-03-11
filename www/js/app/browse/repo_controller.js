@@ -76,8 +76,8 @@
         }
 
     ; const changePath = () =>
-        { readFile($scope.repo, path).then((args) =>
-            { $scope.$apply(() => parseRenderSrc($scope.repo, ...args))
+        { readFile($scope.repo, $scope.repo.path).then((args) =>
+            { parseRenderSrc(...args)
             })
         ; setPath()
         ; $scope.repoForm.updateHack = new Date().getTime()

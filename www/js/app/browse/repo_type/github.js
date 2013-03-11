@@ -4,11 +4,24 @@
     (repoId, repoRef) =>
       { const id = repoId.substr('github:'.length)
       ; const deferred = $q.defer()
+      ; const getFile = (path) => $http.jsonp
+          ( API_PREFIX + 'repos/' + id + '/contents/' + path
+              + '?access_token=' + (localStorage.githubOauthToken || '')
+              + '&callback=JSON_CALLBACK'
+          , { params: {ref: repoRef}
+            }
+          )
       ; const repo =
-          { id: id
+          { id: repoId
+          , githubId: id
           , ref: repoRef
           , tags: []
           , branches: []
+          , readFile: function(path)
+              { return getFile(path).then((ret) =>
+                  { return atob(ret.data.data.content.replace(/\n/g, ''))
+                  })
+              }
           }
       ; $q
           .all
@@ -25,7 +38,6 @@
                 { const data0 = list[0].data
                 ; const data1 = list[1].data
                 ; const data2 = list[2].data
-                ; console.log('args', arguments)
                 ; for (let i in data1) repo.tags.push(data1[i].name)
                 ; repo.tags.sort()
                 ; for (let i in data2) repo.branches.push(data2[i].name)
@@ -33,13 +45,10 @@
                 ; repo.name = data0.name
                 ; repo.ref = repoRef || data0.master_branch
                 ; repo.refs = repo.branches.concat(repo.tags)
-                ; $http.jsonp
-                    ( API_PREFIX + 'repos/' + id + '/contents/doc_manifest'
-                        + '?callback=JSON_CALLBACK'
-                    , {params: {ref: repo.ref}}
-                    )
-                    .success((data) =>
-                        { repo.manifest = parseManifest(data.content)
+                ; getFile('doc_manifest')
+                    .success((ret) =>
+                        { const text = ret.data.content.replace(/\n/g, '')
+                        ; repo.manifest = parseManifest(atob(text))
                         ; deferred.resolve(repo)
                         })
                     .error((err) =>

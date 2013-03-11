@@ -1,4 +1,4 @@
-; export const readFileService = () =>
+; export const readFileService = (parseMeta) =>
     (repo, path) =>
       { const file = repo.manifest.fileMap[path]
       ; return repo.readFile(file.path).then((text) =>
@@ -12,3 +12,5 @@
           ; return [file, text, meta]
           })
       }
+
+readFileService.$inject = ['parseMeta']
