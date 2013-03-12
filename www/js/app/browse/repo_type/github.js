@@ -34,16 +34,13 @@
               ]
             )
           .then
-            ( (list) =>
-                { const data0 = list[0].data
-                ; const data1 = list[1].data
-                ; const data2 = list[2].data
-                ; for (let i in data1) repo.tags.push(data1[i].name)
+            ( ([info, tags, branches]) =>
+                { for (let t of tags.data.data) repo.tags.push(t.name)
                 ; repo.tags.sort()
-                ; for (let i in data2) repo.branches.push(data2[i].name)
+                ; for (let b of branches.data.data) repo.branches.push(b.name)
                 ; repo.branches.sort()
-                ; repo.name = data0.name
-                ; repo.ref = repoRef || data0.master_branch
+                ; repo.name = info.data.data.name
+                ; repo.ref = repoRef || info.data.data.master_branch
                 ; repo.refs = repo.branches.concat(repo.tags)
                 ; getFile('doc_manifest')
                     .success((ret) =>
