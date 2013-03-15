@@ -44,7 +44,21 @@
                 ; repo.refs = repo.branches.concat(repo.tags)
                 ; getFile('doc_manifest')
                     .success((ret) =>
-                        { const text = ret.data.content.replace(/\n/g, '')
+                        { if (ret.meta.status === 401)
+                            { deferred.reject(
+                                { type: 'auth-error'
+                                , message: ret.data.message
+                                })
+                            ; return
+                            }
+                        ; if (ret.meta.status !== 200)
+                            { deferred.reject(
+                                { type: 'repo-error'
+                                , message: ret.data.message
+                                })
+                            ; return
+                            }
+                        ; const text = ret.data.content.replace(/\n/g, '')
                         ; repo.manifest = parseManifest(atob(text))
                         ; deferred.resolve(repo)
                         })
