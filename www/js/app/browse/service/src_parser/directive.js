@@ -25,11 +25,11 @@ containing that string and with an id of "name:`name`".
     { export const name = (str) =>
         { const [_, name, info] = /^(\S+)(?:\s+(.+))?$/.exec(str) || []
         ; const infoSpan = info
-            ? ' <span class="ds:info">'
+            ? ' <span class="ds-info">'
               + escapeHtml(info)
               + '</span>'
             : ''
-        ; return '<div class="ds:name" id="name:'
+        ; return '<div class="ds-name" id="ds-name-'
             + escapeHtml(name)
             + '">'
             + escapeHtml(name)

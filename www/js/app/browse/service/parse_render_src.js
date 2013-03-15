@@ -26,8 +26,8 @@
             .replace(/(?:\n\s*)*$/, '')
         }
     ; const names = [].map.call
-        ( wrapper.find('[id^="name:"]')
-        , (elm) => elm.getAttribute('id').slice('name:'.length)
+        ( wrapper.find('[id^="ds-name-"]')
+        , (elm) => elm.getAttribute('id').slice('ds-name-'.length)
         )
         .sort()
     ; const toc = [].slice.call(wrapper.find('h1,h2,h3,h4'), 0)
