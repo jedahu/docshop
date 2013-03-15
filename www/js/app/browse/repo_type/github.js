@@ -48,6 +48,9 @@
                             { deferred.reject(
                                 { type: 'auth-error'
                                 , message: ret.data.message
+                                    + '. Click to check your github token'
+                                    + ' settings.'
+                                , action: 'show-settings'
                                 })
                             ; return
                             }

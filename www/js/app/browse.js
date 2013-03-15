@@ -13,13 +13,16 @@
 ; import httpRepoType from 'browse/repo_type/http.js'
 ; import githubRepoType from 'browse/repo_type/github.js'
 ; import repoController from 'browse/repo_controller.js'
+; import {alertController, alertService} from 'browse/alert_controller.js'
 ; import markdownRenderer from 'browse/renderer/markdown.js'
 ; import textRenderer from 'browse/renderer/text.js'
 
 ; export const browse = angular.module('BrowseModule', ['ngSanitize', 'ui.directives', 'ui.bootstrap'])
     .controller('RepoController', repoController)
+    .controller('AlertController', alertController)
     .factory('githubRepo', githubRepoType)
     .factory('httpRepo', httpRepoType)
+    .factory('alert', alertService)
     .factory('createRepoObj', createRepoService)
     .factory('parseManifest', manifestParserService)
     .factory('parseMeta', parseMetaService)

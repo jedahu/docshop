@@ -6,6 +6,7 @@
     , parseRenderSrc
     , scrollToHash
     , readFile
+    , alert
     )
     =>
     { $scope.repo = null
@@ -64,8 +65,9 @@
                       ; if (renderFile) changePath()
                       }
                   , (err) =>
-                      { console.log('err:', err) // TODO handle error
+                      { //console.log('err:', err) // TODO handle error
                       ; $scope.repo = null
+                      ; throw err
                       }
                   )
             }
@@ -142,6 +144,9 @@
         { $scope.show.settings = !$scope.show.settings
         }
 
+    ; $scope.performAction = (action) => alert.performAction(action)
+    ; alert.addAction('show-settings', $scope.toggleSettings)
+
     }
 
 ; repoController.$inject =
@@ -152,4 +157,5 @@
     , 'parseRenderSrc'
     , 'scrollToHash'
     , 'readFile'
+    , 'alert'
     ]
