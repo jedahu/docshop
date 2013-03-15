@@ -78,9 +78,14 @@
       </nav>
     </div>
     <div>
+      <button
+        id='ds-show-settings'
+        data-ng-click='toggleSettings()'>
+        &#9881;
+      </button>
       <div
-        data-ng-controller-noop='SettingsController'
-        data-ng-class='{show: show.settings}'
+        modal='show.settings'
+        close='toggleSettings()'
         id='ds-settings-modal'>
         <h1 class='modal-header'>
           Settings
@@ -101,17 +106,11 @@
         </div>
         <div class='modal-footer'>
           <button
-            data-ng-click='settingsVisible=false'>
+            data-ng-click='toggleSettings()'>
             Close
           </button>
         </div>
       </div>
-      <button
-        id='ds-show-settings'
-        data-ng-click='toggleSettings()'
-        href='#ds-settings-modal'>
-        &#9881;
-      </button>
     </div>
   </body>
 </html>

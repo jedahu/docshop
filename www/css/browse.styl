@@ -1,6 +1,7 @@
 @import 'nib'
 @import 'jquery-ui.css'
 @import 'select2.css'
+@import 'bootstrap.css'
 
 font-size = 12px
 line-height = 21px
@@ -535,37 +536,3 @@ ul
   right 0
   z-index 1000
   display inline-block
-
-#ds-settings-modal
-
-  &.show
-    display block
-    opacity 1
-    z-index 1000
-    transition opacity 0.5s
-
-  z-index -1
-  display block
-  opacity 0
-  transition opacity 0.5s
-  position absolute
-  top 0
-  left 0
-  width 100%
-  margin 0
-  padding 0
-  background-color white
-  overflow-y auto
-
-  .modal-body
-    overflow-y hidden
-    max-height none
-
-    input
-      display block
-
-    button
-      display block
-      margin-bottom (2 * pad)
-
-    background-color white

@@ -139,8 +139,7 @@
         }
 
     ; $scope.toggleSettings = () =>
-        { $scope.show.body = $scope.show.settings
-        ; $scope.show.settings = !$scope.show.settings
+        { $scope.show.settings = !$scope.show.settings
         }
 
     }

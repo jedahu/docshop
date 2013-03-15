@@ -1,6 +1,6 @@
 {
   "name": "docshop",
-  "version": "0.1.63",
+  "version": "0.1.65",
   "dependencies": {
     "grunt-contrib-copy": {
       "version": "0.4.0rc7",

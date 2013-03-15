@@ -16,7 +16,7 @@
 ; import markdownRenderer from 'browse/renderer/markdown.js'
 ; import textRenderer from 'browse/renderer/text.js'
 
-; export const browse = angular.module('BrowseModule', ['ngSanitize', 'ui.directives'])
+; export const browse = angular.module('BrowseModule', ['ngSanitize', 'ui.directives', 'ui.bootstrap'])
     .controller('RepoController', repoController)
     .factory('githubRepo', githubRepoType)
     .factory('httpRepo', httpRepoType)
