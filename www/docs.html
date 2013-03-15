@@ -6,13 +6,6 @@
     <meta name='MSSmartTagsPreventParsing' content='true'>
     <meta charset='UTF-8'>
     <link rel='stylesheet' type='text/css' href='<%= bustCache("main.css") %>'>
-    <meta
-      id='ds:var:rendererWorkerUrl'
-      value='<%= bustCache("worker/renderer.js") %>'>
-    <meta
-      id='ds:var:rendererParserUrl'
-      text='<%= bustCache("worker/renderer/text.js") %>'
-      markdown='<%= bustCache("worker/renderer/markdown.js") %>'>
   </head>
   <body data-ng-controller='RepoController'>
     <div id='body' data-ng-class='{show: show.body}'>
