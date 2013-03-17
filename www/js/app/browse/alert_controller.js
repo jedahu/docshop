@@ -1,5 +1,5 @@
 ; export const alertController = ($scope, alert) =>
-    { $scope.alerts = alert.alerts
+    { $scope.alert = alert
     }
 
 ; alertController.$inject = ['$scope', 'alert']
@@ -20,7 +20,8 @@
     , addAction(id, fn)
         { this.actions[id] = fn
         }
-    , performAction(action)
-        { (this.actions[action] || () => {})()
+    , performAction(index, action)
+        { this.remove(index)
+        ; (this.actions[action] || () => {})()
         }
     })

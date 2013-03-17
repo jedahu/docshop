@@ -8,15 +8,13 @@
     <link rel='stylesheet' type='text/css' href='<%= bustCache("main.css") %>'>
   </head>
   <body data-ng-controller='RepoController'>
-    <div data-ng-controller='AlertController'>
+    <div
+      id='ds-alerts'
+      data-ng-controller='AlertController'>
       <div data-alert
-        data-ng-repeat='a in alerts'
-        type='a.type'
-        data-click-action='a.action'
-        close='remove($index)'
-        data-ng-click='performAction(a.action)'>
-        <span data-ng-bind='a.msg' data-ng-click='performAction(a.action)'>
-        </span>
+        data-ng-repeat='a in alert.alerts'
+        data-type='a.type'
+        data-close='alert.remove($index)'>{{a.msg}}
       </div>
     </div>
     <div id='body' data-ng-class='{show: show.body}'>
