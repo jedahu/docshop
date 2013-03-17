@@ -40,6 +40,7 @@
           <input
             data-ui-select2='refQuery'
             data-ng-model='repoForm.ref'
+            data-ng-change='changeRepo()'
             data-placeholder='branch|tag|commit'
             data-ng-disabled='!repo.refs'>
           <button type='submit'></button>

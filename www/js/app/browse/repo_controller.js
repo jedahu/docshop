@@ -13,6 +13,8 @@
     ; $scope.repoForm = {}
     ; $scope.renderedSrc = null
 
+    ; var updateFromLocation = true
+
     ; $scope.refQuery =
         { initSelection: (elem, cb) =>
             cb($scope.repoForm.ref)
@@ -38,6 +40,7 @@
 
     ; const setPath = () =>
         { const repo = $scope.repo
+        ; updateFromLocation = false
         ; $location.path(repo.id + '@' + repo.ref + ':' + repo.path)
         }
 
@@ -82,7 +85,7 @@
             { parseRenderSrc(...args)
             })
         ; setPath()
-        ; $scope.repoForm.updateHack = new Date().getTime()
+        //; $scope.repoForm.updateHack = new Date().getTime()
         }
 
     ; $scope.$on('renderer-result', (_evt, file, result) =>
@@ -110,16 +113,13 @@
         }
 
     ; $scope.$on('$locationChangeSuccess', function(_new, _old)
-        { $scope.repoForm = parseRepoString($location.path().slice(1))
+        { if (!updateFromLocation)
+            { updateFromLocation = true
+            ; return
+            }
+        ; $scope.repoForm = parseRepoString($location.path().slice(1))
         ; $scope.changeRepo()
         })
-
-    ; $scope.$watch
-        ( () => $scope.repoForm && $scope.repoForm.ref
-        , (newVal, _old) =>
-            { if (newVal) $scope.changeRepo()
-            }
-        )
 
     ; $scope.scrollToHash = scrollToHash
 
