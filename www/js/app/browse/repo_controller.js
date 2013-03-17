@@ -140,9 +140,11 @@
         , settings: false
         }
 
-    ; $scope.toggleSettings = () =>
-        { $scope.show.settings = !$scope.show.settings
-        }
+    ; $scope.toggleSettings = (action) =>
+        $scope.show.settings =
+          action === 'hide'
+          ? false
+          : !$scope.show.settings
 
     ; $scope.performAction = (action) => alert.performAction(action)
     ; alert.addAction('show-settings', $scope.toggleSettings)

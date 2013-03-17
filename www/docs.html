@@ -95,7 +95,7 @@
       </button>
       <div
         modal='show.settings'
-        close='toggleSettings()'
+        close='toggleSettings("hide")'
         id='ds-settings-modal'>
         <h1 class='modal-header'>
           Settings
@@ -116,7 +116,7 @@
         </div>
         <div class='modal-footer'>
           <button
-            data-ng-click='toggleSettings()'>
+            data-ng-click='toggleSettings("hide")'>
             Close
           </button>
         </div>
