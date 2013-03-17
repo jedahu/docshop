@@ -1,7 +1,7 @@
 ; export const exceptionHandlerService = ($log, alert) =>
     (err, cause) =>
       { $log.error('ERR:', err, cause)
-      ; if (err.type.startsWith('ds-'))
+      ; if (err.type && err.type.startsWith('ds-'))
           { alert.addError(err, cause)
           }
         else
